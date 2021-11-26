@@ -39,10 +39,10 @@ snpless-nf - A Nextflow pipeline for time-course analysis with bacterial NGS who
 9. PLOTTING
     1. PLOT [R](https://cran.r-project.org/)
 
-Addtional Tools used for data conversion:
+Addtional Tools used for data conversion and data analysis:
 
 - HTSLIB [htslib]((https://github.com/samtools/htslib)
-- 
+- trajectory_pvalue_cpp_code [https://github.com/benjaminhgood/LTEE-metagenomic/tree/master/trajectory_pvalue_cpp_code](https://github.com/benjaminhgood/LTEE-metagenomic/tree/master/trajectory_pvalue_cpp_code)
 
 ## Quickstart
 
@@ -157,6 +157,8 @@ By contributing to this project, you agree to abide by its terms.
 Behringer, Megan G., et al. "Escherichia coli cultures maintain stable subpopulation structure during long-term evolution." Proceedings of the National Academy of Sciences 115.20 (2018): E4642-E4650. [https://www.pnas.org/content/115/20/E4642.short](https://www.pnas.org/content/115/20/E4642.short)
 
 ## References - Tools
+
+Good, Benjamin H., et al. "The dynamics of molecular evolution over 60,000 generations." Nature 551.7678 (2017): 45-50. [https://www.nature.com/articles/nature24287](https://www.nature.com/articles/nature24287)
 
 Di Tommaso, Paolo, et al. "Nextflow enables reproducible computational workflows." Nature biotechnology 35.4 (2017): 316-319. [https://www.nature.com/articles/nbt.3820?report=reader](https://www.nature.com/articles/nbt.3820?report=reader)
 

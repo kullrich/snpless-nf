@@ -16,7 +16,7 @@ snpless-nf - A Nextflow pipeline for time-course analysis with bacterial NGS who
 2. GENMAP [GenMap](https://github.com/cpockrandt/genmap)
 3. ASSEMBLY
     1. UNICYCLER [Unicycler](https://github.com/rrwick/Unicycler)
-    2. PROKKA [prokka]((https://github.com/tseemann/prokka)
+    2. PROKKA [prokka](https://github.com/tseemann/prokka)
 4. MAPPING
     1. BRESEQ [breseq](https://github.com/barricklab/breseq) >> SAMTOOLS [samtools](https://github.com/samtools/samtools) add read group
     2. MINIMAP2 [minimap2](https://github.com/lh3/minimap2) >> SAMBLASTER [samblaster](https://github.com/GregoryFaust/samblaster) remove duplicates
@@ -95,7 +95,7 @@ Download via wget:
 
 ```
 cd snpless-nf/examples
-wget -O behringer.tar.gz https://owncloud.gwdg.de/index.php/s/fqD9ik2s3FReOUn/download
+wget -O behringer2018.tar.gz https://owncloud.gwdg.de/index.php/s/fqD9ik2s3FReOUn/download
 tar -xvf behringer2018.tar.gz
 ```
 

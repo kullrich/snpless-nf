@@ -114,17 +114,17 @@ nextflow run snpless-nf --input behringer2018/behringer2018_113.txt --reference 
 
 ## Pipeline usage
 
-see a detailed description here:
+see a detailed description here: [usage](https://github.com/kullrich/snpless-nf/blob/main/docs/usage.md)
 
 ### Input files
 
 ## Pipeline parameters
 
-see a detailed description here:
+see a detailed description here: [parameters](https://github.com/kullrich/snpless-nf/blob/main/docs/parameters.md)
 
 ## Pipeline output
 
-see a detailed description here:
+see a detailed description here: [output](https://github.com/kullrich/snpless-nf/blob/main/docs/output.md)
 
 ## Licence
 

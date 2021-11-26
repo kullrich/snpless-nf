@@ -95,7 +95,7 @@ Download via wget:
 
 ```
 cd snpless-nf/examples
-wget 
+wget -O behringer.tar.gz https://owncloud.gwdg.de/index.php/s/fqD9ik2s3FReOUn/download
 tar -xvf behringer2018.tar.gz
 ```
 

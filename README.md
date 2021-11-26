@@ -10,28 +10,39 @@ snpless-nf - A Nextflow pipeline for time-course analysis with bacterial NGS who
 ## Pipeline summary
 
 1. QC
-    1. FASTQC
-    2. TRIM
-    3. PEAR
-2. GENMAP
+    1. FASTQC [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+    2. TRIM [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic)
+    3. PEAR [pear](https://cme.h-its.org/exelixis/web/software/pear/)
+2. GENMAP [GenMap](https://github.com/cpockrandt/genmap)
 3. ASSEMBLY
-    1. UNICYCLER
-    2. PROKKA
+    1. UNICYCLER [Unicycler](https://github.com/rrwick/Unicycler)
+    2. PROKKA [prokka]((https://github.com/tseemann/prokka)
 4. MAPPING
-    1. BRESEQ
-    2. MINIMAP2
-    3. BWA
+    1. BRESEQ [breseq](https://github.com/barricklab/breseq) >> SAMTOOLS [samtools](https://github.com/samtools/samtools) add read group
+    2. MINIMAP2 [minimap2](https://github.com/lh3/minimap2) >> SAMBLASTER [samblaster](https://github.com/GregoryFaust/samblaster) remove duplicates
+    3. BWA [BWA](http://bio-bwa.sourceforge.net/) >> SAMBLASTER [samblaster](https://github.com/GregoryFaust/samblaster) remove duplicates
+    4. COVERAGE [samtools](https://github.com/samtools/samtools)
 5. SNPCALLING
-    1. BRESEQ
-    2. BCFTOOLS
-    3. LOFREQ
-    4. VARSCAN
+    1. MPILEUP [samtools](https://github.com/samtools/samtools)
+    2. BCFTOOLS [bcftools](https://github.com/samtools/bcftools)
+    3. FREEBAYES [freebayes](https://github.com/freebayes/freebayes)
+    4. LOFREQ [LoFreq](http://csb5.github.io/lofreq/)
+    5. VARSCAN [varscan](http://dkoboldt.github.io/varscan/)
 6. SVCALLING
-    1. PINDEL
-    2. BREAKDANCER
-7. FILTERING
+    1. PINDEL [pindel](https://github.com/genome/pindel)
+    2. BREAKDANCER [BreakDancer](https://github.com/genome/breakdancer)
+7. FILTERING/MERGING
+    1. GDCOMPARE [gdtools](https://barricklab.org/twiki/pub/Lab/ToolsBacterialGenomeResequencing/documentation/gd_usage.html)
+    2. BEDTOOLS [bedtools](https://bedtools.readthedocs.io/en/latest/)
 8. ANNOTATION
+    1. SNPEFF [SnpEff](http://pcingola.github.io/SnpEff/)
 9. PLOTTING
+    1. PLOT [R](https://cran.r-project.org/)
+
+Addtional Tools used for data conversion:
+
+- HTSLIB [htslib]((https://github.com/samtools/htslib)
+- 
 
 ## Quickstart
 

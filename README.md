@@ -25,7 +25,7 @@ conda install -c bioconda nextflow
 
 ## Get example files (8.6 GB)
 
-download via wget
+Download via wget:
 
 ```
 cd snpless-nf/examples
@@ -33,9 +33,9 @@ wget
 tar -xvf behringer2018.tar.gz
 ```
 
-download via weblink
+Download via weblink:
 
-[behringer2018](https://ftp.evolbio.mpg.de/main.html?download&weblink=74b3a1f98426435d16a97bcc8e55b400&realfilename=behringer2018.tar.gz)
+[behringer2018i - samples 113, 129, 221](https://ftp.evolbio.mpg.de/main.html?download&weblink=74b3a1f98426435d16a97bcc8e55b400&realfilename=behringer2018.tar.gz)
 
 ## Pipeline Description
 

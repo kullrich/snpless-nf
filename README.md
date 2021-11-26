@@ -10,25 +10,25 @@ snpless-nf - A Nextflow pipeline for time-course analysis with bacterial NGS who
 ## Pipeline summary
 
 1. QC
-  1. FASTQC
-  2. TRIM
-  3. PEAR
+    1. FASTQC
+    2. TRIM
+    3. PEAR
 2. GENMAP
 3. ASSEMBLY
-  1. UNICYCLER
-  2. PROKKA
+    1. UNICYCLER
+    2. PROKKA
 4. MAPPING
-  1. BRESEQ
-  2. MINIMAP2
-  3. BWA
+    1. BRESEQ
+    2. MINIMAP2
+    3. BWA
 5. SNPCALLING
-  1. BRESEQ
-  2. BCFTOOLS
-  3. LOFREQ
-  4. VARSCAN
+    1. BRESEQ
+    2. BCFTOOLS
+    3. LOFREQ
+    4. VARSCAN
 6. SVCALLING
-  1. PINDEL
-  2. BREAKDANCER
+    1. PINDEL
+    2. BREAKDANCER
 7. FILTERING
 8. ANNOTATION
 9. PLOTTING

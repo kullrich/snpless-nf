@@ -23,6 +23,14 @@ conda activate nf
 conda install -c bioconda nextflow
 ```
 
+## Get example files (8.6 GB)
+
+```
+cd snpless-nf/examples
+wget https://ftp.evolbio.mpg.de/main.html?download&weblink=74b3a1f98426435d16a97bcc8e55b400&realfilename=behringer2018.tar.gz
+tar -xvf behringer208.tar.gz
+```
+
 ## Pipeline Description
 
 ## Input files

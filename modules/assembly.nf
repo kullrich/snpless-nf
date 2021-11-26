@@ -1,5 +1,5 @@
 process UNICYCLER {
-	conda 'env/snpless-assembly-unicycler.yml'
+	conda baseDir + '/env/snpless-assembly-unicycler.yml'
 	tag "UNICYCLER on ${sampleId}_${sampleReplicate}_${sampleTimepoint}"
 	cpus params.unicycler_threads
 
@@ -28,7 +28,7 @@ process UNICYCLER {
 }
 
 process PROKKA {
-	conda 'env/snpless-assembly-prokka.yml'
+	conda baseDir + '/env/snpless-assembly-prokka.yml'
 	tag "PROKKA on ${sampleId}_${sampleReplicate}_${sampleTimepoint}"
 	cpus params.prokka_threads
 

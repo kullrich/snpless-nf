@@ -1,5 +1,5 @@
 process FASTQC {
-	conda 'env/snpless-qc-fastqc.yml'
+	conda baseDir + '/env/snpless-qc-fastqc.yml'
 	tag "FASTQC on ${sampleId}_${sampleReplicate}_${sampleTimepoint}"
 	cpus params.fastqc_threads
 
@@ -64,7 +64,7 @@ process FASTQC {
 }
 
 process TRIM {
-	conda 'env/snpless-qc-trim.yml'
+	conda baseDir + '/env/snpless-qc-trim.yml'
 	tag "TRIM on ${sampleId}_${sampleReplicate}_${sampleTimepoint}"
 	cpus params.trim_threads
 
@@ -153,7 +153,7 @@ process TRIM {
 }
 
 process PEAR {
-	conda 'env/snpless-qc-pear.yml'
+	conda baseDir + '/env/snpless-qc-pear.yml'
 	tag "PEAR on ${sampleId}_${sampleReplicate}_${sampleTimepoint}"
 	cpus params.pear_threads
 

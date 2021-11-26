@@ -178,10 +178,10 @@ INPUT: ${params.input}
             // GENMAP.out.view()
             // ASSEMBLY
             // PROCESS UNICYCLER
-            // UNICYCLER(PEAR.out)
+            UNICYCLER(PEAR.out)
             // UNICYCLER.out.view()
             // PROCESS PROKKA
-            // PROKKA(UNICYCLER.out.map{it + [file(params.proteins)]})
+            PROKKA(UNICYCLER.out.map{it + [file(params.proteins)]})
             // PROKKA.out.view()
             // MAPPING
             // PROCESS BRESEQ

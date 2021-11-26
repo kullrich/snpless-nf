@@ -1,5 +1,5 @@
 process GENMAP {
-	conda 'genmap'
+	conda baseDir + '/env/snpless-genmap.yml'
 	tag "GENMAP on ${reference}"
 	cpus params.genmap_threads
 

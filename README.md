@@ -72,7 +72,7 @@ git clone https://github.com/kullrich/snpless-nf.git
 
 3. Test the pipeline on an minimal dataset with a single command:
 
-Using <nextflow> conda environment:
+Using nextflow conda environment:
 
 ```
 conda activate nf
@@ -105,7 +105,7 @@ Download via weblink:
 
 ### Run full example dataset
 
-Using <nextflow> conda environment:
+Using nextflow conda environment:
 
 ```
 conda activate nf

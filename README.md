@@ -41,7 +41,7 @@ snpless-nf - A Nextflow pipeline for time-course analysis with bacterial NGS who
 
 Addtional Tools used for data conversion and data analysis:
 
-- HTSLIB [htslib]((https://github.com/samtools/htslib)
+- HTSLIB [htslib](https://github.com/samtools/htslib)
 - trajectory_pvalue_cpp_code [https://github.com/benjaminhgood/LTEE-metagenomic/tree/master/trajectory_pvalue_cpp_code](https://github.com/benjaminhgood/LTEE-metagenomic/tree/master/trajectory_pvalue_cpp_code)
 
 ## Quickstart

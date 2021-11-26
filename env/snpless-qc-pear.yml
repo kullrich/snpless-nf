@@ -1,0 +1,8 @@
+name: snpless-qc-pear
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - pear
+  - htslib

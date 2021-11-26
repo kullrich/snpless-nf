@@ -1,0 +1,9 @@
+name: snpless-mapping-minimap2
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - minimap2
+  - samblaster
+  - samtools

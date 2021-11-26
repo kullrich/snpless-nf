@@ -1,0 +1,7 @@
+name: snpless-assembly-prokka
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - prokka

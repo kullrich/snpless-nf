@@ -1,0 +1,8 @@
+name: snpless-qc-trim
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - trimmomatic
+  - htslib

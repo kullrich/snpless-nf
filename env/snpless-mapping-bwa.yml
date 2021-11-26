@@ -1,0 +1,9 @@
+name: snpless-mapping-bwa
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bwa
+  - samblaster
+  - samtools

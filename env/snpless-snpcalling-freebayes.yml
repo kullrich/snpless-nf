@@ -1,0 +1,7 @@
+name: snpless-qc-fastqc
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - freebayes

@@ -138,7 +138,7 @@ Usage:
 include {FASTQC; TRIM; PEAR} from './modules/qc' params(params)
 include {GENMAP} from './modules/genmap' params(params)
 include {UNICYCLER; PROKKA} from './modules/assembly' params(params)
-include {BRESEQ; MINIMAP2; BWA; POSTBRESEQ} from './modules/mapping' params(params)
+include {BRESEQ; MINIMAP2; BWA; POSTBRESEQ; POSTMINIMAP2; POSTBWA} from './modules/mapping' params(params)
 
 // MAIN workflow
 workflow{
@@ -195,9 +195,13 @@ INPUT: ${params.input}
             // PROCESS MINIMAP2
             MINIMAP2(PEAR.out.map{it + [file(params.reference)]})
             // MINIMAP2.out.view()
+            POSTMINIMAP2(MINIMAP2.out)
+            // POSTMINIMAP2.out.view()
             // PROCESS BWA
             BWA(PEAR.out.map{it + [file(params.reference)]})
             // BWA.out.view()
+            POSTBWA(BWA.out)
+            // POSTBWA.out.view()
 
         }
 }

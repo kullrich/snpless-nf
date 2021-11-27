@@ -113,18 +113,21 @@ Usage:
         --breseq_threads                8
         --mapping_breseq_p              The sample is not clonal. Predict polymorphic (mixed) mutations.
         --mapping_breseq_options        "-m 20 -b 15"
+        --mapping_breseq_coverage       "--min-BQ 3 --min-MQ 10"
 
     Options: MAPPING - MINIMAP2
         --run_minimap2                  run MINIMAP2
         --minimap2_threads              8
         --mapping_minimap2_options      "--sam-hit-only --secondary=yes -ax sr"
         --mapping_minimap2_samblaster   remove duplicates with samblaster
+        --mapping_minimap2_coverage     "--min-BQ 3 --min-MQ 10"
 
     Options: MAPPING - BWA
         --run_bwa                       run BWA
         --bwa_threads                   8
         --mapping_bwa_options           "-M"
         --mapping_bwa_samblaster        remove duplicates with samblaster
+        --mapping_bwa_coverage          "--min-BQ 3 --min-MQ 10"
 
 """
     ["bash", "${baseDir}/bin/clean.sh", "${workflow.sessionId}"].execute()

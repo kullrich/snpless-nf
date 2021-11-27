@@ -4,6 +4,4 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - breseq=0.36.1
-  - perl=5.32.1
-  - samtools=1.7
+  - breseq

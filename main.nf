@@ -138,7 +138,7 @@ Usage:
 include {FASTQC; TRIM; PEAR} from './modules/qc' params(params)
 include {GENMAP} from './modules/genmap' params(params)
 include {UNICYCLER; PROKKA} from './modules/assembly' params(params)
-include {BRESEQ; MINIMAP2; BWA} from './modules/mapping' params(params)
+include {BRESEQ; MINIMAP2; BWA; POSTBRESEQ} from './modules/mapping' params(params)
 
 // MAIN workflow
 workflow{
@@ -190,6 +190,8 @@ INPUT: ${params.input}
             // PROCESS BRESEQ
             BRESEQ(PEAR.out.map{it + [file(params.proteins)]})
             // BRESEQ.out.view()
+            POSTBRESEQ(BRESEQ.out)
+            // POSTBRESEQ.out.view()
             // PROCESS MINIMAP2
             MINIMAP2(PEAR.out.map{it + [file(params.reference)]})
             // MINIMAP2.out.view()

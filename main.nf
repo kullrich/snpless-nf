@@ -226,6 +226,8 @@ OUTPUT: ${params.output}
             POSTBRESEQ.out.breseq_mean_coverage.subscribe {it.copyTo(breseqDir)}
             POSTBRESEQ.out.breseq_bam.subscribe {it.copyTo(breseqDir)}
             POSTBRESEQ.out.breseq_bam_index.subscribe {it.copyTo(breseqDir)}
+            POSTBRESEQ.out.breseq_vcf.subscribe {it.copyTo(breseqDir)}
+            POSTBRESEQ.out.breseq_gd.subscribe {it.copyTo(breseqDir)}
             //
             // PROCESS MINIMAP2
             minimap2Dir = file(params.output+"/MAPPING/MINIMAP2OUT")

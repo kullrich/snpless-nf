@@ -190,7 +190,7 @@ process POSTBWA {
 	tag "POSTBWA on ${sampleId}_${sampleReplicate}_${sampleTimepoint}"
 	cpus params.bwa_threads
 
-	publishDir "${params.output}/MAPPING/BWAOUT", mode: 'copy'
+	publishDir "${params.output}/MAPPING/BWA", mode: 'copy'
 
 	input:
 		tuple path(bwaPath), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)

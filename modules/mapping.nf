@@ -3,7 +3,7 @@ process BRESEQ {
 	tag "BRESEQ on ${sampleId}_${sampleReplicate}_${sampleTimepoint}"
 	cpus params.breseq_threads
 
-	publishDir "${params.output}/MAPPING/BRESEQ", mode: 'copy'
+	publishDir "${params.output}/MAPPING/BRESEQ", mode: 'symlink'
 
 	input:
 		tuple path(pearPath), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2), path(proteins)
@@ -40,7 +40,7 @@ process MINIMAP2 {
 	tag "MINMAP2 on ${sampleId}_${sampleReplicate}_${sampleTimepoint}"
 	cpus params.minimap2_threads
 
-	publishDir "${params.output}/MAPPING/MINIMAP2", mode: 'copy'
+	publishDir "${params.output}/MAPPING/MINIMAP2", mode: 'symlink'
 
 	input:
 		tuple path(pearPath), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2), path(reference)
@@ -79,7 +79,7 @@ process BWA {
 	tag "BWA on ${sampleId}_${sampleReplicate}_${sampleTimepoint}"
 	cpus params.bwa_threads
 
-	publishDir "${params.output}/MAPPING/BWA", mode: 'copy'
+	publishDir "${params.output}/MAPPING/BWA", mode: 'symlink'
 
 	input:
 		tuple path(pearPath), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2), path(reference)
@@ -128,19 +128,19 @@ process POSTBRESEQ {
 		tuple path(breseqPath), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
 
 	output:
-		tuple path("BRESEQOUT"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
+		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.mean.coverage", emit: breseq_mean_coverage
 
 	when:
 		(params.mapping && params.run_breseq) || params.run_all
 
 	script:
 		"""
-		mkdir -p BRESEQOUT
-		cp ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/output.vcf BRESEQOUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.vcf
-		cp ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/output.gd BRESEQOUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.gd
-		samtools addreplacerg -r '@RG\\tID:${sampleId}_${sampleReplicate}_${sampleTimepoint}\\tSM:${sampleId}_${sampleReplicate}_${sampleTimepoint}\\tLB:lib1\\tPL:illumina\\tPU:unit1' -o ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bam BRESEQOUT/reference.bam
-		samtools index BRESEQOUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bam
-		samtools coverage ${params.mapping_breseq_coverage} BRESEQOUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bam > BRESEQOUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.mean.coverage
+		cp ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/output.vcf ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.vcf
+		cp ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/output.gd ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.gd
+		samtools addreplacerg -r '@RG\\tID:${sampleId}_${sampleReplicate}_${sampleTimepoint}\\tSM:${sampleId}_${sampleReplicate}_${sampleTimepoint}\\tLB:lib1\\tPL:illumina\\tPU:unit1' -o ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bam ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/reference.bam
+		samtools index ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bam
+		samtools coverage ${params.mapping_breseq_coverage} ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.mean.coverage
 		"""
 }
 
@@ -155,7 +155,10 @@ process POSTMINIMAP2 {
 		tuple path(minimap2Path), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
 
 	output:
-		tuple path("MINIMAP2OUT"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
+		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.mean.coverage", emit: minimap2_mean_coverage
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.bam", emit: minimap2_bam
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.bam.bai", emit: minimap2_bam_index
 
 	when:
 		(params.mapping && params.run_minimap2) || params.run_all
@@ -163,21 +166,19 @@ process POSTMINIMAP2 {
 	script:
 		if (reads2 == "-")
 			"""
-			mkdir -p MINIMAP2OUT
-			samtools sort -@ $task.cpus ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.bam > MINIMAP2OUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.bam
-			samtools index MINIMAP2OUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.bam
-			samtools coverage ${params.mapping_minimap2_coverage} MINIMAP2OUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.bam > MINIMAP2OUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.mean.coverage
+			samtools sort -@ $task.cpus ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.bam
+			samtools index ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.bam
+			samtools coverage ${params.mapping_minimap2_coverage} ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.mean.coverage
 			"""
 		else
 			"""
-			mkdir -p MINIMAP2OUT
-			samtools sort -@ $task.cpus ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.paired.bam > MINIMAP2OUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.paired.sorted.bam
-			samtools sort -@ $task.cpus ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.single.bam > MINIMAP2OUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.single.sorted.bam
-			samtools merge -@ $task.cpus MINIMAP2OUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.bam MINIMAP2OUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.paired.sorted.bam MINIMAP2OUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.single.sorted.bam
-			rm MINIMAP2OUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.paired.sorted.bam 
-			rm MINIMAP2OUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.single.sorted.bam
-			samtools index MINIMAP2OUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.bam
-			samtools coverage ${params.mapping_minimap2_coverage} MINIMAP2OUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.mean.coverage
+			samtools sort -@ $task.cpus ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.paired.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.paired.sorted.bam
+			samtools sort -@ $task.cpus ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.single.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.single.sorted.bam
+			samtools merge -@ $task.cpus ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.bam ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.paired.sorted.bam ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.single.sorted.bam
+			rm ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.paired.sorted.bam 
+			rm ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.single.sorted.bam
+			samtools index ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.bam
+			samtools coverage ${params.mapping_minimap2_coverage} ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.mean.coverage
 			"""
 }
 
@@ -186,13 +187,14 @@ process POSTBWA {
 	tag "POSTBWA on ${sampleId}_${sampleReplicate}_${sampleTimepoint}"
 	cpus params.bwa_threads
 
-	publishDir "${params.output}/MAPPING/BWAOUT/${sampleId}_${sampleReplicate}_${sampleTimepoint}", mode: 'copy'
+	publishDir "${params.output}/MAPPING/BWAOUT", mode: 'copy'
 
 	input:
 		tuple path(bwaPath), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
 
 	output:
-		tuple path("."), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
+		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.mean.coverage", emit: bwa_mean_coverage
 
 	when:
 		(params.mapping && params.run_bwa) || params.run_all
@@ -200,18 +202,18 @@ process POSTBWA {
 	script:
 		if (reads2 == "-")
 			"""
-			samtools sort -@ $task.cpus ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.bam
-			samtools index ${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.bam
-			samtools coverage ${params.mapping_bwa_coverage} ${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.mean.coverage
+			samtools sort -@ $task.cpus ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.bam
+			samtools index ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.bam
+			samtools coverage ${params.mapping_bwa_coverage} ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.mean.coverage
 			"""
 		else
 			"""
-			samtools sort -@ $task.cpus ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.paired.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.paired.sorted.bam
-			samtools sort -@ $task.cpus ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.single.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.single.sorted.bam
-			samtools merge -@ $task.cpus ${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.bam ${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.paired.sorted.bam ${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.single.sorted.bam
-			rm ${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.paired.sorted.bam 
-			rm ${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.single.sorted.bam
-			samtools index ${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.bam
-			samtools coverage ${params.mapping_bwa_coverage} ${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.mean.coverage
+			samtools sort -@ $task.cpus ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.paired.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.paired.sorted.bam
+			samtools sort -@ $task.cpus ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.single.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.single.sorted.bam
+			samtools merge -@ $task.cpus ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.bam ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.paired.sorted.bam ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.single.sorted.bam
+			rm ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.paired.sorted.bam 
+			rm ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.single.sorted.bam
+			samtools index ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.bam
+			samtools coverage ${params.mapping_bwa_coverage} ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.mean.coverage
 			"""
 }

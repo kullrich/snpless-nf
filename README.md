@@ -1,5 +1,5 @@
 # snpless-nf
-snpless-nf - A Nextflow pipeline for time-course analysis with bacterial NGS whole-genome data.
+snpless-nf - A Nextflow pipeline for time-course analysis with bacterial NGS whole-genome data. <img align="right" src="SNPless.png" width=400>
 
 [![nextflow](https://img.shields.io/badge/nextflow-%E2%89%A521.10.0-brightgreen.svg)](http://nextflow.io)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)

@@ -166,52 +166,66 @@ OUTPUT: ${params.output}
                 .map{row->tuple(row[0],row[1],row[2],row[3],row[4],file(row[3]),file(row[4]),file(params.qc_trim_adapter_file))}
                 .set{samples}
             // run all
+            //
             // QC
+            //
             // PROCESS FASTQC
             FASTQC(samples)
             // FASTQC.out.subscribe {println "Got: $it"}
             // FASTQC.out.view()
             // FASTQC.out.subscribe onComplete: {println "FastQC - Done"}
+            //
             // PROCESS TRIM READS
             TRIM(samples)
             // TRIM.out.subscribe {println "Got: $it"}
             // TRIM.out.view()
             // TRIM.out.subscribe onComplete: {println "Trimmomatic - Done"}
+            //
             // PROCESS PEAR READS
             PEAR(TRIM.out)
             // PEAR.out.subscribe {println "Got: $it"}
             // PEAR.out.view()
             // PEAR.out.subscribe onComplete: {println "Pear - Done"}
+            //
             // GENMAP
+            //
             // PROCESS GENMAP
             GENMAP(file(params.reference))
             // GENMAP.out.subscribe {println "Got: $it"}
             // GENMAP.out.view()
             // GENMAP.out.subscribe onComplete: {println "GenMap - Done"}
+            //
             // ASSEMBLY
+            //
             // PROCESS UNICYCLER
             // UNICYCLER(PEAR.out)
             // UNICYCLER.out.subscribe {println "Got: $it"}
             // UNICYCLER.out.view()
             // UNICYCLER.out.subscribe onComplete: {println "Unicycler - Done"}
+            //
             // PROCESS PROKKA
             // PROKKA(UNICYCLER.out.map{it + [file(params.proteins)]})
             // PROKKA.out.subscribe {println "Got: $it"}
             // PROKKA.out.view()
             // PROKKA.out.subscribe onComplete: {println "Prokka - Done"}
+            //
             // MAPPING
+            //
             // PROCESS BRESEQ
-            // BRESEQ(PEAR.out.map{it + [file(params.proteins)]})
+            breseqDir = file(params.output+"/MAPPING/BRESEQOUT")
+            breseqDir.mkdirs()
+            // println breseqDir
+            BRESEQ(PEAR.out.map{it + [file(params.proteins)]})
             // BRESEQ.out.subscribe {println "Got: $it"}
             // BRESEQ.out.view()
             // BRESEQ.out.subscribe onComplete: {println "breseq - Done"}
-            // breseqDir = file(params.output+"/MAPPING/BRESEQOUT")
-            // println breseqDir
-            // BRESEQ.out.subscribe onComplete: {breseqDir.mkdirs()}
-            // POSTBRESEQ(BRESEQ.out)
+            POSTBRESEQ(BRESEQ.out)
             // POSTBRESEQ.out.subscribe {println "Got: $it"}
             // POSTBRESEQ.out.view()
             // POSTBRESEQ.out.subscribe onComplete: {println "Postprocess breseq - Done"}
+            POSTBRESEQ.out.breseq_mean_coverage.subscribe {it.copyTo(breseqDir)}
+            POSTBRESEQ.out.breseq_bam.subscribe {it.copyTo(breseqDir)}
+            POSTBRESEQ.out.breseq_bam_index.subscribe {it.copyTo(breseqDir)}
             //
             // PROCESS MINIMAP2
             minimap2Dir = file(params.output+"/MAPPING/MINIMAP2OUT")
@@ -221,7 +235,6 @@ OUTPUT: ${params.output}
             // MINIMAP2.out.subscribe {println "Got: $it"}
             // MINIMAP2.out.view()
             // MINIMAP2.out.subscribe onComplete: {println "minimap2 - Done"}
-            // MINIMAP2.out.subscribe onComplete: {minimap2Dir.mkdirs()}
             POSTMINIMAP2(MINIMAP2.out)
             // POSTMINIMAP2.out.subscribe {println "Got: $it"}
             // POSTMINIMAP2.out.view()
@@ -229,18 +242,22 @@ OUTPUT: ${params.output}
             POSTMINIMAP2.out.minimap2_mean_coverage.subscribe {it.copyTo(minimap2Dir)}
             POSTMINIMAP2.out.minimap2_bam.subscribe {it.copyTo(minimap2Dir)}
             POSTMINIMAP2.out.minimap2_bam_index.subscribe {it.copyTo(minimap2Dir)}
+            //
             // PROCESS BWA
-            // BWA(PEAR.out.map{it + [file(params.reference)]})
+            bwaDir = file(params.output+"/MAPPING/BWAOUT")
+            bwaDir.mkdirs()
+            // println bwaDir
+            BWA(PEAR.out.map{it + [file(params.reference)]})
             // BWA.out.subscribe {println "Got: $it"}
             // BWA.out.view()
             // BWA.out.subscribe onComplete: {println "bwa - Done"}
-            // bwaDir = file(params.output+"/MAPPING/BWAOUT")
-            // println bwaDir
-            // BWA.out.subscribe onComplete: {bwaDir.mkdirs()}
-            // POSTBWA(BWA.out)
+            POSTBWA(BWA.out)
             // POSTBWA.out.subscribe {println "Got: $it"}
             // POSTBWA.out.view()
             // POSTBWA.out.subscribe onComplete: {println "Postprocess bwa - Done"}
+            POSTBWA.out.bwa_mean_coverage.subscribe {it.copyTo(bwaDir)}
+            POSTBWA.out.bwa_bam.subscribe {it.copyTo(bwaDir)}
+            POSTBWA.out.bwa_bam_index.subscribe {it.copyTo(bwaDir)}
         }
 }
 

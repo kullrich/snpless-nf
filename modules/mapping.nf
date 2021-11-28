@@ -129,7 +129,9 @@ process POSTBRESEQ {
 
 	output:
 		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
-		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.mean.coverage", emit: breseq_mean_coverage
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.mean.coverage", emit: breseq_mean_coverage
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.sorted.bam", emit: breseq_bam
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.sorted.bam.bai", emit: breseq_bam_index
 
 	when:
 		(params.mapping && params.run_breseq) || params.run_all
@@ -138,9 +140,10 @@ process POSTBRESEQ {
 		"""
 		cp ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/output.vcf ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.vcf
 		cp ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/output.gd ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.gd
-		samtools addreplacerg -r '@RG\\tID:${sampleId}_${sampleReplicate}_${sampleTimepoint}\\tSM:${sampleId}_${sampleReplicate}_${sampleTimepoint}\\tLB:lib1\\tPL:illumina\\tPU:unit1' -o ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bam ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/reference.bam
-		samtools index ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bam
-		samtools coverage ${params.mapping_breseq_coverage} ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.mean.coverage
+		samtools addreplacerg -r '@RG\\tID:${sampleId}_${sampleReplicate}_${sampleTimepoint}\\tSM:${sampleId}_${sampleReplicate}_${sampleTimepoint}\\tLB:lib1\\tPL:illumina\\tPU:unit1' -o ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.bam ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/reference.bam
+		samtools sort -@ $task.cpus ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.bam  > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.sorted.bam 
+		samtools index ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.sorted.bam
+		samtools coverage ${params.mapping_breseq_coverage} ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.sorted.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.mean.coverage
 		"""
 }
 
@@ -195,6 +198,8 @@ process POSTBWA {
 	output:
 		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
 		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.mean.coverage", emit: bwa_mean_coverage
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.bam", emit: bwa_bam
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.bam.bai", emit: bwa_bam_index
 
 	when:
 		(params.mapping && params.run_bwa) || params.run_all

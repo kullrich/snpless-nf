@@ -132,6 +132,8 @@ process POSTBRESEQ {
 		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.mean.coverage", emit: breseq_mean_coverage
 		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.sorted.bam", emit: breseq_bam
 		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.sorted.bam.bai", emit: breseq_bam_index
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/reference.fasta", emit: breseq_bam_reference
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/reference.gff3", emit: breseq_bam_reference_gff3
 		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.vcf", emit: breseq_vcf
 		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.gd", emit: breseq_gd
 

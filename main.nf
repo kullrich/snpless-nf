@@ -231,6 +231,13 @@ workflow mapping {
         POSTBRESEQ.out.breseq_bam_index.subscribe {it.copyTo(breseqDir)}
         POSTBRESEQ.out.breseq_vcf.subscribe {it.copyTo(breseqDir)}
         POSTBRESEQ.out.breseq_gd.subscribe {it.copyTo(breseqDir)}
+        breseq_mean_coverage = POSTBRESEQ.out.breseq_mean_coverage.collect()
+        breseq_bam = POSTBRESEQ.out.breseq_bam.collect()
+        breseq_bam_index = POSTBRESEQ.out.breseq_bam_index.collect()
+        breseq_bam_reference = POSTBRESEQ.out.breseq_bam_reference.collect()
+        breseq_bam_reference_gff3 = POSTBRESEQ.out.breseq_bam_reference_gff3.collect()
+        breseq_vcf = POSTBRESEQ.out.breseq_vcf.collect()
+        breseq_gd = POSTBRESEQ.out.breseq_gd.collect()
         //
         // PROCESS MINIMAP2
         MINIMAP2(pear.map{it + [file(params.reference)]})
@@ -265,11 +272,13 @@ workflow mapping {
         bwa_bam = POSTBWA.out.bwa_bam.collect()
         bwa_bam_index = POSTBWA.out.bwa_bam_index.collect()
     emit:
-        breseq_mean_coverage = POSTBRESEQ.out.breseq_mean_coverage
-        breseq_bam = POSTBRESEQ.out.breseq_bam
-        breseq_bam_index = POSTBRESEQ.out.breseq_bam_index
-        breseq_vcf = POSTBRESEQ.out.breseq_vcf
-        breseq_gd = POSTBRESEQ.out.breseq_gd
+        breseq_mean_coverage
+        breseq_bam
+        breseq_bam_index
+        breseq_bam_reference
+        breseq_bam_reference_gff3
+        breseq_vcf
+        breseq_gd
         minimap2_mean_coverage
         minimap2_bam
         minimap2_bam_index
@@ -286,6 +295,8 @@ workflow snpcalling {
         breseq_mean_coverage
         breseq_bam
         breseq_bam_index
+        breseq_bam_reference
+        breseq_bam_reference_gff3
         breseq_vcf
         breseq_gd
         minimap2_mean_coverage
@@ -296,7 +307,7 @@ workflow snpcalling {
         bwa_bam_index
     main:
         // PROCESS FREEBAYESBRESEQ
-        FREEBAYESBRESEQ(breseq_bam, breseqDir, file(params.reference))
+        FREEBAYESBRESEQ(breseq_bam, breseqDir, breseq_bam_reference)
         // PROCESS FREEBAYESMINIMAP2
         FREEBAYESMINIMAP2(minimap2_bam, minimap2Dir, file(params.reference))
         // PROCESS FREEBAYESBWA
@@ -356,7 +367,7 @@ OUTPUT: ${params.output}
             //
             // SNPCALLING
             //
-            snpcalling(breseqDir, minimap2Dir, bwaDir, mapping.out.breseq_mean_coverage, mapping.out.breseq_bam, mapping.out.breseq_bam_index, mapping.out.breseq_vcf, mapping.out.breseq_gd, mapping.out.minimap2_mean_coverage, mapping.out.minimap2_bam, mapping.out.minimap2_bam_index, mapping.out.bwa_mean_coverage, mapping.out.bwa_bam, mapping.out.bwa_bam_index)
+            snpcalling(breseqDir, minimap2Dir, bwaDir, mapping.out.breseq_mean_coverage, mapping.out.breseq_bam, mapping.out.breseq_bam_index, mapping.out.breseq_bam_reference, mapping.out.breseq_bam_reference_gff3, mapping.out.breseq_vcf, mapping.out.breseq_gd, mapping.out.minimap2_mean_coverage, mapping.out.minimap2_bam, mapping.out.minimap2_bam_index, mapping.out.bwa_mean_coverage, mapping.out.bwa_bam, mapping.out.bwa_bam_index)
             
         }
 }

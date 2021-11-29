@@ -129,6 +129,13 @@ Usage:
         --mapping_bwa_samblaster        remove duplicates with samblaster
         --mapping_bwa_coverage          "--min-BQ 3 --min-MQ 10"
 
+    Options: SNPCALLING                 run SNPCALLING
+
+    Options: SNPCALLING - FREEBAYES
+        --run_freebayes                 run FREEBAYES
+        --freebayes_threads             1
+        --snpcalling_freebayes_options  "--pooled-discrete --min-alternate-fraction 0.05 --min-alternate-count 2 --min-mapping-quality 20 --min-base-quality 15"
+
 """
     ["bash", "${baseDir}/bin/clean.sh", "${workflow.sessionId}"].execute()
     exit 0
@@ -139,6 +146,155 @@ include {FASTQC; TRIM; PEAR} from './modules/qc' params(params)
 include {GENMAP} from './modules/genmap' params(params)
 include {UNICYCLER; PROKKA} from './modules/assembly' params(params)
 include {BRESEQ; MINIMAP2; BWA; POSTBRESEQ; POSTMINIMAP2; POSTBWA} from './modules/mapping' params(params)
+include {FREEBAYESBRESEQ; FREEBAYESMINIMAP2; FREEBAYESBWA } from './modules/snpcalling' params(params)
+
+// QC workflow
+workflow qc {
+    take:
+        samples
+    main:
+        //
+        // PROCESS FASTQC
+        FASTQC(samples)
+        // FASTQC.out.subscribe {println "Got: $it"}
+        // FASTQC.out.view()
+        // FASTQC.out.subscribe onComplete: {println "FastQC - Done"}
+        //
+        // PROCESS TRIM READS
+        TRIM(samples)
+        // TRIM.out.subscribe {println "Got: $it"}
+        // TRIM.out.view()
+        // TRIM.out.subscribe onComplete: {println "Trimmomatic - Done"}
+        //
+        // PROCESS PEAR READS
+        PEAR(TRIM.out)
+        // PEAR.out.subscribe {println "Got: $it"}
+        // PEAR.out.view()
+        // PEAR.out.subscribe onComplete: {println "Pear - Done"}
+        emit:
+            fastqc = FASTQC.out
+            trim = TRIM.out
+            pear = PEAR.out
+}
+
+// GENMAP workflow
+workflow genmap {
+    main:
+        // PROCESS GENMAP
+        GENMAP(file(params.reference))
+        // GENMAP.out.subscribe {println "Got: $it"}
+        // GENMAP.out.view()
+        // GENMAP.out.subscribe onComplete: {println "GenMap - Done"}
+    emit:
+        genmap = GENMAP.out
+}
+
+// ASSEMBLY wworkflow
+workflow assembly {
+    take:
+        pear
+    main:
+        // PROCESS UNICYCLER
+        UNICYCLER(pear)
+        // UNICYCLER.out.subscribe {println "Got: $it"}
+        // UNICYCLER.out.view()
+        // UNICYCLER.out.subscribe onComplete: {println "Unicycler - Done"}
+        //
+        // PROCESS PROKKA
+        PROKKA(UNICYCLER.out.map{it + [file(params.proteins)]})
+        // PROKKA.out.subscribe {println "Got: $it"}
+        // PROKKA.out.view()
+        // PROKKA.out.subscribe onComplete: {println "Prokka - Done"}
+    emit:
+        unicycler = UNICYCLER.out
+        prokka = PROKKA.out
+}
+
+workflow mapping {
+    take:
+        pear
+        breseqDir
+        minimap2Dir
+        bwaDir
+    main:
+        // PROCESS BRESEQ
+        // BRESEQ(pear.map{it + [file(params.proteins)]})
+        // BRESEQ.out.subscribe {println "Got: $it"}
+        // BRESEQ.out.view()
+        // BRESEQ.out.subscribe onComplete: {println "breseq - Done"}
+        // POSTBRESEQ(BRESEQ.out)
+        // POSTBRESEQ.out.subscribe {println "Got: $it"}
+        // POSTBRESEQ.out.view()
+        // POSTBRESEQ.out.subscribe onComplete: {println "Postprocess breseq - Done"}
+        // POSTBRESEQ.out.breseq_mean_coverage.subscribe {it.copyTo(breseqDir)}
+        // POSTBRESEQ.out.breseq_bam.subscribe {it.copyTo(breseqDir)}
+        // POSTBRESEQ.out.breseq_bam_index.subscribe {it.copyTo(breseqDir)}
+        // POSTBRESEQ.out.breseq_vcf.subscribe {it.copyTo(breseqDir)}
+        // POSTBRESEQ.out.breseq_gd.subscribe {it.copyTo(breseqDir)}
+        //
+        // PROCESS MINIMAP2
+        MINIMAP2(pear.map{it + [file(params.reference)]})
+        // MINIMAP2(PEAR.out.map{it + [file(params.reference)]})
+        // MINIMAP2.out.subscribe {println "Got: $it"}
+        // MINIMAP2.out.view()
+        // MINIMAP2.out.subscribe onComplete: {println "minimap2 - Done"}
+        POSTMINIMAP2(MINIMAP2.out)
+        // POSTMINIMAP2.out.subscribe {println "Got: $it"}
+        // POSTMINIMAP2.out.view()
+        // POSTMINIMAP2.out.subscribe onComplete: {println "Postprocess minimap2 - Done"}
+        POSTMINIMAP2.out.minimap2_mean_coverage.subscribe {it.copyTo(minimap2Dir)}
+        POSTMINIMAP2.out.minimap2_bam.subscribe {it.copyTo(minimap2Dir)}
+        POSTMINIMAP2.out.minimap2_bam_index.subscribe {it.copyTo(minimap2Dir)}
+        minimap2_mean_coverage = POSTMINIMAP2.out.minimap2_mean_coverage.collect()
+        minimap2_bam = POSTMINIMAP2.out.minimap2_bam.collect()
+        minimap2_bam_index = POSTMINIMAP2.out.minimap2_bam_index.collect()
+        //
+        // PROCESS BWA
+        BWA(pear.map{it + [file(params.reference)]})
+        // BWA.out.subscribe {println "Got: $it"}
+        // BWA.out.view()
+        // BWA.out.subscribe onComplete: {println "bwa - Done"}
+        POSTBWA(BWA.out)
+        // POSTBWA.out.subscribe {println "Got: $it"}
+        // POSTBWA.out.view()
+        // POSTBWA.out.subscribe onComplete: {println "Postprocess bwa - Done"}
+        POSTBWA.out.bwa_mean_coverage.subscribe {it.copyTo(bwaDir)}
+        POSTBWA.out.bwa_bam.subscribe {it.copyTo(bwaDir)}
+        POSTBWA.out.bwa_bam_index.subscribe {it.copyTo(bwaDir)}
+        bwa_mean_coverage = POSTBWA.out.bwa_mean_coverage.collect()
+        bwa_bam = POSTBWA.out.bwa_bam.collect()
+        bwa_bam_index = POSTBWA.out.bwa_bam_index.collect()
+    emit:
+        // breseq_mean_coverage = POSTBRESEQ.out.breseq_mean_coverage
+        // breseq_bam = POSTBRESEQ.out.breseq_bam
+        // breseq_bam_index = POSTBRESEQ.out.breseq_bam_index
+        // breseq_vcf = POSTBRESEQ.out.breseq_vcf
+        // breseq_gd = POSTBRESEQ.out.breseq_gd
+        minimap2_mean_coverage
+        minimap2_bam
+        minimap2_bam_index
+        bwa_mean_coverage
+        bwa_bam
+        bwa_bam_index
+}
+
+workflow snpcalling {
+    take:
+        breseqDir
+        minimap2Dir
+        bwaDir
+        minimap2_mean_coverage
+        minimap2_bam
+        minimap2_bam_index
+        bwa_mean_coverage
+        bwa_bam
+        bwa_bam_index
+    main:
+        // PROCESS FREEBAYESMINIMAP2
+        FREEBAYESMINIMAP2(minimap2_bam, minimap2Dir, file(params.reference))
+        // PROCESS FREEBAYESBWA
+        FREEBAYESBWA(bwa_bam, bwaDir, file(params.reference))
+}
 
 // MAIN workflow
 workflow{
@@ -168,98 +324,33 @@ OUTPUT: ${params.output}
             // run all
             //
             // QC
-            //
-            // PROCESS FASTQC
-            FASTQC(samples)
-            // FASTQC.out.subscribe {println "Got: $it"}
-            // FASTQC.out.view()
-            // FASTQC.out.subscribe onComplete: {println "FastQC - Done"}
-            //
-            // PROCESS TRIM READS
-            TRIM(samples)
-            // TRIM.out.subscribe {println "Got: $it"}
-            // TRIM.out.view()
-            // TRIM.out.subscribe onComplete: {println "Trimmomatic - Done"}
-            //
-            // PROCESS PEAR READS
-            PEAR(TRIM.out)
-            // PEAR.out.subscribe {println "Got: $it"}
-            // PEAR.out.view()
-            // PEAR.out.subscribe onComplete: {println "Pear - Done"}
+            qc(samples)
             //
             // GENMAP
             //
-            // PROCESS GENMAP
-            GENMAP(file(params.reference))
-            // GENMAP.out.subscribe {println "Got: $it"}
-            // GENMAP.out.view()
-            // GENMAP.out.subscribe onComplete: {println "GenMap - Done"}
+            genmap()
             //
             // ASSEMBLY
             //
-            // PROCESS UNICYCLER
-            // UNICYCLER(PEAR.out)
-            // UNICYCLER.out.subscribe {println "Got: $it"}
-            // UNICYCLER.out.view()
-            // UNICYCLER.out.subscribe onComplete: {println "Unicycler - Done"}
-            //
-            // PROCESS PROKKA
-            // PROKKA(UNICYCLER.out.map{it + [file(params.proteins)]})
-            // PROKKA.out.subscribe {println "Got: $it"}
-            // PROKKA.out.view()
-            // PROKKA.out.subscribe onComplete: {println "Prokka - Done"}
+            // assembly(qc.out.pear)
             //
             // MAPPING
             //
-            // PROCESS BRESEQ
             breseqDir = file(params.output+"/MAPPING/BRESEQOUT")
             breseqDir.mkdirs()
             // println breseqDir
-            BRESEQ(PEAR.out.map{it + [file(params.proteins)]})
-            // BRESEQ.out.subscribe {println "Got: $it"}
-            // BRESEQ.out.view()
-            // BRESEQ.out.subscribe onComplete: {println "breseq - Done"}
-            POSTBRESEQ(BRESEQ.out)
-            // POSTBRESEQ.out.subscribe {println "Got: $it"}
-            // POSTBRESEQ.out.view()
-            // POSTBRESEQ.out.subscribe onComplete: {println "Postprocess breseq - Done"}
-            POSTBRESEQ.out.breseq_mean_coverage.subscribe {it.copyTo(breseqDir)}
-            POSTBRESEQ.out.breseq_bam.subscribe {it.copyTo(breseqDir)}
-            POSTBRESEQ.out.breseq_bam_index.subscribe {it.copyTo(breseqDir)}
-            POSTBRESEQ.out.breseq_vcf.subscribe {it.copyTo(breseqDir)}
-            POSTBRESEQ.out.breseq_gd.subscribe {it.copyTo(breseqDir)}
-            //
-            // PROCESS MINIMAP2
             minimap2Dir = file(params.output+"/MAPPING/MINIMAP2OUT")
             minimap2Dir.mkdirs()
             // println minimap2Dir
-            MINIMAP2(PEAR.out.map{it + [file(params.reference)]})
-            // MINIMAP2.out.subscribe {println "Got: $it"}
-            // MINIMAP2.out.view()
-            // MINIMAP2.out.subscribe onComplete: {println "minimap2 - Done"}
-            POSTMINIMAP2(MINIMAP2.out)
-            // POSTMINIMAP2.out.subscribe {println "Got: $it"}
-            // POSTMINIMAP2.out.view()
-            // POSTMINIMAP2.out.subscribe onComplete: {println "Postprocess minimap2 - Done"}
-            POSTMINIMAP2.out.minimap2_mean_coverage.subscribe {it.copyTo(minimap2Dir)}
-            POSTMINIMAP2.out.minimap2_bam.subscribe {it.copyTo(minimap2Dir)}
-            POSTMINIMAP2.out.minimap2_bam_index.subscribe {it.copyTo(minimap2Dir)}
-            //
-            // PROCESS BWA
             bwaDir = file(params.output+"/MAPPING/BWAOUT")
             bwaDir.mkdirs()
             // println bwaDir
-            BWA(PEAR.out.map{it + [file(params.reference)]})
-            // BWA.out.subscribe {println "Got: $it"}
-            // BWA.out.view()
-            // BWA.out.subscribe onComplete: {println "bwa - Done"}
-            POSTBWA(BWA.out)
-            // POSTBWA.out.subscribe {println "Got: $it"}
-            // POSTBWA.out.view()
-            // POSTBWA.out.subscribe onComplete: {println "Postprocess bwa - Done"}
-            POSTBWA.out.bwa_mean_coverage.subscribe {it.copyTo(bwaDir)}
-            POSTBWA.out.bwa_bam.subscribe {it.copyTo(bwaDir)}
-            POSTBWA.out.bwa_bam_index.subscribe {it.copyTo(bwaDir)}
+            mapping(qc.out.pear, breseqDir, minimap2Dir, bwaDir)
+            //
+            // SNPCALLING
+            //
+            snpcalling(breseqDir, minimap2Dir, bwaDir, mapping.out.minimap2_mean_coverage, mapping.out.minimap2_bam, mapping.out.minimap2_bam_index, mapping.out.bwa_mean_coverage, mapping.out.bwa_bam, mapping.out.bwa_bam_index)
+            
         }
 }
 

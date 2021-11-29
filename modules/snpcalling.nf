@@ -1,41 +1,71 @@
-process BRESEQ {
-	conda baseDir + '/env/snpless-mapping-breseq.yml'
-	tag "BRESEQ on ${sampleId}_${sampleReplicate}_${sampleTimepoint}"
-	cpus params.breseq_threads
+process FREEBAYESBRESEQ {
+	conda baseDir + '/env/snpless-snpcalling-freebayes.yml'
+	tag "FREEBAYES on ${mappingPath}"
+	cpus params.freebayes_threads
 
-	publishDir "${params.output}/MAPPING/BRESEQ", mode: 'copy'
+	publishDir "${params.output}/SNPCALLING/BRESEQ", mode: 'symlink'
 
 	input:
-		tuple path(pearPath), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2), path(proteins)
+		val(bams)
+		path(mappingPath)
+		path(reference)
 
 	output:
-		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
+		path "BRESEQ.freebayes.vcf"
 
 	when:
-		(params.mapping && params.run_breseq) || params.run_all
+		(params.snpcalling && params.run_freebayes) || params.run_all
 
 	script:
-		if (reads2 == "-")
-			if(params.mapping_breseq_p)
-				"""
-				[ -f ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.log] && rm ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.log
-				breseq --reference ${proteins} --num-processors $task.cpus --polymorphism-prediction --brief-html-output ${params.mapping_breseq_options} --output ${sampleId}_${sampleReplicate}_${sampleTimepoint} ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.SE.fq.gz
-				"""
-			else
-				"""
-				[ -f ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.log] && rm ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.log
-				breseq --reference ${proteins} --num-processors $task.cpus --brief-html-output ${params.mapping_breseq_options} --output ${sampleId}_${sampleReplicate}_${sampleTimepoint} ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.SE.fq.gz
-				"""
-		else
-			if(params.mapping_breseq_p)
-				"""
-				[ -f ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.log] && rm ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.log
-				breseq --reference ${proteins} --num-processors $task.cpus --polymorphism-prediction --brief-html-output ${params.mapping_breseq_options} --output ${sampleId}_${sampleReplicate}_${sampleTimepoint} ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.MEPE1.fq.gz ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.MEPE2.fq.gz ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.MESE.fq.gz
-				"""
-			else
-				"""
-				[ -f ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.log] && rm ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.log
-				breseq --reference ${proteins} --num-processors $task.cpus --brief-html-output ${params.mapping_breseq_options} --output ${sampleId}_${sampleReplicate}_${sampleTimepoint} ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.MEPE1.fq.gz ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.MEPE2.fq.gz ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.MESE.fq.gz
-				"""
+		"""
+		freebayes -f ${reference} ${params.snpcalling_freebayes_options} -b ${mappingPath}/*.bam > BRESEQ.freebayes.vcf
+		"""
 }
 
+process FREEBAYESMINIMAP2 {
+	conda baseDir + '/env/snpless-snpcalling-freebayes.yml'
+	tag "FREEBAYES on ${mappingPath}"
+	cpus params.freebayes_threads
+
+	publishDir "${params.output}/SNPCALLING/MINIMAP2", mode: 'symlink'
+
+	input:
+		val(bams)
+		path(mappingPath)
+		path(reference)
+
+	output:
+		path "MINIMAP2.freebayes.vcf"
+
+	when:
+		(params.snpcalling && params.run_freebayes) || params.run_all
+
+	script:
+		"""
+		freebayes -f ${reference} ${params.snpcalling_freebayes_options} -b ${mappingPath}/*.bam > MINIMAP2.freebayes.vcf
+		"""
+}
+
+process FREEBAYESBWA {
+	conda baseDir + '/env/snpless-snpcalling-freebayes.yml'
+	tag "FREEBAYES on ${mappingPath}"
+	cpus params.freebayes_threads
+
+	publishDir "${params.output}/SNPCALLING/BWA", mode: 'symlink'
+
+	input:
+		val(bams)
+		path(mappingPath)
+		path(reference)
+
+	output:
+		path "BWA.freebayes.vcf"
+
+	when:
+		(params.snpcalling && params.run_freebayes) || params.run_all
+
+	script:
+		"""
+		freebayes -f ${reference} ${params.snpcalling_freebayes_options} -b ${mappingPath}/*.bam > BWA.freebayes.vcf
+		"""
+}

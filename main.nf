@@ -146,7 +146,7 @@ include {FASTQC; TRIM; PEAR} from './modules/qc' params(params)
 include {GENMAP} from './modules/genmap' params(params)
 include {UNICYCLER; PROKKA} from './modules/assembly' params(params)
 include {BRESEQ; MINIMAP2; BWA; POSTBRESEQ; POSTMINIMAP2; POSTBWA} from './modules/mapping' params(params)
-include {FREEBAYESBRESEQ; FREEBAYESMINIMAP2; FREEBAYESBWA } from './modules/snpcalling' params(params)
+include {FREEBAYESBRESEQ; FREEBAYESMINIMAP2; FREEBAYESBWA; BCFTOOLSBWA} from './modules/snpcalling' params(params)
 
 // QC workflow
 workflow qc {
@@ -229,6 +229,8 @@ workflow mapping {
         POSTBRESEQ.out.breseq_mean_coverage.subscribe {it.copyTo(breseqDir)}
         POSTBRESEQ.out.breseq_bam.subscribe {it.copyTo(breseqDir)}
         POSTBRESEQ.out.breseq_bam_index.subscribe {it.copyTo(breseqDir)}
+        POSTBRESEQ.out.breseq_bam_reference.subscribe {it.copyTo(breseqDir)}
+        POSTBRESEQ.out.breseq_bam_reference_gff3.subscribe {it.copyTo(breseqDir)}
         POSTBRESEQ.out.breseq_vcf.subscribe {it.copyTo(breseqDir)}
         POSTBRESEQ.out.breseq_gd.subscribe {it.copyTo(breseqDir)}
         breseq_mean_coverage = POSTBRESEQ.out.breseq_mean_coverage.collect()
@@ -307,11 +309,13 @@ workflow snpcalling {
         bwa_bam_index
     main:
         // PROCESS FREEBAYESBRESEQ
-        FREEBAYESBRESEQ(breseq_bam, breseqDir, breseq_bam_reference)
+        FREEBAYESBRESEQ(breseq_bam, breseqDir)
         // PROCESS FREEBAYESMINIMAP2
         FREEBAYESMINIMAP2(minimap2_bam, minimap2Dir, file(params.reference))
         // PROCESS FREEBAYESBWA
         FREEBAYESBWA(bwa_bam, bwaDir, file(params.reference))
+        // PROCESS BCFTOOLSBWA
+        BCFTOOLSBWA(bwa_bam, bwaDir, file(params.reference))
 }
 
 // MAIN workflow

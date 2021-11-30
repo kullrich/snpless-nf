@@ -88,7 +88,7 @@ process BWA {
 		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
 
 	when:
-		(params.assembly && params.run_prokka) || params.run_all
+		(params.mapping && params.run_bwa) || params.run_all
 
 	script:
 		if (reads2 == "-")

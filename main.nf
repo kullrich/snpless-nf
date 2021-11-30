@@ -136,6 +136,10 @@ Usage:
         --freebayes_threads             1
         --snpcalling_freebayes_options  "--pooled-discrete --min-alternate-fraction 0.05 --min-alternate-count 2 --min-mapping-quality 20 --min-base-quality 15"
 
+    Options: SNPCALLING - GDCOMPARE
+        --run_gdcompare                 run GDCOMPARE
+        --gdtools_threads               1
+
 """
     ["bash", "${baseDir}/bin/clean.sh", "${workflow.sessionId}"].execute()
     exit 0
@@ -146,7 +150,7 @@ include {FASTQC; TRIM; PEAR} from './modules/qc' params(params)
 include {GENMAP} from './modules/genmap' params(params)
 include {UNICYCLER; PROKKA} from './modules/assembly' params(params)
 include {BRESEQ; MINIMAP2; BWA; POSTBRESEQ; POSTMINIMAP2; POSTBWA} from './modules/mapping' params(params)
-include {FREEBAYESBRESEQ; FREEBAYESMINIMAP2; FREEBAYESBWA; BCFTOOLSBWA} from './modules/snpcalling' params(params)
+include {FREEBAYESBRESEQ; FREEBAYESMINIMAP2; FREEBAYESBWA; BCFTOOLSBRESEQ; BCFTOOLSMINIMAP2; BCFTOOLSBWA; GDCOMPARE} from './modules/snpcalling' params(params)
 
 // QC workflow
 workflow qc {
@@ -314,8 +318,14 @@ workflow snpcalling {
         FREEBAYESMINIMAP2(minimap2_bam, minimap2Dir, file(params.reference))
         // PROCESS FREEBAYESBWA
         FREEBAYESBWA(bwa_bam, bwaDir, file(params.reference))
+        // PROCESS BCFTOOLSBRESEQ
+        BCFTOOLSBRESEQ(breseq_bam, breseqDir)
+        // PROCESS BCFTOOLSMINIMAP2
+        BCFTOOLSMINIMAP2(minimap2_bam, minimap2Dir, file(params.reference))
         // PROCESS BCFTOOLSBWA
         BCFTOOLSBWA(bwa_bam, bwaDir, file(params.reference))
+        // PROCESS GDCOMPARE
+        GDCOMPARE(breseq_gd, breseqDir)
 }
 
 // MAIN workflow

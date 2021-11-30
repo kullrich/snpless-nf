@@ -325,7 +325,7 @@ workflow snpcalling {
         // PROCESS BCFTOOLSBWA
         BCFTOOLSBWA(bwa_bam, bwaDir, file(params.reference))
         // PROCESS GDCOMPARE
-        GDCOMPARE(breseq_gd, breseqDir)
+        GDCOMPARE(breseq_gd, breseqDir, file(params.proteins))
 }
 
 // MAIN workflow

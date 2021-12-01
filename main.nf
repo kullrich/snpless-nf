@@ -144,6 +144,13 @@ Usage:
         --run_lofreq                    run LOFREQ
         --lofreq_threads                8
 
+    Options: SNPCALLING - VARSCAN
+        --run_varscan                   run VARSCAN
+        --varscan_threads                1
+        --snpcalling_varscan_mpileup_options
+        --snpcalling_varscan_snp_options
+        --snpcalling_varscan_indel_options
+
 """
     ["bash", "${baseDir}/bin/clean.sh", "${workflow.sessionId}"].execute()
     exit 0
@@ -154,7 +161,7 @@ include {FASTQC; TRIM; PEAR} from './modules/qc' params(params)
 include {GENMAP} from './modules/genmap' params(params)
 include {UNICYCLER; PROKKA} from './modules/assembly' params(params)
 include {BRESEQ; MINIMAP2; BWA; POSTBRESEQ; POSTMINIMAP2; POSTBWA} from './modules/mapping' params(params)
-include {FREEBAYESBRESEQ; FREEBAYESMINIMAP2; FREEBAYESBWA; BCFTOOLSBRESEQ; BCFTOOLSMINIMAP2; BCFTOOLSBWA; GDCOMPARE; LOFREQBRESEQ; LOFREQMINIMAP2; LOFREQBWA} from './modules/snpcalling' params(params)
+include {FREEBAYESBRESEQ; FREEBAYESMINIMAP2; FREEBAYESBWA; BCFTOOLSBRESEQ; BCFTOOLSMINIMAP2; BCFTOOLSBWA; GDCOMPARE; LOFREQBRESEQ; LOFREQMINIMAP2; LOFREQBWA; VARSCANBRESEQ; VARSCANMINIMAP2; VARSCANBWA} from './modules/snpcalling' params(params)
 
 // QC workflow
 workflow qc {
@@ -351,6 +358,12 @@ workflow snpcalling {
         // PROCESS LOFREQBWA
         LOFREQBWA(postbwa, file(params.reference))
         LOFREQBWA.out.lofreq_vcf.subscribe {it.copyTo(lofreq_bwaDir)}
+        // PROCESS VARSCANBRESEQ
+        VARSCANBRESEQ(breseq_bam, breseqDir)
+        // PROCESS VARSCANMINIMAP2
+        VARSCANMINIMAP2(minimap2_bam, minimap2Dir, file(params.reference))
+        // PROCESS VARSCANBWA
+        VARSCANBWA(bwa_bam, bwaDir, file(params.reference))
 
 }
 

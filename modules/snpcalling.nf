@@ -220,6 +220,80 @@ process LOFREQBWA {
 		"""
 }
 
+process VARSCANBRESEQ {
+	conda baseDir + '/env/snpless-snpcalling-varscan.yml'
+	tag "VARSCANBRESEQ on ${mappingPath}"
+	cpus params.varscan_threads
+
+	publishDir "${params.output}/SNPCALLING/VARSCAN/BRESEQ", mode: 'symlink'
+
+	input:
+		val(bams)
+		path(mappingPath)
+
+	output:
+		path "BRESEQ.varscan.*.vcf"
+
+	when:
+		(params.snpcalling && params.run_varscan) || params.run_all
+
+	script:
+		"""
+		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${mappingPath}/reference.fasta ${mappingPath}/*.bam | varscan mpileup2snp ${params.snpcalling_varscan_snp_options} > BRESEQ.varscan.snp.vcf
+		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${mappingPath}/reference.fasta ${mappingPath}/*.bam | varscan mpileup2indel ${params.snpcalling_varscan_indel_options} > BRESEQ.varscan.indel.vcf
+		"""
+}
+
+process VARSCANMINIMAP2 {
+	conda baseDir + '/env/snpless-snpcalling-varscan.yml'
+	tag "VARSCANMINIMAP2 on ${mappingPath}"
+	cpus params.varscan_threads
+
+	publishDir "${params.output}/SNPCALLING/VARSCAN/MINIMAP2", mode: 'symlink'
+
+	input:
+		val(bams)
+		path(mappingPath)
+		path(reference)
+
+	output:
+		path "MINIMAP2.varscan.*.vcf"
+
+	when:
+		(params.snpcalling && params.run_varscan) || params.run_all
+
+	script:
+		"""
+		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${reference} ${mappingPath}/*.bam | varscan mpileup2snp ${params.snpcalling_varscan_snp_options} > MINIMAP2.varscan.snp.vcf
+		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${reference} ${mappingPath}/*.bam | varscan mpileup2indel ${params.snpcalling_varscan_indel_options} > MINIMAP2.varscan.indel.vcf
+		"""
+}
+
+process VARSCANBWA {
+	conda baseDir + '/env/snpless-snpcalling-varscan.yml'
+	tag "VARSCANBWA on ${mappingPath}"
+	cpus params.varscan_threads
+
+	publishDir "${params.output}/SNPCALLING/VARSCAN/BWA", mode: 'symlink'
+
+	input:
+		val(bams)
+		path(mappingPath)
+		path(reference)
+
+	output:
+		path "BWA.varscan.*.vcf"
+
+	when:
+		(params.snpcalling && params.run_varscan) || params.run_all
+
+	script:
+		"""
+		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${reference} ${mappingPath}/*.bam | varscan mpileup2snp ${params.snpcalling_varscan_snp_options} > BWA.varscan.snp.vcf
+		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${reference} ${mappingPath}/*.bam | varscan mpileup2indel ${params.snpcalling_varscan_indel_options} > BWA.varscan.indel.vcf
+		"""
+}
+
 process GDCOMPARE {
 	conda baseDir + '/env/snpless-mapping-breseq.yml'
 	tag "GDCOMPARE on ${mappingPath}"

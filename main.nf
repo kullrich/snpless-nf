@@ -140,6 +140,10 @@ Usage:
         --run_gdcompare                 run GDCOMPARE
         --gdtools_threads               1
 
+    Options: SNPCALLING - LOFREQ
+        --run_lofreq                    run LOFREQ
+        --lofreq_threads                8
+
 """
     ["bash", "${baseDir}/bin/clean.sh", "${workflow.sessionId}"].execute()
     exit 0
@@ -150,7 +154,7 @@ include {FASTQC; TRIM; PEAR} from './modules/qc' params(params)
 include {GENMAP} from './modules/genmap' params(params)
 include {UNICYCLER; PROKKA} from './modules/assembly' params(params)
 include {BRESEQ; MINIMAP2; BWA; POSTBRESEQ; POSTMINIMAP2; POSTBWA} from './modules/mapping' params(params)
-include {FREEBAYESBRESEQ; FREEBAYESMINIMAP2; FREEBAYESBWA; BCFTOOLSBRESEQ; BCFTOOLSMINIMAP2; BCFTOOLSBWA; GDCOMPARE} from './modules/snpcalling' params(params)
+include {FREEBAYESBRESEQ; FREEBAYESMINIMAP2; FREEBAYESBWA; BCFTOOLSBRESEQ; BCFTOOLSMINIMAP2; BCFTOOLSBWA; GDCOMPARE; LOFREQBRESEQ; LOFREQMINIMAP2; LOFREQBWA} from './modules/snpcalling' params(params)
 
 // QC workflow
 workflow qc {
@@ -237,6 +241,7 @@ workflow mapping {
         POSTBRESEQ.out.breseq_bam_reference_gff3.subscribe {it.copyTo(breseqDir)}
         POSTBRESEQ.out.breseq_vcf.subscribe {it.copyTo(breseqDir)}
         POSTBRESEQ.out.breseq_gd.subscribe {it.copyTo(breseqDir)}
+        postbreseq = POSTBRESEQ.out.postbreseq
         breseq_mean_coverage = POSTBRESEQ.out.breseq_mean_coverage.collect()
         breseq_bam = POSTBRESEQ.out.breseq_bam.collect()
         breseq_bam_index = POSTBRESEQ.out.breseq_bam_index.collect()
@@ -258,6 +263,7 @@ workflow mapping {
         POSTMINIMAP2.out.minimap2_mean_coverage.subscribe {it.copyTo(minimap2Dir)}
         POSTMINIMAP2.out.minimap2_bam.subscribe {it.copyTo(minimap2Dir)}
         POSTMINIMAP2.out.minimap2_bam_index.subscribe {it.copyTo(minimap2Dir)}
+        postminimap2 = POSTMINIMAP2.out.postminimap2
         minimap2_mean_coverage = POSTMINIMAP2.out.minimap2_mean_coverage.collect()
         minimap2_bam = POSTMINIMAP2.out.minimap2_bam.collect()
         minimap2_bam_index = POSTMINIMAP2.out.minimap2_bam_index.collect()
@@ -274,10 +280,12 @@ workflow mapping {
         POSTBWA.out.bwa_mean_coverage.subscribe {it.copyTo(bwaDir)}
         POSTBWA.out.bwa_bam.subscribe {it.copyTo(bwaDir)}
         POSTBWA.out.bwa_bam_index.subscribe {it.copyTo(bwaDir)}
+        postbwa = POSTBWA.out.postbwa
         bwa_mean_coverage = POSTBWA.out.bwa_mean_coverage.collect()
         bwa_bam = POSTBWA.out.bwa_bam.collect()
         bwa_bam_index = POSTBWA.out.bwa_bam_index.collect()
     emit:
+        postbreseq
         breseq_mean_coverage
         breseq_bam
         breseq_bam_index
@@ -285,9 +293,11 @@ workflow mapping {
         breseq_bam_reference_gff3
         breseq_vcf
         breseq_gd
+        postminimap2
         minimap2_mean_coverage
         minimap2_bam
         minimap2_bam_index
+        postbwa
         bwa_mean_coverage
         bwa_bam
         bwa_bam_index
@@ -298,6 +308,10 @@ workflow snpcalling {
         breseqDir
         minimap2Dir
         bwaDir
+        lofreq_breseqDir
+        lofreq_minimap2Dir
+        lofreq_bwaDir
+        postbreseq
         breseq_mean_coverage
         breseq_bam
         breseq_bam_index
@@ -305,9 +319,11 @@ workflow snpcalling {
         breseq_bam_reference_gff3
         breseq_vcf
         breseq_gd
+        postminimap2
         minimap2_mean_coverage
         minimap2_bam
         minimap2_bam_index
+        postbwa
         bwa_mean_coverage
         bwa_bam
         bwa_bam_index
@@ -326,6 +342,16 @@ workflow snpcalling {
         BCFTOOLSBWA(bwa_bam, bwaDir, file(params.reference))
         // PROCESS GDCOMPARE
         GDCOMPARE(breseq_gd, breseqDir, file(params.proteins))
+        // PROCESS LOFREQBRESEQ
+        LOFREQBRESEQ(postbreseq)
+        LOFREQBRESEQ.out.lofreq_vcf.subscribe {it.copyTo(lofreq_breseqDir)}
+        // PROCESS LOFREQMINIMAP2
+        LOFREQMINIMAP2(postminimap2, file(params.reference))
+        LOFREQMINIMAP2.out.lofreq_vcf.subscribe {it.copyTo(lofreq_minimap2Dir)}
+        // PROCESS LOFREQBWA
+        LOFREQBWA(postbwa, file(params.reference))
+        LOFREQBWA.out.lofreq_vcf.subscribe {it.copyTo(lofreq_bwaDir)}
+
 }
 
 // MAIN workflow
@@ -381,7 +407,14 @@ OUTPUT: ${params.output}
             //
             // SNPCALLING
             //
-            snpcalling(breseqDir, minimap2Dir, bwaDir, mapping.out.breseq_mean_coverage, mapping.out.breseq_bam, mapping.out.breseq_bam_index, mapping.out.breseq_bam_reference, mapping.out.breseq_bam_reference_gff3, mapping.out.breseq_vcf, mapping.out.breseq_gd, mapping.out.minimap2_mean_coverage, mapping.out.minimap2_bam, mapping.out.minimap2_bam_index, mapping.out.bwa_mean_coverage, mapping.out.bwa_bam, mapping.out.bwa_bam_index)
+            lofreq_breseqDir = file(params.output+"/SNPCALLING/LOFREQ/BRESEQ")
+            lofreq_breseqDir.mkdirs()
+            lofreq_minimap2Dir = file(params.output+"/SNPCALLING/LOFREQ/MINIMAP2")
+            lofreq_minimap2Dir.mkdirs()
+            lofreq_bwaDir = file(params.output+"/SNPCALLING/LOFREQ/BWA")
+            lofreq_bwaDir.mkdirs()
+            //
+            snpcalling(breseqDir, minimap2Dir, bwaDir, lofreq_breseqDir, lofreq_minimap2Dir, lofreq_bwaDir, mapping.out.postbreseq, mapping.out.breseq_mean_coverage, mapping.out.breseq_bam, mapping.out.breseq_bam_index, mapping.out.breseq_bam_reference, mapping.out.breseq_bam_reference_gff3, mapping.out.breseq_vcf, mapping.out.breseq_gd, mapping.out.postminimap2, mapping.out.minimap2_mean_coverage, mapping.out.minimap2_bam, mapping.out.minimap2_bam_index, mapping.out.postbwa, mapping.out.bwa_mean_coverage, mapping.out.bwa_bam, mapping.out.bwa_bam_index)
             
         }
 }

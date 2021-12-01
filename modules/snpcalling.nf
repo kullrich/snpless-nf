@@ -140,6 +140,86 @@ process BCFTOOLSBWA {
 		"""
 }
 
+process LOFREQBRESEQ {
+	conda baseDir + '/env/snpless-snpcalling-lofreq.yml'
+	tag "LOFREQBRESEQ on ${sampleId}_${sampleReplicate}_${sampleTimepoint}"
+	cpus params.lofreq_threads
+
+	publishDir "${params.output}/SNPCALLING/LOFREQ/BRESEQ", mode: 'symlink'
+
+	input:
+		tuple path(breseqPath), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
+
+	output:
+		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2), emit: lofreq_breseq
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.lofreq.vcf", emit: lofreq_vcf
+
+	when:
+		(params.snpcalling && params.run_lofreq) || params.run_all
+
+	script:
+		"""
+		lofreq faidx ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/reference.fasta
+		lofreq indelqual --dindel -f ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/reference.fasta ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.sorted.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.sorted.indel.bam
+		lofreq index ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.sorted.indel.bam
+		lofreq call-parallel --pp-threads $task.cpus ${params.snpcalling_lofreq_options} -f ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/reference.fasta -o ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.lofreq.vcf ${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.sorted.indel.bam
+		"""
+}
+
+process LOFREQMINIMAP2 {
+	conda baseDir + '/env/snpless-snpcalling-lofreq.yml'
+	tag "LOFREQMINIMAP2 on ${sampleId}_${sampleReplicate}_${sampleTimepoint}"
+	cpus params.lofreq_threads
+
+	publishDir "${params.output}/SNPCALLING/LOFREQ/MINIMAP2", mode: 'symlink'
+
+	input:
+		tuple path(minimap2Path), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
+		path(reference)
+
+	output:
+		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2), emit: lofreq_minimap2
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.lofreq.vcf", emit: lofreq_vcf
+
+	when:
+		(params.snpcalling && params.run_lofreq) || params.run_all
+
+	script:
+		"""
+		lofreq faidx ${reference}
+		lofreq indelqual --dindel -f ${reference} ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.indel.bam
+		lofreq index ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.indel.bam
+		lofreq call-parallel --pp-threads $task.cpus ${params.snpcalling_lofreq_options} -f ${reference} -o ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.lofreq.vcf ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.indel.bam
+		"""
+}
+
+process LOFREQBWA {
+	conda baseDir + '/env/snpless-snpcalling-lofreq.yml'
+	tag "LOFREQBWA on ${sampleId}_${sampleReplicate}_${sampleTimepoint}"
+	cpus params.lofreq_threads
+
+	publishDir "${params.output}/SNPCALLING/LOFREQ/BWA", mode: 'symlink'
+
+	input:
+		tuple path(bwaPath), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
+		path(reference)
+
+	output:
+		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2), emit: lofreq_bwa
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.lofreq.vcf", emit: lofreq_vcf
+
+	when:
+		(params.snpcalling && params.run_lofreq) || params.run_all
+
+	script:
+		"""
+		lofreq faidx ${reference}
+		lofreq indelqual --dindel -f ${reference} ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.bam > ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.indel.bam
+		lofreq index ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.indel.bam
+		lofreq call-parallel --pp-threads $task.cpus ${params.snpcalling_lofreq_options} -f ${reference} -o ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.lofreq.vcf ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.indel.bam
+		"""
+}
+
 process GDCOMPARE {
 	conda baseDir + '/env/snpless-mapping-breseq.yml'
 	tag "GDCOMPARE on ${mappingPath}"

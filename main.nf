@@ -162,6 +162,7 @@ include {GENMAP} from './modules/genmap' params(params)
 include {UNICYCLER; PROKKA} from './modules/assembly' params(params)
 include {BRESEQ; MINIMAP2; BWA; POSTBRESEQ; POSTMINIMAP2; POSTBWA} from './modules/mapping' params(params)
 include {FREEBAYESBRESEQ; FREEBAYESMINIMAP2; FREEBAYESBWA; BCFTOOLSBRESEQ; BCFTOOLSMINIMAP2; BCFTOOLSBWA; GDCOMPARE; LOFREQBRESEQ; LOFREQMINIMAP2; LOFREQBWA; VARSCANBRESEQ; VARSCANMINIMAP2; VARSCANBWA} from './modules/snpcalling' params(params)
+include {PINDELBRESEQ; PINDELMINIMAP2; PINDELBWA} from './modules/svcalling' params(params)
 
 // QC workflow
 workflow qc {
@@ -364,7 +365,48 @@ workflow snpcalling {
         VARSCANMINIMAP2(minimap2_bam, minimap2Dir, file(params.reference))
         // PROCESS VARSCANBWA
         VARSCANBWA(bwa_bam, bwaDir, file(params.reference))
+}
 
+workflow svcalling {
+    take:
+        breseqDir
+        minimap2Dir
+        bwaDir
+        pindel_breseqDir
+        pindel_minimap2Dir
+        pindel_bwaDir
+        postbreseq
+        breseq_mean_coverage
+        breseq_bam
+        breseq_bam_index
+        breseq_bam_reference
+        breseq_bam_reference_gff3
+        breseq_vcf
+        breseq_gd
+        postminimap2
+        minimap2_mean_coverage
+        minimap2_bam
+        minimap2_bam_index
+        postbwa
+        bwa_mean_coverage
+        bwa_bam
+        bwa_bam_index
+    main:
+        // PROCESS PINDELBRESEQ
+        // PINDELBRESEQ(postbreseq)
+        // PINDELBRESEQ.out.pindel_files.subscribe {it.copyTo(pindel_breseqDir)}
+        // PROCESS PINDELMINIMAP2
+        // PINDELMINIMAP2(postminimap2, file(params.reference))
+        // PINDELMINIMAP2.out.pindel_files.subscribe {it.copyTo(pindel_minimap2Dir)}
+        // PROCESS PINDELBWA
+        PINDELBWA(postbwa, file(params.reference))
+        PINDELBWA.out.pindel_files.subscribe {it.copyTo(pindel_bwaDir)}
+        // PROCESS GRIDSSBRESEQ
+        // GRIDSSBRESEQ(breseq_bam, breseqDir)
+        // PROCESS GRIDSSMINIMAP2
+        // GRIDSSMINIMAP2(minimap2_bam, minimap2Dir, file(params.reference))
+        // PROCESS GRIDSSBWA
+        // GRIDSSBWA(bwa_bam, bwaDir, file(params.reference))
 }
 
 // MAIN workflow
@@ -428,6 +470,17 @@ OUTPUT: ${params.output}
             lofreq_bwaDir.mkdirs()
             //
             snpcalling(breseqDir, minimap2Dir, bwaDir, lofreq_breseqDir, lofreq_minimap2Dir, lofreq_bwaDir, mapping.out.postbreseq, mapping.out.breseq_mean_coverage, mapping.out.breseq_bam, mapping.out.breseq_bam_index, mapping.out.breseq_bam_reference, mapping.out.breseq_bam_reference_gff3, mapping.out.breseq_vcf, mapping.out.breseq_gd, mapping.out.postminimap2, mapping.out.minimap2_mean_coverage, mapping.out.minimap2_bam, mapping.out.minimap2_bam_index, mapping.out.postbwa, mapping.out.bwa_mean_coverage, mapping.out.bwa_bam, mapping.out.bwa_bam_index)
+            //
+            // SVCALLING
+            //
+            pindel_breseqDir = file(params.output+"/SVCALLING/PINDEL/BRESEQ")
+            pindel_breseqDir.mkdirs()
+            pindel_minimap2Dir = file(params.output+"/SVCALLING/PINDEL/MINIMAP2")
+            pindel_minimap2Dir.mkdirs()
+            pindel_bwaDir = file(params.output+"/SVCALLING/PINDEL/BWA")
+            pindel_bwaDir.mkdirs()
+            //
+            svcalling(breseqDir, minimap2Dir, bwaDir, lofreq_breseqDir, lofreq_minimap2Dir, lofreq_bwaDir, mapping.out.postbreseq, mapping.out.breseq_mean_coverage, mapping.out.breseq_bam, mapping.out.breseq_bam_index, mapping.out.breseq_bam_reference, mapping.out.breseq_bam_reference_gff3, mapping.out.breseq_vcf, mapping.out.breseq_gd, mapping.out.postminimap2, mapping.out.minimap2_mean_coverage, mapping.out.minimap2_bam, mapping.out.minimap2_bam_index, mapping.out.postbwa, mapping.out.bwa_mean_coverage, mapping.out.bwa_bam, mapping.out.bwa_bam_index)
             
         }
 }

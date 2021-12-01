@@ -30,7 +30,7 @@ snpless-nf - A Nextflow pipeline for time-course analysis with bacterial NGS who
     5. VARSCAN [varscan](http://dkoboldt.github.io/varscan/)
 6. SVCALLING
     1. PINDEL [pindel](https://github.com/genome/pindel)
-    2. BREAKDANCER [BreakDancer](https://github.com/genome/breakdancer)
+    2. GRIDSS [GRIDSS](https://github.com/PapenfussLab/gridss)
 7. FILTERING/MERGING
     1. GDCOMPARE [gdtools](https://barricklab.org/twiki/pub/Lab/ToolsBacterialGenomeResequencing/documentation/gd_usage.html)
     2. BEDTOOLS [bedtools](https://bedtools.readthedocs.io/en/latest/)
@@ -192,7 +192,7 @@ Koboldt, Daniel C., et al. "VarScan 2: somatic mutation and copy number alterati
 
 Ye, Kai, et al. "Pindel: a pattern growth approach to detect break points of large deletions and medium sized insertions from paired-end short reads." Bioinformatics 25.21 (2009): 2865-2871. [https://academic.oup.com/bioinformatics/article/25/21/2865/2112044?login=true](https://academic.oup.com/bioinformatics/article/25/21/2865/2112044?login=true)
 
-Chen, Ken, et al. "BreakDancer: an algorithm for high-resolution mapping of genomic structural variation." Nature methods 6.9 (2009): 677-681. [https://www.nature.com/articles/nmeth.1363?message=remove&lang=en](https://www.nature.com/articles/nmeth.1363?message=remove&lang=en)
+Cameron, Daniel L., et al. "GRIDSS2: comprehensive characterisation of somatic structural variation using single breakend variants and structural variant phasing." bioRxiv (2021): 2020-07. [https://genomebiology.biomedcentral.com/articles/10.1186/s13059-021-02423-x](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-021-02423-x)
 
 Quinlan, Aaron R., and Ira M. Hall. "BEDTools: a flexible suite of utilities for comparing genomic features." Bioinformatics 26.6 (2010): 841-842. [https://academic.oup.com/bioinformatics/article/26/6/841/244688?login=true](https://academic.oup.com/bioinformatics/article/26/6/841/244688?login=true)
 

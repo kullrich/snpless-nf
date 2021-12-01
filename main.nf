@@ -393,14 +393,14 @@ workflow svcalling {
         bwa_bam_index
     main:
         // PROCESS PINDELBRESEQ
-        // PINDELBRESEQ(postbreseq)
-        // PINDELBRESEQ.out.pindel_files.subscribe {it.copyTo(pindel_breseqDir)}
+        PINDELBRESEQ(postbreseq)
+        PINDELBRESEQ.out.pindel_files.subscribe {it.each {it.copyTo(pindel_breseqDir)} }
         // PROCESS PINDELMINIMAP2
-        // PINDELMINIMAP2(postminimap2, file(params.reference))
-        // PINDELMINIMAP2.out.pindel_files.subscribe {it.copyTo(pindel_minimap2Dir)}
+        PINDELMINIMAP2(postminimap2, file(params.reference))
+        PINDELMINIMAP2.out.pindel_files.subscribe {it.each {it.copyTo(pindel_minimap2Dir)} }
         // PROCESS PINDELBWA
         PINDELBWA(postbwa, file(params.reference))
-        PINDELBWA.out.pindel_files.subscribe {it.copyTo(pindel_bwaDir)}
+        PINDELBWA.out.pindel_files.subscribe {it.each {it.copyTo(pindel_bwaDir)} }
         // PROCESS GRIDSSBRESEQ
         // GRIDSSBRESEQ(breseq_bam, breseqDir)
         // PROCESS GRIDSSMINIMAP2
@@ -480,7 +480,7 @@ OUTPUT: ${params.output}
             pindel_bwaDir = file(params.output+"/SVCALLING/PINDEL/BWA")
             pindel_bwaDir.mkdirs()
             //
-            svcalling(breseqDir, minimap2Dir, bwaDir, lofreq_breseqDir, lofreq_minimap2Dir, lofreq_bwaDir, mapping.out.postbreseq, mapping.out.breseq_mean_coverage, mapping.out.breseq_bam, mapping.out.breseq_bam_index, mapping.out.breseq_bam_reference, mapping.out.breseq_bam_reference_gff3, mapping.out.breseq_vcf, mapping.out.breseq_gd, mapping.out.postminimap2, mapping.out.minimap2_mean_coverage, mapping.out.minimap2_bam, mapping.out.minimap2_bam_index, mapping.out.postbwa, mapping.out.bwa_mean_coverage, mapping.out.bwa_bam, mapping.out.bwa_bam_index)
+            svcalling(breseqDir, minimap2Dir, bwaDir, pindel_breseqDir, pindel_minimap2Dir, pindel_bwaDir, mapping.out.postbreseq, mapping.out.breseq_mean_coverage, mapping.out.breseq_bam, mapping.out.breseq_bam_index, mapping.out.breseq_bam_reference, mapping.out.breseq_bam_reference_gff3, mapping.out.breseq_vcf, mapping.out.breseq_gd, mapping.out.postminimap2, mapping.out.minimap2_mean_coverage, mapping.out.minimap2_bam, mapping.out.minimap2_bam_index, mapping.out.postbwa, mapping.out.bwa_mean_coverage, mapping.out.bwa_bam, mapping.out.bwa_bam_index)
             
         }
 }

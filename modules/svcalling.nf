@@ -10,7 +10,7 @@ process PINDELBRESEQ {
 
 	output:
 		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2), emit: pindel_breseq
-		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.pindel.*", emit: pindel_files
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.pindel*", emit: pindel_files
 
 	when:
 		(params.svcalling && params.run_pindel) || params.run_all
@@ -36,7 +36,7 @@ process PINDELMINIMAP2 {
 
 	output:
 		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2), emit: pindel_minimap2
-		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.pindel.*", emit: pindel_files
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.pindel*", emit: pindel_files
 
 	when:
 		(params.svcalling && params.run_pindel) || params.run_all
@@ -62,7 +62,7 @@ process PINDELBWA {
 
 	output:
 		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2), emit: pindel_bwa
-		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.pindel.*", emit: pindel_files
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.pindel*", emit: pindel_files
 
 	when:
 		(params.svcalling && params.run_pindel) || params.run_all

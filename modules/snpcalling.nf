@@ -152,7 +152,7 @@ process LOFREQBRESEQ {
 
 	output:
 		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2), emit: lofreq_breseq
-		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.lofreq.vcf", emit: lofreq_vcf
+		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.lofreq.vcf", emit: lofreq_vcf
 
 	when:
 		(params.snpcalling && params.run_lofreq) || params.run_all

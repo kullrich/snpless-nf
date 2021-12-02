@@ -22,7 +22,7 @@ Define where the pipeline should find input data and save output data.
 
 :floppy_disk::notebook::dart: `--proteins <ARG>` Path to a GBFF (Genomic GenBank format) reference file. :pushpin: `mandatory`
 
-## General options
+## :information_source: General options
 
 :hourglass_flowing_sand: `--run_all` Turns on all pipeline steps. `default: true` 
 
@@ -34,11 +34,11 @@ Define where the pipeline should find input data and save output data.
 
 :hammer: `--mapping` Turns on MAPPING step. `default: true`
 
-`--snpcalling` Turns on SNPCALLING step. `default: true`
+:dango: `--snpcalling` Turns on SNPCALLING step. `default: true`
 
-`--svcalling` Turns on SVCALLING step. `default: true`
+:oden: `--svcalling` Turns on SVCALLING step. `default: true`
 
-## Skip steps
+## :fast_forward: Skip steps
 
 Skip any of the mentioned steps.
 

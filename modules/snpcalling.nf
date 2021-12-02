@@ -310,7 +310,7 @@ process GDCOMPARE {
 		path "BRESEQ.annotate.*"
 
 	when:
-		(params.snpcalling && params.run_gdcompare && params.run_breseq && !params.skip_breseq && !params.skip_gdcomapare) || params.run_all
+		(params.snpcalling && params.run_gdcompare && params.run_breseq && !params.skip_breseq && !params.skip_gdcompare) || params.run_all
 
 	script:
 		"""

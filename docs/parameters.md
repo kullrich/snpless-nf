@@ -132,6 +132,8 @@ see here for detailed possible options [https://cme.h-its.org/exelixis/web/softw
 
 ### MAPPING - BRESEQ
 
+see here for detailed possible options [https://barricklab.org/twiki/pub/Lab/ToolsBacterialGenomeResequencing/documentation/usage.html#breseq](https://barricklab.org/twiki/pub/Lab/ToolsBacterialGenomeResequencing/documentation/usage.html#breseq)
+
 `--breseq_threads`
 
 `--mapping_breseq_p` sample is not clonal. Predict polymorphic (mixed) mutations.
@@ -142,6 +144,8 @@ see here for detailed possible options [https://cme.h-its.org/exelixis/web/softw
 
 ### MAPPING - MINIMAP2
 
+see here for detailed possible options [https://lh3.github.io/minimap2/minimap2.html](https://lh3.github.io/minimap2/minimap2.html)
+
 `--minimap2_threads`
 
 `--mapping_minimap2_options` "--sam-hit-only --secondary=yes -ax sr"
@@ -151,6 +155,8 @@ see here for detailed possible options [https://cme.h-its.org/exelixis/web/softw
 `--mapping_minimap2_coverage` "--min-BQ 3 --min-MQ 10"
 
 ### MAPPING - BWA
+
+see here for detailed possible options [http://bio-bwa.sourceforge.net/bwa.shtml](http://bio-bwa.sourceforge.net/bwa.shtml)
 
 `--bwa_threads`
 
@@ -164,11 +170,15 @@ see here for detailed possible options [https://cme.h-its.org/exelixis/web/softw
 
 ### SNPCALLING - FREEBAYES
 
+see here for detailed possible options [https://github.com/freebayes/freebayes](https://github.com/freebayes/freebayes)
+
 `--freebayes_threads`
 
 `--snpcalling_freebayes_options` "--pooled-discrete --min-alternate-fraction 0.05 --min-alternate-count 2 --min-mapping-quality 20 --min-base-quality 15"
 
 ### SNPCALLING - BCFTOOLS
+
+see here for detailed possible options [https://samtools.github.io/bcftools/bcftools.html](https://samtools.github.io/bcftools/bcftools.html)
 
 `--bcftools_threads`
 
@@ -184,11 +194,15 @@ see here for detailed possible options [https://cme.h-its.org/exelixis/web/softw
 
 ### SNPCALLING - LOFREQ
 
+see here for detailed possible options [https://csb5.github.io/lofreq/commands/](https://csb5.github.io/lofreq/commands/)
+
 `--lofreq_threads`
 
 `--snpcalling_lofreq_options` "-C 5 -d 2000 -m 20 -q 5 -Q 5 -D --call-indels"
 
 ### SNPCALLING - VARSCAN
+
+see here for detailed possible options [http://varscan.sourceforge.net/using-varscan.html](http://varscan.sourceforge.net/using-varscan.html)
 
 `--varscan_threads`
 
@@ -202,6 +216,8 @@ see here for detailed possible options [https://cme.h-its.org/exelixis/web/softw
 
 ### SVCALLING - PINDEL
 
+see here for detailed possible options [https://gmt.genome.wustl.edu/packages/pindel/user-manual.html](https://gmt.genome.wustl.edu/packages/pindel/user-manual.html)
+
 `--pindel_threads`
 
 `--svcalling_pindel_sam2pindel_options` "300 tag 0 Illumina-PairEnd"
@@ -209,4 +225,12 @@ see here for detailed possible options [https://cme.h-its.org/exelixis/web/softw
 `--svcalling_pindel_options` "-c ALL"
 
 ### SVCALLING - GRIDSS
+
+see here for detailed possible options [https://github.com/PapenfussLab/gridss](https://github.com/PapenfussLab/gridss)
+
+## ANNOTATION
+
+### ANNOTATION - SNPEFF
+
+see here for detailed possible options [http://pcingola.github.io/SnpEff/se_introduction/](http://pcingola.github.io/SnpEff/se_introduction/)
 

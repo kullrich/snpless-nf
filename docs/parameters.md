@@ -12,15 +12,15 @@
 
 Define where the pipeline should find input data and save output data.
 
-`--input <ARG>` Path to tab-separated file containing information about the samples in the experiment. :pushpin: `mandatory`
+:pencil: `--input <ARG>` Path to tab-separated file containing information about the samples in the experiment. :pushpin: `mandatory`
 
-`--output <results>` Path to the ouptut directory where the results will be saved. `default: results`
+:open_file_folder: `--output <results>` Path to the ouptut directory where the results will be saved. `default: results`
 
-`--reference <ARG>` Path to a FASTA reference file. :pushpin: `mandatory`
+:notebook `--reference <ARG>` Path to a FASTA reference file. :pushpin: `mandatory`
 
-`--gff3 <ARG>` Path to a GFF3 file for the given reference. :pushpin: `mandatory`
+:dart: `--gff3 <ARG>` Path to a GFF3 file for the given reference. :pushpin: `mandatory`
 
-`--proteins <ARG>` Path to a GBFF (Genomic GenBank format) reference file. :pushpin: `mandatory`
+:notebook::dart: `--proteins <ARG>` Path to a GBFF (Genomic GenBank format) reference file. :pushpin: `mandatory`
 
 ## General options
 

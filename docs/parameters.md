@@ -68,7 +68,7 @@ Some of the steps in the pipeline can be executed optionally. If you specify spe
 
 :fast_forward: `--skip_gridss` Turns off SNPCALLING with GRIDSS and all related downstream analysis of GRIDSS output.
 
-## QC options
+## :mag: QC options
 
 Options to adjust read quality.
 
@@ -76,13 +76,15 @@ Options to adjust read quality.
 
 `--fastqc_threads` 
 
-`--qc_fastqc_kmers` 
+:mag: `--qc_fastqc_kmers` 
 
-`--qc_fastqc_nogroup`
+:mag: `--qc_fastqc_nogroup`
 
-`--qc_fastqc_quiet`
+:mag: `--qc_fastqc_quiet`
 
 ### QC - TRIM
+
+see here for detailed possible options [http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf](http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf)
 
 `--trim_threads`
 
@@ -96,13 +98,115 @@ Options to adjust read quality.
 
 :scissors: `--qc_trim_quiet` supress all progress output on stdout and only report errors
 
-## GENMAP options
+### QC - PEAR
 
-## ASSEMBLY options
+see here for detailed possible options [https://cme.h-its.org/exelixis/web/software/pear/doc.html](https://cme.h-its.org/exelixis/web/software/pear/doc.html)
 
-## MAPPING options
+`--pear_threads`
 
-## SNPCALLING options
+`--qc_pear_options` "-p 0.01 -v 10 -m 999999 -n 50 -t 1 -q 0 -u 1 -g1 -s 2"
 
-## SVCALLING options
+## :earth_americas: GENMAP options
+
+`--genmap_threads`
+
+`--genmap_kmers`
+
+`--genmap_errors`
+
+`--genmap_outputs`
+
+## :wrench: ASSEMBLY options
+
+### ASSEMBLY - UNICYCLER
+
+`--unicycler_threads`
+
+`--assembly_unicycler_mode`
+
+### ASSEMBLY - PROKKA
+
+`--prokka_threads`
+
+## :dart: MAPPING options
+
+### MAPPING - BRESEQ
+
+`--breseq_threads`
+
+`--mapping_breseq_p` sample is not clonal. Predict polymorphic (mixed) mutations.
+
+`--mapping_breseq_options` "-m 20 -b 15"
+
+`--mapping_breseq_coverage` "--min-BQ 3 --min-MQ 10"
+
+### MAPPING - MINIMAP2
+
+`--minimap2_threads`
+
+`--mapping_minimap2_options` "--sam-hit-only --secondary=yes -ax sr"
+
+`--mapping_minimap2_samblaster` remove duplicates with samblaster
+
+`--mapping_minimap2_coverage` "--min-BQ 3 --min-MQ 10"
+
+### MAPPING - BWA
+
+`--bwa_threads`
+
+`--mapping_bwa_options` "-M"
+
+`--mapping_bwa_samblaster` remove duplicates with samblaster
+
+`--mapping_bwa_coverage` "--min-BQ 3 --min-MQ 10"
+
+## :dango: SNPCALLING options
+
+### SNPCALLING - FREEBAYES
+
+`--freebayes_threads`
+
+`--snpcalling_freebayes_options` "--pooled-discrete --min-alternate-fraction 0.05 --min-alternate-count 2 --min-mapping-quality 20 --min-base-quality 15"
+
+### SNPCALLING - BCFTOOLS
+
+`--bcftools_threads`
+
+`--snpcalling_bcftools_mpileup_options` "-C 50 -q 10 -m 3 -F 0.0002 -d 2000 -E -a FORMAT/AD,FORMAT/DP"
+
+`--snpcalling_bcftools_call_options` "-mAv -Ov"
+
+`--snpcalling_bcftools_varfilter_options` "-Q 10 -d 5 -D 2000"
+
+### SNPCALLING - GDCOMAPRE
+
+`--gdtools_threads`
+
+### SNPCALLING - LOFREQ
+
+`--lofreq_threads`
+
+`--snpcalling_lofreq_options` "-C 5 -d 2000 -m 20 -q 5 -Q 5 -D --call-indels"
+
+### SNPCALLING - VARSCAN
+
+`--varscan_threads`
+
+`--snpcalling_varscan_mpileup_options` "-C 50 -q 10 -d 2000 -E"
+
+`--snpcalling_varscan_snp_options` "--min-coverage 5 --min-avg-qual 15 --min-var-freq 0.0002 --output-vcf 1"
+
+`--snpcalling_varscan_indel_options` "--min-coverage 5 --min-avg-qual 15 --min-var-freq 0.0002 --output-vcf 1"
+
+## :oden: SVCALLING options
+
+### SVCALLING - PINDEL
+
+`--pindel_threads`
+
+`--svcalling_pindel_sam2pindel_options` "300 tag 0 Illumina-PairEnd"
+
+`--svcalling_pindel_options` "-c ALL"
+
+### SVCALLING - GRIDSS
 

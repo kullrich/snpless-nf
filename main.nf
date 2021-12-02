@@ -49,14 +49,14 @@ Usage:
     nextflow run snpless-nf [OPTIONS]...
 
     Options: INPUT/OUTPUT
-        --input                         input table <tab> separated (sampleId;sampleReplicate;sampleTimepoint;reads1,reads2)
-        --output                        outdir
-        --reference                     path to a fasta file containing the reference
-        --gff3                          path to a gff3 file containing the reference annotations
-        --proteins                      path to a gbff file containing the reference annotations
+        --input                                 input table <tab> separated (sampleId;sampleReplicate;sampleTimepoint;reads1,reads2)
+        --output                                outdir
+        --reference                             path to a fasta file containing the reference
+        --gff3                                  path to a gff3 file containing the reference annotations
+        --proteins                              path to a gbff file containing the reference annotations
 
     Options: 
-        --run_all                       run all: QC, GENMAP, ASSEMBLY, MAPPING, SNPCALLING, SVCALLING, MERGING, ANNOTATION
+        --run_all                               run all: QC, GENMAP, ASSEMBLY, MAPPING, SNPCALLING, SVCALLING, MERGING, ANNOTATION
 
     Options: SKIP STEPS
         --skip_genmap
@@ -73,97 +73,118 @@ Usage:
         --skip_gridss
 
     Options: QC
-        --qc                            run QC
+        --qc                                    run QC
 
     Options: QC - FASTQC
-        --run_fastqc                    run FASTQC
-        --fastqc_threads                4
-        --qc_fastqc_kmers               length of kmer
-        --qc_fastqc_nogroup             disable grouping of bases for reads >50bp
-        --qc_fastqc_quiet               supress all progress output on stdout and only report errors
+        --run_fastqc                            run FASTQC
+        --fastqc_threads                        4
+        --qc_fastqc_kmers                       length of kmer
+        --qc_fastqc_nogroup                     disable grouping of bases for reads >50bp
+        --qc_fastqc_quiet                       supress all progress output on stdout and only report errors
 
     Options: QC - TRIM READS
-        --run_trim                      run TRIM
-        --trim_threads                  4
-        --qc_trim_adapter_file          path to a fasta file containing all the adapters
-        --qc_trim_use_adapter           specify if adapter file should be used
-        --qc_clip_options               seedMismatches:palindromeClipThreshold:simpleClipThreshold:
-        --qc_trim_options               "LEADING:20 TRAILING:20 SLIDINGWINDOW:4:15 AVGQUAL:20 MINLEN:50"
-        --qc_trim_quiet                 supress all progress output on stdout and only report errors
+        --run_trim                              run TRIM
+        --trim_threads                          4
+        --qc_trim_adapter_file                  path to a fasta file containing all the adapters
+        --qc_trim_use_adapter                   specify if adapter file should be used
+        --qc_clip_options                       seedMismatches:palindromeClipThreshold:simpleClipThreshold:
+        --qc_trim_options                       "LEADING:20 TRAILING:20 SLIDINGWINDOW:4:15 AVGQUAL:20 MINLEN:50"
+        --qc_trim_quiet                         supress all progress output on stdout and only report errors
 
     Options: QC - PEAR READS
-        --run_pear                      run PEAR
-        --pear_threads                  4
-        --qc_pear_options               "-p 0.01 -v 10 -m 999999 -n 50 -t 1 -q 0 -u 1 -g1 -s 2"
+        --run_pear                              run PEAR
+        --pear_threads                          4
+        --qc_pear_options                       "-p 0.01 -v 10 -m 999999 -n 50 -t 1 -q 0 -u 1 -g1 -s 2"
 
 
     Options: GENMAP
-        --genmap                        run GENMAP
+        --genmap                                run GENMAP
 
     Options: GENMAP - INDEX/MAP
-        --run_genmap                    run GENMAP INDEX/MAP
-        --genmap_threads                8
-        --genmap_kmers                  30
-        --genmap_errors                 2
-        --genmap_outputs                "-t -w -b"
+        --run_genmap                            run GENMAP INDEX/MAP
+        --genmap_threads                        8
+        --genmap_kmers                          30
+        --genmap_errors                         2
+        --genmap_outputs                        "-t -w -b"
 
     Options: ASSEMBLY
-        --assembly                      run ASSEMBLY
+        --assembly                              run ASSEMBLY
 
     Options: ASSEMBLY - UNICYCLER
-        --run_unicycler                 run UNICYCLER
-        --unicycler_threads             8
-        --assembly_unicycler_mode       unicycler bridging mode
+        --run_unicycler                         run UNICYCLER
+        --unicycler_threads                     8
+        --assembly_unicycler_mode               unicycler bridging mode
 
     Options: ASSEMBLY - PROKKA
-        --run_prokka                    run PROKKA
-        --prokka_threads                8
+        --run_prokka                            run PROKKA
+        --prokka_threads                        8
 
     Options: MAPPING
-        --mapping                       run MAPPING
+        --mapping                               run MAPPING
 
     Options: MAPPING - BRESEQ
-        --run_breseq                    run BRESEQ
-        --breseq_threads                8
-        --mapping_breseq_p              The sample is not clonal. Predict polymorphic (mixed) mutations.
-        --mapping_breseq_options        "-m 20 -b 15"
-        --mapping_breseq_coverage       "--min-BQ 3 --min-MQ 10"
+        --run_breseq                            run BRESEQ
+        --breseq_threads                        8
+        --mapping_breseq_p                      sample is not clonal. Predict polymorphic (mixed) mutations.
+        --mapping_breseq_options                "-m 20 -b 15"
+        --mapping_breseq_coverage               "--min-BQ 3 --min-MQ 10"
 
     Options: MAPPING - MINIMAP2
-        --run_minimap2                  run MINIMAP2
-        --minimap2_threads              8
-        --mapping_minimap2_options      "--sam-hit-only --secondary=yes -ax sr"
-        --mapping_minimap2_samblaster   remove duplicates with samblaster
-        --mapping_minimap2_coverage     "--min-BQ 3 --min-MQ 10"
+        --run_minimap2                          run MINIMAP2
+        --minimap2_threads                      8
+        --mapping_minimap2_options              "--sam-hit-only --secondary=yes -ax sr"
+        --mapping_minimap2_samblaster           remove duplicates with samblaster
+        --mapping_minimap2_coverage             "--min-BQ 3 --min-MQ 10"
 
     Options: MAPPING - BWA
-        --run_bwa                       run BWA
-        --bwa_threads                   8
-        --mapping_bwa_options           "-M"
-        --mapping_bwa_samblaster        remove duplicates with samblaster
-        --mapping_bwa_coverage          "--min-BQ 3 --min-MQ 10"
+        --run_bwa                               run BWA
+        --bwa_threads                           8
+        --mapping_bwa_options                   "-M"
+        --mapping_bwa_samblaster                remove duplicates with samblaster
+        --mapping_bwa_coverage                  "--min-BQ 3 --min-MQ 10"
 
-    Options: SNPCALLING                 run SNPCALLING
+    Options: SNPCALLING
+        --snpcalling                            run SNPCALLING
 
     Options: SNPCALLING - FREEBAYES
-        --run_freebayes                 run FREEBAYES
-        --freebayes_threads             1
-        --snpcalling_freebayes_options  "--pooled-discrete --min-alternate-fraction 0.05 --min-alternate-count 2 --min-mapping-quality 20 --min-base-quality 15"
+        --run_freebayes                         run FREEBAYES
+        --freebayes_threads                     1
+        --snpcalling_freebayes_options          "--pooled-discrete --min-alternate-fraction 0.05 --min-alternate-count 2 --min-mapping-quality 20 --min-base-quality 15"
+
+    Options: SNPCALLING - BCFFTOOLS
+        --run_bcftools                          run BCFTOOLS
+        --bcftools_threads                      1
+        --snpcalling_bcftools_mpileup_options   "-C 50 -q 10 -m 3 -F 0.0002 -d 2000 -E -a FORMAT/AD,FORMAT/DP"
+        --snpcalling_bcftools_call_options      "-mAv -Ov"
+        --snpcalling_bcftools_varfilter_options "-Q 10 -d 5 -D 2000"
 
     Options: SNPCALLING - GDCOMPARE
-        --run_gdcompare                 run GDCOMPARE
-        --gdtools_threads               1
+        --run_gdcompare                         run GDCOMPARE
+        --gdtools_threads                       1
 
     Options: SNPCALLING - LOFREQ
-        --run_lofreq                    run LOFREQ
-        --lofreq_threads                8
+        --run_lofreq                            run LOFREQ
+        --lofreq_threads                        8
+        --snpcalling_lofreq_options             "-C 5 -d 2000 -m 20 -q 5 -Q 5 -D --call-indels"
 
     Options: SNPCALLING - VARSCAN
-        --run_varscan                   run VARSCAN
-        --varscan_threads                1
-        --snpcalling_varscan_mpileup_options
-        --snpcalling_varscan_snp_options
-        --snpcalling_varscan_indel_options
+        --run_varscan                           run VARSCAN
+        --varscan_threads                       1
+        --snpcalling_varscan_mpileup_options    "-C 50 -q 10 -d 2000 -E"
+        --snpcalling_varscan_snp_options        "--min-coverage 5 --min-avg-qual 15 --min-var-freq 0.0002 --output-vcf 1"
+        --snpcalling_varscan_indel_options      "--min-coverage 5 --min-avg-qual 15 --min-var-freq 0.0002 --output-vcf 1"
+
+    Options: SVCALLING                          
+        --svcalling                             run SVCALLING
+
+    Options: SVCALLING - PINDEL
+        --run_pinder                            run PINDEL
+        --pindel_threads                        8
+        --svcalling_pindel_sam2pindel_options   "300 tag 0 Illumina-PairEnd"
+        --svcalling_pindel_options              "-c ALL"
+
+
+    Options: SVCALLING - GRIDSS
 
 """
     ["bash", "${baseDir}/bin/clean.sh", "${workflow.sessionId}"].execute()

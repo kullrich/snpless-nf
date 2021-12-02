@@ -12,15 +12,15 @@
 
 Define where the pipeline should find input data and save output data.
 
-:floppy_disk::pencil: `--input <ARG>` Path to tab-separated file containing information about the samples in the experiment. :pushpin: `mandatory`
+:floppy_disk: `--input <ARG>` Path to tab-separated file containing information about the samples in the experiment. :pushpin: `mandatory`
 
 :open_file_folder: `--output <results>` Path to the ouptut directory where the results will be saved. `default: results`
 
-:floppy_disk::notebook: `--reference <ARG>` Path to a FASTA reference file. :pushpin: `mandatory`
+:floppy_disk: `--reference <ARG>` Path to a FASTA reference file. :pushpin: `mandatory`
 
-:floppy_disk::dart: `--gff3 <ARG>` Path to a GFF3 file for the given reference. :pushpin: `mandatory`
+:floppy_disk: `--gff3 <ARG>` Path to a GFF3 file for the given reference. :pushpin: `mandatory`
 
-:floppy_disk::notebook::dart: `--proteins <ARG>` Path to a GBFF (Genomic GenBank format) reference file. :pushpin: `mandatory`
+:floppy_disk: `--proteins <ARG>` Path to a GBFF (Genomic GenBank format) reference file. :pushpin: `mandatory`
 
 ## :information_source: General options
 
@@ -32,7 +32,7 @@ Define where the pipeline should find input data and save output data.
 
 :wrench: `--assembly` Turns on ASSEMBLY step. `default: true`
 
-:hammer: `--mapping` Turns on MAPPING step. `default: true`
+:dart: `--mapping` Turns on MAPPING step. `default: true`
 
 :dango: `--snpcalling` Turns on SNPCALLING step. `default: true`
 

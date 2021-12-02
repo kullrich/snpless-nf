@@ -2,9 +2,60 @@
 
 The output of snpless-nf primarily consists of the following main components:
 
-## Output directotry structure
+## Output Directotry Structure
 
 The default directory structure of snpless-nf is as follows:
+
+```
+results/
+├── ASSEMBLY
+│   └── UNICYCLER
+│       ├── <Sample1>
+│       └── <Sample2>
+├── GENMAP
+│   ├── <reference>
+├── MAPPING
+│   ├── BRESEQ
+│   ├── BRESEQOUT
+│   ├── BWA
+│   ├── BWAOUT
+│   ├── MINIMAP2
+│   └── MINIMAP2OUT
+├── QC
+│   ├── FASTQC
+│   ├── PEAR
+│   └── TRIM
+├── SNPCALLING
+│   ├── BCFTOOLS
+│   │   ├── BRESEQ
+│   │   ├── BWA
+│   │   └── MINIMAP2
+│   ├── FREEBAYES
+│   ├── GDCOMPARE
+│   ├── LOFREQ
+│   └── VARSCAN
+├── SVCALLING
+│   ├── GRIDSS
+│   │   ├── BRESEQ
+│   │   ├── BWA
+│   │   └── MINIMAP2
+│   └── PINDEL
+├── dag.svg
+├── report.html
+├── timeline.html
+└── trace.txt
+work/
+```
+
+To see the full directory structure see here:
+
+The default name of the output directory (unless otherwise specified) will be `./results/` as specified with the `--output` option.
+
+## Primary Output Directories
+
+## Secondary Output Directories
+
+## Full Output Directory Structure
 
 ```
 results/
@@ -145,11 +196,3 @@ results/
 └── trace.txt
 work/
 ```
-
-The default name of the output directory (unless otherwise specified) will be `./results/` as specified with the `--output` option.
-
-## Primary Output Directories
-
-## Secondary Output Directories
-
-

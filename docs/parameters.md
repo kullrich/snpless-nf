@@ -24,9 +24,9 @@ Define where the pipeline should find input data and save output data.
 
 ## General options
 
-`--run_all`  
+:hourglass_flowing_sand: `--run_all` Turns on all pipeline steps. `default: true` 
 
-`--qc`
+:mag: `--qc` 
 
 `--genmap`
 
@@ -65,6 +65,18 @@ Some of the steps in the pipeline can be executed optionally. If you specify spe
 `--skip_gridss` Turns off SNPCALLING with GRIDSS and all related downstream analysis of GRIDSS output.
 
 ## QC options
+
+Options to adjust read quality.
+
+### QC - FASTQC
+
+`--fastqc_threads` 
+
+`--qc_fastqc_kmers`
+
+`--qc_fastqc_nogroup`
+
+`--qc_fastqc_quiet`
 
 ## GENMAP options
 

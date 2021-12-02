@@ -17,12 +17,12 @@ process UNICYCLER {
 	script:
 		if (reads2 == "-")
 			"""
-			unicycler -s ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.SE.fq.gz -o . -t $task.cpus --mode ${params.assembly_unicycler_mode}
+			unicycler -s ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.SE.fq.gz -o . -t $task.cpus --no_correct --mode ${params.assembly_unicycler_mode}
 			mv assembly.fasta ${sampleId}_${sampleReplicate}_${sampleTimepoint}.assembly.fasta
 			"""
 		else
 			"""
-			unicycler -1 ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.MEPE1.fq.gz -2 ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.MEPE2.fq.gz -s ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.MESE.fq.gz -o . -t $task.cpus --mode ${params.assembly_unicycler_mode}
+			unicycler -1 ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.MEPE1.fq.gz -2 ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.MEPE2.fq.gz -s ${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.MESE.fq.gz -o . -t $task.cpus --no_correct --mode ${params.assembly_unicycler_mode}
 			mv assembly.fasta ${sampleId}_${sampleReplicate}_${sampleTimepoint}.assembly.fasta
 			"""
 }

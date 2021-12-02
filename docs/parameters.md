@@ -4,35 +4,39 @@
 
 :question: `--help`
 
- `--version`
+`--version` Print version.
 
-`--debug`
+`--debug` Turns on debug mode.
 
 ## :arrow_forward: Input/Output options
 
 Define where the pipeline should find input data and save output data.
 
-`--input` Path to tab-separated file containing information about the samples in the experiment. :pushpin: `mandatory`
+`--input <ARG>` Path to tab-separated file containing information about the samples in the experiment. :pushpin: `mandatory`
 
-`--output` Path to the ouptut directory where the results will be saved. `default: results`
+`--output <results>` Path to the ouptut directory where the results will be saved. `default: results`
 
-`--reference` Path to a FASTA reference file. :pushpin: `mandatory`
+`--reference <ARG>` Path to a FASTA reference file. :pushpin: `mandatory`
 
-`--gff3` Path to a GFF3 file for the given reference. :pushpin: `mandatory`
+`--gff3 <ARG>` Path to a GFF3 file for the given reference. :pushpin: `mandatory`
 
-`--proteins` Path to a GBFF (Genomic GenBank format) reference file. :pushpin: `mandatory`
+`--proteins <ARG>` Path to a GBFF (Genomic GenBank format) reference file. :pushpin: `mandatory`
 
 ## General options
 
 :hourglass_flowing_sand: `--run_all` Turns on all pipeline steps. `default: true` 
 
-:mag: `--qc` 
+:mag: `--qc` Turns on QC step. `default: true`
 
-`--genmap`
+`--genmap` Turns on GENMAP step. `default: true`
 
-`--assembly`
+`--assembly` Turns on ASSEMBLY step. `default: true`
 
-`--mapping`
+`--mapping` Turns on MAPPING step. `default: true`
+
+`--snpcalling` Turns on SNPCALLING step. `default: true`
+
+`--svcalling` Turns on SVCALLING step. `default: true`
 
 ## Skip steps
 
@@ -72,7 +76,7 @@ Options to adjust read quality.
 
 `--fastqc_threads` 
 
-`--qc_fastqc_kmers`
+`--qc_fastqc_kmers` 
 
 `--qc_fastqc_nogroup`
 

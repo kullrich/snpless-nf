@@ -13,7 +13,7 @@ process FREEBAYESBRESEQ {
 		path "BRESEQ.freebayes.vcf"
 
 	when:
-		(params.snpcalling && params.run_freebayes) || params.run_all
+		(params.snpcalling && params.run_freebayes && params.run_breseq && !params.skip_breseq && !params.skip_freebayes) || params.run_all
 
 	script:
 		"""
@@ -37,7 +37,7 @@ process FREEBAYESMINIMAP2 {
 		path "MINIMAP2.freebayes.vcf"
 
 	when:
-		(params.snpcalling && params.run_freebayes) || params.run_all
+		(params.snpcalling && params.run_freebayes && params.run_minimap2 && !params.skip_minimap2 && !params.skip_freebayes) || params.run_all
 
 	script:
 		"""
@@ -61,7 +61,7 @@ process FREEBAYESBWA {
 		path "BWA.freebayes.vcf"
 
 	when:
-		(params.snpcalling && params.run_freebayes) || params.run_all
+		(params.snpcalling && params.run_freebayes && params.run_bwa && !params.skip_bwa && !params.skip_freebayes) || params.run_all
 
 	script:
 		"""
@@ -84,7 +84,7 @@ process BCFTOOLSBRESEQ {
 		path "BRESEQ.bcftools.vcf"
 
 	when:
-		(params.snpcalling && params.run_bcftools) || params.run_all
+		(params.snpcalling && params.run_bcftools && params.run_breseq && !params.skip_breseq && !params.skip_bcftools) || params.run_all
 
 	script:
 		"""
@@ -108,7 +108,7 @@ process BCFTOOLSMINIMAP2 {
 		path "MINIMAP2.bcftools.vcf"
 
 	when:
-		(params.snpcalling && params.run_bcftools) || params.run_all
+		(params.snpcalling && params.run_bcftools && params.run_minimap2 && !params.skip_minimap2 && !params.skip_bcftools) || params.run_all
 
 	script:
 		"""
@@ -132,7 +132,7 @@ process BCFTOOLSBWA {
 		path "BWA.bcftools.vcf"
 
 	when:
-		(params.snpcalling && params.run_bcftools) || params.run_all
+		(params.snpcalling && params.run_bcftools && params.run_bwa && !params.skip_bwa && !params.skip_bcftools) || params.run_all
 
 	script:
 		"""
@@ -155,7 +155,7 @@ process LOFREQBRESEQ {
 		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.lofreq.vcf", emit: lofreq_vcf
 
 	when:
-		(params.snpcalling && params.run_lofreq) || params.run_all
+		(params.snpcalling && params.run_lofreq && params.run_breseq && !params.skip_breseq && !params.skip_lofreq) || params.run_all
 
 	script:
 		"""
@@ -182,7 +182,7 @@ process LOFREQMINIMAP2 {
 		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.lofreq.vcf", emit: lofreq_vcf
 
 	when:
-		(params.snpcalling && params.run_lofreq) || params.run_all
+		(params.snpcalling && params.run_lofreq && params.run_minimap2 && !params.skip_minimap2 && !params.skip_lofreq) || params.run_all
 
 	script:
 		"""
@@ -209,7 +209,7 @@ process LOFREQBWA {
 		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.lofreq.vcf", emit: lofreq_vcf
 
 	when:
-		(params.snpcalling && params.run_lofreq) || params.run_all
+		(params.snpcalling && params.run_lofreq && params.run_bwa && !params.skip_bwa && !params.skip_lofreq) || params.run_all
 
 	script:
 		"""
@@ -235,7 +235,7 @@ process VARSCANBRESEQ {
 		path "BRESEQ.varscan.*.vcf"
 
 	when:
-		(params.snpcalling && params.run_varscan) || params.run_all
+		(params.snpcalling && params.run_varscan && params.run_breseq && !params.skip_breseq && !params.skip_varscan) || params.run_all
 
 	script:
 		"""
@@ -260,7 +260,7 @@ process VARSCANMINIMAP2 {
 		path "MINIMAP2.varscan.*.vcf"
 
 	when:
-		(params.snpcalling && params.run_varscan) || params.run_all
+		(params.snpcalling && params.run_varscan && params.run_minimap2 && !params.skip_minimap2 && !params.skip_varscan) || params.run_all
 
 	script:
 		"""
@@ -285,7 +285,7 @@ process VARSCANBWA {
 		path "BWA.varscan.*.vcf"
 
 	when:
-		(params.snpcalling && params.run_varscan) || params.run_all
+		(params.snpcalling && params.run_varscan && params.run_bwa && !params.skip_bwa && !params.skip_varscan) || params.run_all
 
 	script:
 		"""
@@ -310,7 +310,7 @@ process GDCOMPARE {
 		path "BRESEQ.annotate.*"
 
 	when:
-		(params.snpcalling && params.run_gdcompare) || params.run_all
+		(params.snpcalling && params.run_gdcompare && params.run_breseq && !params.skip_breseq && !params.skip_gdcomapare) || params.run_all
 
 	script:
 		"""

@@ -12,7 +12,7 @@ process BRESEQ {
 		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
 
 	when:
-		(params.mapping && params.run_breseq) || params.run_all
+		(params.mapping && params.run_breseq && !params.skip_breseq) || params.run_all
 
 	script:
 		if (reads2 == "-")
@@ -49,7 +49,7 @@ process MINIMAP2 {
 		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
 
 	when:
-		(params.mapping && params.run_minimap2) || params.run_all
+		(params.mapping && params.run_minimap2 && !params.skip_minimap2) || params.run_all
 
 	script:
 		if (reads2 == "-")
@@ -88,7 +88,7 @@ process BWA {
 		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
 
 	when:
-		(params.mapping && params.run_bwa) || params.run_all
+		(params.mapping && params.run_bwa && !params.skip_bwa) || params.run_all
 
 	script:
 		if (reads2 == "-")
@@ -138,7 +138,7 @@ process POSTBRESEQ {
 		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/data/${sampleId}_${sampleReplicate}_${sampleTimepoint}.gd", emit: breseq_gd
 
 	when:
-		(params.mapping && params.run_breseq) || params.run_all
+		(params.mapping && params.run_breseq && !params.skip_breseq) || params.run_all
 
 	script:
 		"""
@@ -168,7 +168,7 @@ process POSTMINIMAP2 {
 		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.sorted.bam.bai", emit: minimap2_bam_index
 
 	when:
-		(params.mapping && params.run_minimap2) || params.run_all
+		(params.mapping && params.run_minimap2 && !params.skip_minimap2) || params.run_all
 
 	script:
 		if (reads2 == "-")
@@ -206,7 +206,7 @@ process POSTBWA {
 		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.sorted.bam.bai", emit: bwa_bam_index
 
 	when:
-		(params.mapping && params.run_bwa) || params.run_all
+		(params.mapping && params.run_bwa && !params.skip_bwa) || params.run_all
 
 	script:
 		if (reads2 == "-")

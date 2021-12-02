@@ -13,7 +13,7 @@ process PINDELBRESEQ {
 		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.breseq.pindel*", emit: pindel_files
 
 	when:
-		(params.svcalling && params.run_pindel) || params.run_all
+		(params.svcalling && params.run_pindel && params.run_breseq && !params.skip_breseq && !params.skip_pindel) || params.run_all
 
 	script:
 		"""
@@ -39,7 +39,7 @@ process PINDELMINIMAP2 {
 		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.minimap2.pindel*", emit: pindel_files
 
 	when:
-		(params.svcalling && params.run_pindel) || params.run_all
+		(params.svcalling && params.run_pindel && params.run_minimap2 && !params.skip_minimap2 && !params.skip_pindel) || params.run_all
 
 	script:
 		"""
@@ -65,7 +65,7 @@ process PINDELBWA {
 		path "${sampleId}_${sampleReplicate}_${sampleTimepoint}/${sampleId}_${sampleReplicate}_${sampleTimepoint}.bwa.pindel*", emit: pindel_files
 
 	when:
-		(params.svcalling && params.run_pindel) || params.run_all
+		(params.svcalling && params.run_pindel && params.run_bwa && !params.skip_bwa && !params.skip_pindel) || params.run_all
 
 	script:
 		"""

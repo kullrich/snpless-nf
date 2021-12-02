@@ -12,7 +12,7 @@ process GENMAP {
 		path(".")
 
 	when:
-		params.genmap || params.run_all
+		(params.genmap && !params.skip_genmap) || params.run_all
 
 	script:
 		if(params.run_genmap)

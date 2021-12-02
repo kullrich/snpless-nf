@@ -58,6 +58,20 @@ Usage:
     Options: 
         --run_all                       run all: QC, GENMAP, ASSEMBLY, MAPPING, SNPCALLING, SVCALLING, MERGING, ANNOTATION
 
+    Options: SKIP STEPS
+        --skip_genmap
+        --skip_assembly
+        --skip_breseq
+        --skip_minimap2
+        --skip_bwa
+        --skip_freebayes
+        --skip_bcftools
+        --skip_lofreq
+        --skip_varscan
+        --skip_gdcompare
+        --skip_pindel
+        --skip_gridss
+
     Options: QC
         --qc                            run QC
 
@@ -445,7 +459,7 @@ OUTPUT: ${params.output}
             //
             // ASSEMBLY
             //
-            // assembly(qc.out.pear)
+            assembly(qc.out.pear)
             //
             // MAPPING
             //

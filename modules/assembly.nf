@@ -12,7 +12,7 @@ process UNICYCLER {
 		tuple path("*"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
 
 	when:
-		(params.assembly && params.run_unicycler) || params.run_all
+		(params.assembly && !params.skip_assembly && params.run_unicycler) || params.run_all
 
 	script:
 		if (reads2 == "-")
@@ -41,7 +41,7 @@ process PROKKA {
 		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(reads1), val(reads2)
 
 	when:
-		(params.assembly && params.run_prokka) || params.run_all
+		(params.assembly && !params.skip_assembly && params.run_prokka) || params.run_all
 
 	script:
 		"""

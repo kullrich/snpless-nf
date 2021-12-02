@@ -82,6 +82,20 @@ Options to adjust read quality.
 
 `--qc_fastqc_quiet`
 
+### QC - TRIM
+
+`--trim_threads`
+
+:scissors: `--qc_trim_adapter_file` path to a fasta file containing all the adapters
+
+:scissors: `--qc_trim_use_adapter` specify if adapter file should be used
+
+:scissors: `--qc_clip_options` seedMismatches:palindromeClipThreshold:simpleClipThreshold:
+
+:scissors: `--qc_trim_options` "LEADING:20 TRAILING:20 SLIDINGWINDOW:4:15 AVGQUAL:20 MINLEN:50"
+
+:scissors: `--qc_trim_quiet` supress all progress output on stdout and only report errors
+
 ## GENMAP options
 
 ## ASSEMBLY options

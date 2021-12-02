@@ -16,7 +16,7 @@ Define where the pipeline should find input data and save output data.
 
 :open_file_folder: `--output <results>` Path to the ouptut directory where the results will be saved. `default: results`
 
-:notebook `--reference <ARG>` Path to a FASTA reference file. :pushpin: `mandatory`
+:notebook: `--reference <ARG>` Path to a FASTA reference file. :pushpin: `mandatory`
 
 :dart: `--gff3 <ARG>` Path to a GFF3 file for the given reference. :pushpin: `mandatory`
 

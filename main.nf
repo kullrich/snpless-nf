@@ -176,7 +176,7 @@ include {GENMAP} from './modules/genmap' params(params)
 include {UNICYCLER; PROKKA} from './modules/assembly' params(params)
 include {BRESEQ; MINIMAP2; BWA; POSTBRESEQ; POSTMINIMAP2; POSTBWA} from './modules/mapping' params(params)
 include {FREEBAYESBRESEQ; FREEBAYESMINIMAP2; FREEBAYESBWA; BCFTOOLSBRESEQ; BCFTOOLSMINIMAP2; BCFTOOLSBWA; GDCOMPARE; LOFREQBRESEQ; LOFREQMINIMAP2; LOFREQBWA; VARSCANBRESEQ; VARSCANMINIMAP2; VARSCANBWA} from './modules/snpcalling' params(params)
-include {PINDELBRESEQ; PINDELMINIMAP2; PINDELBWA} from './modules/svcalling' params(params)
+include {PINDELMINIMAP2; PINDELBWA} from './modules/svcalling' params(params)
 
 // QC workflow
 workflow qc {
@@ -407,8 +407,8 @@ workflow svcalling {
         bwa_bam_index
     main:
         // PROCESS PINDELBRESEQ
-        PINDELBRESEQ(postbreseq)
-        PINDELBRESEQ.out.pindel_files.subscribe {it.each {it.copyTo(pindel_breseqDir)} }
+        // PINDELBRESEQ(postbreseq)
+        // PINDELBRESEQ.out.pindel_files.subscribe {it.each {it.copyTo(pindel_breseqDir)} }
         // PROCESS PINDELMINIMAP2
         PINDELMINIMAP2(postminimap2, file(params.reference))
         PINDELMINIMAP2.out.pindel_files.subscribe {it.each {it.copyTo(pindel_minimap2Dir)} }

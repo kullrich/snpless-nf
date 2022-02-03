@@ -1,0 +1,7 @@
+name: snpless-merging-bedtools
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bedtools

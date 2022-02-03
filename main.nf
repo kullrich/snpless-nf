@@ -49,10 +49,12 @@ Usage:
     nextflow run snpless-nf [OPTIONS]...
 
     Options: INPUT/OUTPUT
-        --input                                 input table <tab> separated (sampleId;sampleReplicate;sampleTimepoint;reads1,reads2)
+        --input                                 input table <tab> separated (sampleId;sampleReplicate;sampleTimepoint;sampleType;reads1,reads2)
         --output                                outdir
         --reference                             path to a fasta file containing the reference
         --gff3                                  path to a gff3 file containing the reference annotations
+        --gtf                                   path to a gtf file containing the reference annotations
+        --genbank                               path to a gbff file containing the reference annotations
         --proteins                              path to a gbff file containing the reference annotations
 
     Options: 
@@ -71,6 +73,7 @@ Usage:
         --skip_gdcompare
         --skip_pindel
         --skip_gridss
+        --skip_snpeff
 
     Options: QC
         --qc                                    run QC
@@ -126,22 +129,22 @@ Usage:
         --run_breseq                            run BRESEQ
         --breseq_threads                        8
         --mapping_breseq_p                      sample is not clonal. Predict polymorphic (mixed) mutations.
-        --mapping_breseq_options                "-m 20 -b 15"
-        --mapping_breseq_coverage               "--min-BQ 3 --min-MQ 10"
+        --mapping_breseq_options                "-m 30 -b 20"
+        --mapping_breseq_coverage               "--min-MQ 30 --min-BQ 20"
 
     Options: MAPPING - MINIMAP2
         --run_minimap2                          run MINIMAP2
         --minimap2_threads                      8
         --mapping_minimap2_options              "--sam-hit-only --secondary=yes -ax sr"
         --mapping_minimap2_samblaster           remove duplicates with samblaster
-        --mapping_minimap2_coverage             "--min-BQ 3 --min-MQ 10"
+        --mapping_minimap2_coverage             "--min-MQ 30 --min-BQ 20"
 
     Options: MAPPING - BWA
         --run_bwa                               run BWA
         --bwa_threads                           8
         --mapping_bwa_options                   "-M"
         --mapping_bwa_samblaster                remove duplicates with samblaster
-        --mapping_bwa_coverage                  "--min-BQ 3 --min-MQ 10"
+        --mapping_bwa_coverage                  "--min-MQ 30 --min-BQ 20"
 
     Options: SNPCALLING
         --snpcalling                            run SNPCALLING
@@ -149,12 +152,13 @@ Usage:
     Options: SNPCALLING - FREEBAYES
         --run_freebayes                         run FREEBAYES
         --freebayes_threads                     1
-        --snpcalling_freebayes_options          "--pooled-discrete --min-alternate-fraction 0.05 --min-alternate-count 2 --min-mapping-quality 20 --min-base-quality 15"
+        --snpcalling_freebayes_options          "--pooled-discrete --min-alternate-fraction 0.05 --min-alternate-count 2 --min-mapping-quality 30 --min-base-quality 20"
+        --snpcalling_freebayes_filter_options   "-f 'QUAL > 30'"
 
     Options: SNPCALLING - BCFFTOOLS
         --run_bcftools                          run BCFTOOLS
         --bcftools_threads                      1
-        --snpcalling_bcftools_mpileup_options   "-C 50 -q 10 -m 3 -F 0.0002 -d 2000 -E -a FORMAT/AD,FORMAT/DP"
+        --snpcalling_bcftools_mpileup_options   "-C 50 -q 30 -Q 20 -F 0.0002 -d 2000 -E -a FORMAT/AD,FORMAT/DP"
         --snpcalling_bcftools_call_options      "-mAv -Ov"
         --snpcalling_bcftools_varfilter_options "-Q 10 -d 5 -D 2000"
 
@@ -165,26 +169,38 @@ Usage:
     Options: SNPCALLING - LOFREQ
         --run_lofreq                            run LOFREQ
         --lofreq_threads                        8
-        --snpcalling_lofreq_options             "-C 5 -d 2000 -m 20 -q 5 -Q 5 -D --call-indels"
+        --snpcalling_lofreq_options             "-C 5 -d 2000 -m 30 -q 20 -Q 20 -D --call-indels"
 
     Options: SNPCALLING - VARSCAN
         --run_varscan                           run VARSCAN
         --varscan_threads                       1
-        --snpcalling_varscan_mpileup_options    "-C 50 -q 10 -d 2000 -E"
-        --snpcalling_varscan_snp_options        "--min-coverage 5 --min-avg-qual 15 --min-var-freq 0.0002 --output-vcf 1"
-        --snpcalling_varscan_indel_options      "--min-coverage 5 --min-avg-qual 15 --min-var-freq 0.0002 --output-vcf 1"
+        --snpcalling_varscan_mpileup_options    "-C 50 -q 30 -Q 20 -d 2000 -E"
+        --snpcalling_varscan_snp_options        "--min-coverage 5 --min-avg-qual 20 --min-var-freq 0.05 --output-vcf 1"
+        --snpcalling_varscan_indel_options      "--min-coverage 5 --min-avg-qual 20 --min-var-freq 0.05 --output-vcf 1"
 
     Options: SVCALLING                          
         --svcalling                             run SVCALLING
 
     Options: SVCALLING - PINDEL
-        --run_pinder                            run PINDEL
+        --run_pindel                            run PINDEL
         --pindel_threads                        8
         --svcalling_pindel_sam2pindel_options   "300 tag 0 Illumina-PairEnd"
         --svcalling_pindel_options              "-c ALL"
 
-
     Options: SVCALLING - GRIDSS
+
+    Options: ANNOTATION
+        --annotation                            run ANNOTATION
+
+    Options: ANNOTATION - SNPEFF
+        --run_snpeff                            run SNPEFF
+        --annotation_snpeff_type                "gff3"
+        --annotation_reference_name             "refname"
+        --annotation_reference_version          "0.0"
+        --annotation_reference_codon_table      "Bacterial_and_Plant_Plastid"
+        --annotation_snpeff_config_file         "data/snpEff.config"
+
+nextflow run snpless-nf --input <samples.tsv> --reference <genome.fna> --gff3 <genome.gff3> --proteins <genome.gbff>
 
 """
     ["bash", "${baseDir}/bin/clean.sh", "${workflow.sessionId}"].execute()
@@ -198,6 +214,7 @@ include {UNICYCLER; PROKKA} from './modules/assembly' params(params)
 include {BRESEQ; MINIMAP2; BWA; POSTBRESEQ; POSTMINIMAP2; POSTBWA} from './modules/mapping' params(params)
 include {FREEBAYESBRESEQ; FREEBAYESMINIMAP2; FREEBAYESBWA; BCFTOOLSBRESEQ; BCFTOOLSMINIMAP2; BCFTOOLSBWA; GDCOMPARE; LOFREQBRESEQ; LOFREQMINIMAP2; LOFREQBWA; VARSCANBRESEQ; VARSCANMINIMAP2; VARSCANBWA} from './modules/snpcalling' params(params)
 include {PINDELMINIMAP2; PINDELBWA} from './modules/svcalling' params(params)
+include {SNPEFFCREATEDB} from './modules/annotation' params(params)
 
 // QC workflow
 workflow qc {
@@ -222,10 +239,10 @@ workflow qc {
         // PEAR.out.subscribe {println "Got: $it"}
         // PEAR.out.view()
         // PEAR.out.subscribe onComplete: {println "Pear - Done"}
-        emit:
-            fastqc = FASTQC.out
-            trim = TRIM.out
-            pear = PEAR.out
+    emit:
+        fastqc = FASTQC.out
+        trim = TRIM.out
+        pear = PEAR.out
 }
 
 // GENMAP workflow
@@ -240,7 +257,7 @@ workflow genmap {
         genmap = GENMAP.out
 }
 
-// ASSEMBLY wworkflow
+// ASSEMBLY workflow
 workflow assembly {
     take:
         pear
@@ -400,6 +417,33 @@ workflow snpcalling {
         VARSCANMINIMAP2(minimap2_bam, minimap2Dir, file(params.reference))
         // PROCESS VARSCANBWA
         VARSCANBWA(bwa_bam, bwaDir, file(params.reference))
+        freebayes_breseq_vcf = FREEBAYESBRESEQ.out.freebayes_vcf
+        freebayes_minimap2_vcf = FREEBAYESMINIMAP2.out.freebayes_vcf
+        freebayes_bwa_vcf = FREEBAYESBWA.out.freebayes_vcf
+        bcftools_breseq_vcf = BCFTOOLSBRESEQ.out.bcftools_vcf
+        bcftools_minimap2_vcf = BCFTOOLSMINIMAP2.out.bcftools_vcf
+        bcftools_bwa_vcf = BCFTOOLSBWA.out.bcftools_vcf
+        varscan_breseq_vcf = VARSCANBRESEQ.out.varscan_vcf
+        varscan_minimap2_vcf = VARSCANMINIMAP2.out.varscan_vcf
+        varscan_bwa_vcf = VARSCANBWA.out.varscan_vcf
+        gdcompare = GDCOMPARE.out.gdcompare
+        lofreq_breseq_vcf = LOFREQBRESEQ.out.lofreq_vcf
+        lofreq_minimap2_vcf = LOFREQMINIMAP2.out.lofreq_vcf
+        lofreq_bwa_vcf = LOFREQBWA.out.lofreq_vcf
+    emit:
+        freebayes_breseq_vcf
+        freebayes_minimap2_vcf
+        freebayes_bwa_vcf
+        bcftools_breseq_vcf
+        bcftools_minimap2_vcf
+        bcftools_bwa_vcf
+        varscan_breseq_vcf
+        varscan_minimap2_vcf
+        varscan_bwa_vcf
+        gdcompare
+        lofreq_breseq_vcf
+        lofreq_minimap2_vcf
+        lofreq_bwa_vcf
 }
 
 workflow svcalling {
@@ -444,6 +488,15 @@ workflow svcalling {
         // GRIDSSBWA(bwa_bam, bwaDir, file(params.reference))
 }
 
+workflow annotation {
+    take:
+        snpeffDir
+    main:
+        // CREATE REFERENCE DB
+        file(params.annotation_snpeff_config_file).copyTo(snpeffDir)
+        SNPEFFCREATEDB(snpeffDir, file(params.reference), file(params.gff3))
+}
+
 // MAIN workflow
 workflow{
     main:
@@ -467,7 +520,7 @@ OUTPUT: ${params.output}
             channel
                 .fromPath(params.input)
                 .splitCsv(header:false,sep:'\t')
-                .map{row->tuple(row[0],row[1],row[2],row[3],row[4],file(row[3]),file(row[4]),file(params.qc_trim_adapter_file))}
+                .map{row->tuple(row[0],row[1],row[2],row[3],row[4],row[5],file(row[4]),file(row[5]),file(params.qc_trim_adapter_file))}
                 .set{samples}
             // run all
             //
@@ -516,7 +569,17 @@ OUTPUT: ${params.output}
             pindel_bwaDir.mkdirs()
             //
             svcalling(breseqDir, minimap2Dir, bwaDir, pindel_breseqDir, pindel_minimap2Dir, pindel_bwaDir, mapping.out.postbreseq, mapping.out.breseq_mean_coverage, mapping.out.breseq_bam, mapping.out.breseq_bam_index, mapping.out.breseq_bam_reference, mapping.out.breseq_bam_reference_gff3, mapping.out.breseq_vcf, mapping.out.breseq_gd, mapping.out.postminimap2, mapping.out.minimap2_mean_coverage, mapping.out.minimap2_bam, mapping.out.minimap2_bam_index, mapping.out.postbwa, mapping.out.bwa_mean_coverage, mapping.out.bwa_bam, mapping.out.bwa_bam_index)
-            
+            //
+            // MERGING
+            //
+
+            //
+            // ANNOTATION
+            //
+            snpeffDir = file(params.output+"/ANNOTATION/REFERENCE")
+            snpeffDir.mkdirs()
+            annotation(snpeffDir)
+            //
         }
 }
 

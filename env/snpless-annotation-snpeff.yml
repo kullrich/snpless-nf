@@ -1,0 +1,7 @@
+name: snpless-mapping-breseq
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - snpeff

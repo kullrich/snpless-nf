@@ -12,13 +12,17 @@
 
 Define where the pipeline should find input data and save output data.
 
-:floppy_disk: `--input <ARG>` Path to tab-separated file containing information about the samples in the experiment. :pushpin: `mandatory`
+:floppy_disk: `--input <ARG>` Path to tab-separated file containing information about the samples in the experiment (sampleId;sampleReplicate;sampleTimepoint;sampleType;reads1,reads2). :pushpin: `mandatory`
 
 :open_file_folder: `--output <results>` Path to the ouptut directory where the results will be saved. `default: results`
 
 :floppy_disk: `--reference <ARG>` Path to a FASTA reference file. :pushpin: `mandatory`
 
-:floppy_disk: `--gff3 <ARG>` Path to a GFF3 file for the given reference. :pushpin: `mandatory`
+:floppy_disk: `--gff3 <ARG>` Path to a GFF3 file for the reference annotations. :pushpin: `mandatory`
+
+:floppy_disk: `--gtf <ARG>` Path to a GTF file for the reference annotations. :pushpin: `mandatory`
+
+:floppy_disk: `--genbank <ARG>` Path to a GBFF (Genomic GenBank format) reference file. :pushpin: `mandatory`
 
 :floppy_disk: `--proteins <ARG>` Path to a GBFF (Genomic GenBank format) reference file. :pushpin: `mandatory`
 
@@ -138,9 +142,9 @@ see here for detailed possible options [https://barricklab.org/twiki/pub/Lab/Too
 
 `--mapping_breseq_p` sample is not clonal. Predict polymorphic (mixed) mutations.
 
-`--mapping_breseq_options` "-m 20 -b 15"
+`--mapping_breseq_options` "-m 30 -b 20"
 
-`--mapping_breseq_coverage` "--min-BQ 3 --min-MQ 10"
+`--mapping_breseq_coverage` "--min-MQ 30 --min-BQ 20"
 
 ### MAPPING - MINIMAP2
 
@@ -152,7 +156,7 @@ see here for detailed possible options [https://lh3.github.io/minimap2/minimap2.
 
 `--mapping_minimap2_samblaster` remove duplicates with samblaster
 
-`--mapping_minimap2_coverage` "--min-BQ 3 --min-MQ 10"
+`--mapping_minimap2_coverage` "--min-MQ 30 --min-BQ 20"
 
 ### MAPPING - BWA
 
@@ -164,7 +168,7 @@ see here for detailed possible options [http://bio-bwa.sourceforge.net/bwa.shtml
 
 `--mapping_bwa_samblaster` remove duplicates with samblaster
 
-`--mapping_bwa_coverage` "--min-BQ 3 --min-MQ 10"
+`--mapping_bwa_coverage` "--min-MQ 30 --min-BQ 20"
 
 ## :dango: SNPCALLING options
 
@@ -174,7 +178,7 @@ see here for detailed possible options [https://github.com/freebayes/freebayes](
 
 `--freebayes_threads`
 
-`--snpcalling_freebayes_options` "--pooled-discrete --min-alternate-fraction 0.05 --min-alternate-count 2 --min-mapping-quality 20 --min-base-quality 15"
+`--snpcalling_freebayes_options` "--pooled-discrete --min-alternate-fraction 0.01 --min-alternate-count 2 --min-mapping-quality 30 --min-base-quality 20"
 
 ### SNPCALLING - BCFTOOLS
 
@@ -182,7 +186,7 @@ see here for detailed possible options [https://samtools.github.io/bcftools/bcft
 
 `--bcftools_threads`
 
-`--snpcalling_bcftools_mpileup_options` "-C 50 -q 10 -m 3 -F 0.0002 -d 2000 -E -a FORMAT/AD,FORMAT/DP"
+`--snpcalling_bcftools_mpileup_options` "-C 50 -q 30 -Q 20 -d 2000 -E -a FORMAT/AD,FORMAT/DP"
 
 `--snpcalling_bcftools_call_options` "-mAv -Ov"
 
@@ -198,7 +202,7 @@ see here for detailed possible options [https://csb5.github.io/lofreq/commands/]
 
 `--lofreq_threads`
 
-`--snpcalling_lofreq_options` "-C 5 -d 2000 -m 20 -q 5 -Q 5 -D --call-indels"
+`--snpcalling_lofreq_options` "-C 5 -d 2000 -m 30 -q 20 -Q 20 -D --call-indels"
 
 ### SNPCALLING - VARSCAN
 
@@ -206,11 +210,11 @@ see here for detailed possible options [http://varscan.sourceforge.net/using-var
 
 `--varscan_threads`
 
-`--snpcalling_varscan_mpileup_options` "-C 50 -q 10 -d 2000 -E"
+`--snpcalling_varscan_mpileup_options` "-C 50 -q 30 -Q 20 -d 2000 -E"
 
-`--snpcalling_varscan_snp_options` "--min-coverage 5 --min-avg-qual 15 --min-var-freq 0.0002 --output-vcf 1"
+`--snpcalling_varscan_snp_options` "--min-coverage 5 --min-avg-qual 20 --min-var-freq 0.01 --output-vcf 1"
 
-`--snpcalling_varscan_indel_options` "--min-coverage 5 --min-avg-qual 15 --min-var-freq 0.0002 --output-vcf 1"
+`--snpcalling_varscan_indel_options` "--min-coverage 5 --min-avg-qual 20 --min-var-freq 0.01 --output-vcf 1"
 
 ## :oden: SVCALLING options
 

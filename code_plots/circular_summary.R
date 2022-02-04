@@ -16,3 +16,13 @@ check <- matrix(random_sample,nrow=4,
                        c("breseq","BWA","Minimap")))
 
 chordDiagram(check,grid.col = col.pal)
+
+
+
+# make the plot more beautiful 
+library(circlize)
+circos.clear()
+circos.initialize(factors=c("pb_501_001", "pb_501_002", "pb_501_003"), 
+                  xlim=matrix(c(rep(0, 3), ref$V2), ncol=2))
+
+# https://jokergoo.github.io/2020/05/21/make-circular-heatmaps/

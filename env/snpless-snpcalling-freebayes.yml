@@ -1,7 +1,8 @@
-name: snpless-qc-fastqc
+name: snpless-snpcalling-freebayes
 channels:
   - conda-forge
   - bioconda
   - defaults
 dependencies:
   - freebayes
+  - vt

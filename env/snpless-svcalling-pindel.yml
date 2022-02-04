@@ -1,0 +1,8 @@
+name: snpless-svcalling-pindel
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - pindel
+  - samtools=1.9

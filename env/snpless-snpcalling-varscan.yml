@@ -1,0 +1,9 @@
+name: snpless-snpcalling-varscan
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - varscan
+  - samtools=1.9
+  - vt

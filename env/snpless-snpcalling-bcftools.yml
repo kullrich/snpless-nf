@@ -1,0 +1,8 @@
+name: snpless-snpcalling-bcftools
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bcftools
+  - vt

@@ -1,0 +1,8 @@
+name: snpless-svcalling-gridss
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - gridss
+  - samtools=1.9

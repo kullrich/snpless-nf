@@ -1,0 +1,8 @@
+name: snpless-snpcalling-lofreq
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - lofreq
+  - vt

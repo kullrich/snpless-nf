@@ -400,8 +400,6 @@ workflow snpcalling {
         BCFTOOLSMINIMAP2(minimap2_bam, minimap2Dir, file(params.reference))
         // PROCESS BCFTOOLSBWA
         BCFTOOLSBWA(bwa_bam, bwaDir, file(params.reference))
-        // PROCESS GDCOMPARE
-        GDCOMPARE(breseq_gd, breseqDir, file(params.proteins))
         // PROCESS LOFREQBRESEQ
         LOFREQBRESEQ(postbreseq)
         LOFREQBRESEQ.out.lofreq_vcf.subscribe {it.copyTo(lofreq_breseqDir)}
@@ -417,6 +415,8 @@ workflow snpcalling {
         VARSCANMINIMAP2(minimap2_bam, minimap2Dir, file(params.reference))
         // PROCESS VARSCANBWA
         VARSCANBWA(bwa_bam, bwaDir, file(params.reference))
+        // PROCESS GDCOMPARE
+        GDCOMPARE(breseq_gd, breseqDir, file(params.proteins))
         freebayes_breseq_vcf = FREEBAYESBRESEQ.out.freebayes_vcf
         freebayes_minimap2_vcf = FREEBAYESMINIMAP2.out.freebayes_vcf
         freebayes_bwa_vcf = FREEBAYESBWA.out.freebayes_vcf
@@ -426,10 +426,10 @@ workflow snpcalling {
         varscan_breseq_vcf = VARSCANBRESEQ.out.varscan_vcf
         varscan_minimap2_vcf = VARSCANMINIMAP2.out.varscan_vcf
         varscan_bwa_vcf = VARSCANBWA.out.varscan_vcf
-        gdcompare = GDCOMPARE.out.gdcompare
         lofreq_breseq_vcf = LOFREQBRESEQ.out.lofreq_vcf
         lofreq_minimap2_vcf = LOFREQMINIMAP2.out.lofreq_vcf
         lofreq_bwa_vcf = LOFREQBWA.out.lofreq_vcf
+        gdcompare = GDCOMPARE.out.gdcompare
     emit:
         freebayes_breseq_vcf
         freebayes_minimap2_vcf
@@ -440,10 +440,10 @@ workflow snpcalling {
         varscan_breseq_vcf
         varscan_minimap2_vcf
         varscan_bwa_vcf
-        gdcompare
         lofreq_breseq_vcf
         lofreq_minimap2_vcf
         lofreq_bwa_vcf
+        gdcompare
 }
 
 workflow svcalling {

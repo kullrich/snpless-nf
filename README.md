@@ -23,17 +23,17 @@ snpless-nf - A Nextflow pipeline for time-course analysis with bacterial NGS who
     3. BWA [BWA](http://bio-bwa.sourceforge.net/) >> SAMBLASTER [samblaster](https://github.com/GregoryFaust/samblaster) remove duplicates
     4. COVERAGE [samtools](https://github.com/samtools/samtools)
 5. SNPCALLING
-    1. MPILEUP [samtools](https://github.com/samtools/samtools)
-    2. BCFTOOLS [bcftools](https://github.com/samtools/bcftools)
-    3. FREEBAYES [freebayes](https://github.com/freebayes/freebayes)
-    4. LOFREQ [LoFreq](http://csb5.github.io/lofreq/)
-    5. VARSCAN [varscan](http://dkoboldt.github.io/varscan/)
+    1. FREEBAYES [freebayes](https://github.com/freebayes/freebayes) >> VCFFILTER [vcflib](https://github.com/vcflib/vcflib) >> VT [Vt](https://genome.sph.umich.edu/wiki/Vt) normalize >> decompose
+    2. BCFTOOLS [bcftools](https://github.com/samtools/bcftools) mpileup, call, vcfutils.pl varFilter >>  VT [Vt](https://genome.sph.umich.edu/wiki/Vt) normalize >> decompose
+    3. LOFREQ [LoFreq](http://csb5.github.io/lofreq/) indelqual, index, call-parallel
+    4. VARSCAN [varscan](http://dkoboldt.github.io/varscan/) mpileup2snp, mpileup2indel
+    5. MPILEUP [samtools](https://github.com/samtools/samtools) >> 
+    6. GDCOMPARE [gdtools](https://barricklab.org/twiki/pub/Lab/ToolsBacterialGenomeResequencing/documentation/gd_usage.html)
 6. SVCALLING
     1. PINDEL [pindel](https://github.com/genome/pindel)
     2. GRIDSS [GRIDSS](https://github.com/PapenfussLab/gridss)
 7. FILTERING/MERGING
-    1. GDCOMPARE [gdtools](https://barricklab.org/twiki/pub/Lab/ToolsBacterialGenomeResequencing/documentation/gd_usage.html)
-    2. BEDTOOLS [bedtools](https://bedtools.readthedocs.io/en/latest/)
+    1. BEDTOOLS [bedtools](https://bedtools.readthedocs.io/en/latest/)
 8. ANNOTATION
     1. SNPEFF [SnpEff](http://pcingola.github.io/SnpEff/)
 9. PLOTTING

@@ -172,6 +172,8 @@ see here for detailed possible options [http://bio-bwa.sourceforge.net/bwa.shtml
 
 ## :dango: SNPCALLING options
 
+### SNPCALLING - 
+
 ### SNPCALLING - FREEBAYES
 
 see here for detailed possible options [https://github.com/freebayes/freebayes](https://github.com/freebayes/freebayes)

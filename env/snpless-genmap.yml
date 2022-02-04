@@ -1,0 +1,7 @@
+name: snpless-genmap
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - genamp

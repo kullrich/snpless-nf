@@ -17,8 +17,8 @@ process FREEBAYESBRESEQ {
 
 	script:
 		"""
-		bamlist="\$(sortfiles.py ${mappingPath} bam _)"
-		freebayes -f ${mappingPath}/reference.fasta ${params.snpcalling_freebayes_options} -b $bamlist | vcffilter ${params.snpcalling_freebayes_filter_options} > BRESEQ.freebayes.vcffilter.vcf
+		sortfiles.py ${mappingPath} bam _ > bamlist.txt
+		freebayes -f ${mappingPath}/reference.fasta ${params.snpcalling_freebayes_options} -L bamlist.txt | vcffilter ${params.snpcalling_freebayes_filter_options} > BRESEQ.freebayes.vcffilter.vcf
 		vt normalize -r ${mappingPath}/reference.fasta -o BRESEQ.freebayes.normalized.vcf BRESEQ.freebayes.vcffilter.vcf
 		vt decompose -o BRESEQ.freebayes.decomposed.vcf BRESEQ.freebayes.normalized.vcf
 		"""
@@ -44,8 +44,8 @@ process FREEBAYESMINIMAP2 {
 
 	script:
 		"""
-		bamlist="\$(sortfiles.py ${mappingPath} bam _)"
-		freebayes -f ${reference} ${params.snpcalling_freebayes_options} -b $bamlist | vcffilter ${params.snpcalling_freebayes_filter_options} > MINIMAP2.freebayes.vcffilter.vcf
+		sortfiles.py ${mappingPath} bam _ > bamlist.txt
+		freebayes -f ${reference} ${params.snpcalling_freebayes_options} -L bamlist.txt | vcffilter ${params.snpcalling_freebayes_filter_options} > MINIMAP2.freebayes.vcffilter.vcf
 		vt normalize -r ${reference} -o MINIMAP2.freebayes.normalized.vcf MINIMAP2.freebayes.vcffilter.vcf
 		vt decompose -o MINIMAP2.freebayes.decomposed.vcf MINIMAP2.freebayes.normalized.vcf
 		"""
@@ -71,7 +71,8 @@ process FREEBAYESBWA {
 
 	script:
 		"""
-		freebayes -f ${reference} ${params.snpcalling_freebayes_options} -b ${mappingPath}/*.bam | vcffilter ${params.snpcalling_freebayes_filter_options} > BWA.freebayes.vcffilter.vcf
+		sortfiles.py ${mappingPath} bam _ > bamlist.txt
+		freebayes -f ${reference} ${params.snpcalling_freebayes_options} -L bamlist.txt | vcffilter ${params.snpcalling_freebayes_filter_options} > BWA.freebayes.vcffilter.vcf
 		vt normalize -r ${reference} -o BWA.freebayes.normalized.vcf BWA.freebayes.vcffilter.vcf
 		vt decompose -o BWA.freebayes.decomposed.vcf BWA.freebayes.normalized.vcf
 		"""
@@ -96,7 +97,8 @@ process BCFTOOLSBRESEQ {
 
 	script:
 		"""
-		bcftools mpileup ${params.snpcalling_bcftools_mpileup_options} -f ${mappingPath}/reference.fasta ${mappingPath}/*.bam | bcftools call ${params.snpcalling_bcftools_call_options} | vcfutils.pl varFilter ${params.snpcalling_bcftools_varfilter_options} > BRESEQ.bcftools.varfilter.vcf
+		sortfiles.py ${mappingPath} bam _ > bamlist.txt
+		bcftools mpileup ${params.snpcalling_bcftools_mpileup_options} -f ${mappingPath}/reference.fasta -b bamlist.txt | bcftools call ${params.snpcalling_bcftools_call_options} | vcfutils.pl varFilter ${params.snpcalling_bcftools_varfilter_options} > BRESEQ.bcftools.varfilter.vcf
 		vt normalize -r ${mappingPath}/reference.fasta -o BRESEQ.bcftools.normalized.vcf BRESEQ.bcftools.varfilter.vcf
 		vt decompose -o BRESEQ.bcftools.decomposed.vcf BRESEQ.bcftools.normalized.vcf
 		"""
@@ -122,7 +124,8 @@ process BCFTOOLSMINIMAP2 {
 
 	script:
 		"""
-		bcftools mpileup ${params.snpcalling_bcftools_mpileup_options} -f ${reference} ${mappingPath}/*.bam | bcftools call ${params.snpcalling_bcftools_call_options} | vcfutils.pl varFilter ${params.snpcalling_bcftools_varfilter_options} > MINIMAP2.bcftools.varfilter.vcf
+		sortfiles.py ${mappingPath} bam _ > bamlist.txt
+		bcftools mpileup ${params.snpcalling_bcftools_mpileup_options} -f ${reference} -b bamlist.txt | bcftools call ${params.snpcalling_bcftools_call_options} | vcfutils.pl varFilter ${params.snpcalling_bcftools_varfilter_options} > MINIMAP2.bcftools.varfilter.vcf
 		vt normalize -r ${reference} -o MINIMAP2.bcftools.normalized.vcf MINIMAP2.bcftools.varfilter.vcf
 		vt decompose -o MINIMAP2.bcftools.decompose.vcf MINIMAP2.bcftools.varfilter.vcf
 		"""
@@ -148,7 +151,8 @@ process BCFTOOLSBWA {
 
 	script:
 		"""
-		bcftools mpileup ${params.snpcalling_bcftools_mpileup_options} -f ${reference} ${mappingPath}/*.bam | bcftools call ${params.snpcalling_bcftools_call_options} | vcfutils.pl varFilter ${params.snpcalling_bcftools_varfilter_options} > BWA.bcftools.varfilter.vcf
+		sortfiles.py ${mappingPath} bam _ > bamlist.txt
+		bcftools mpileup ${params.snpcalling_bcftools_mpileup_options} -f ${reference} -b bamlist.txt | bcftools call ${params.snpcalling_bcftools_call_options} | vcfutils.pl varFilter ${params.snpcalling_bcftools_varfilter_options} > BWA.bcftools.varfilter.vcf
 		vt normalize -r ${reference} -o BWA.bcftools.normalized.vcf BWA.bcftools.varfilter.vcf
 		vt decompose -o BWA.bcftools.decompose.vcf BWA.bcftools.normalized.vcf
 		"""
@@ -259,8 +263,9 @@ process VARSCANBRESEQ {
 
 	script:
 		"""
-		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${mappingPath}/reference.fasta ${mappingPath}/*.bam | varscan mpileup2snp ${params.snpcalling_varscan_snp_options} > BRESEQ.varscan.snp.vcf
-		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${mappingPath}/reference.fasta ${mappingPath}/*.bam | varscan mpileup2indel ${params.snpcalling_varscan_indel_options} > BRESEQ.varscan.indel.vcf
+		sortfiles.py ${mappingPath} bam _ > bamlist.txt
+		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${mappingPath}/reference.fasta -b bamlist.txt | varscan mpileup2snp ${params.snpcalling_varscan_snp_options} > BRESEQ.varscan.snp.vcf
+		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${mappingPath}/reference.fasta -b bamlist.txt | varscan mpileup2indel ${params.snpcalling_varscan_indel_options} > BRESEQ.varscan.indel.vcf
 		vt normalize -r ${mappingPath}/reference.fasta -o BRESEQ.varscan.snp.normalized.vcf BRESEQ.varscan.snp.vcf
 		vt decompose -o BRESEQ.varscan.snp.decomposed.vcf BRESEQ.varscan.snp.normalized.vcf
 		vt normalize -r ${mappingPath}/reference.fasta -o BRESEQ.varscan.indel.normalized.vcf BRESEQ.varscan.indel.vcf
@@ -288,8 +293,9 @@ process VARSCANMINIMAP2 {
 
 	script:
 		"""
-		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${reference} ${mappingPath}/*.bam | varscan mpileup2snp ${params.snpcalling_varscan_snp_options} > MINIMAP2.varscan.snp.vcf
-		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${reference} ${mappingPath}/*.bam | varscan mpileup2indel ${params.snpcalling_varscan_indel_options} > MINIMAP2.varscan.indel.vcf
+		sortfiles.py ${mappingPath} bam _ > bamlist.txt
+		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${reference} -b bamlist.txt | varscan mpileup2snp ${params.snpcalling_varscan_snp_options} > MINIMAP2.varscan.snp.vcf
+		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${reference} -b bamlist.txt | varscan mpileup2indel ${params.snpcalling_varscan_indel_options} > MINIMAP2.varscan.indel.vcf
 		vt normalize -r ${reference} -o MINIMAP2.varscan.snp.normalized.vcf MINIMAP2.varscan.snp.vcf
 		vt decompose -o MINIMAP2.varscan.snp.decompose.vcf MINIMAP2.varscan.snp.normalized.vcf
 		vt normalize -r ${reference} -o MINIMAP2.varscan.indel.normalized.vcf MINIMAP2.varscan.indel.vcf
@@ -317,8 +323,9 @@ process VARSCANBWA {
 
 	script:
 		"""
-		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${reference} ${mappingPath}/*.bam | varscan mpileup2snp ${params.snpcalling_varscan_snp_options} > BWA.varscan.snp.vcf
-		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${reference} ${mappingPath}/*.bam | varscan mpileup2indel ${params.snpcalling_varscan_indel_options} > BWA.varscan.indel.vcf
+		sortfiles.py ${mappingPath} bam _ > bamlist.txt
+		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${reference} -b bamlist.txt | varscan mpileup2snp ${params.snpcalling_varscan_snp_options} > BWA.varscan.snp.vcf
+		samtools mpileup ${params.snpcalling_varscan_mpileup_options} -f ${reference} -b bamlist.txt | varscan mpileup2indel ${params.snpcalling_varscan_indel_options} > BWA.varscan.indel.vcf
 		vt normalize -r ${reference} -o BWA.varscan.snp.normalized.vcf BWA.varscan.snp.vcf
 		vt decompose -o BWA.varscan.snp.decompose.vcf BWA.varscan.snp.normalized.vcf
 		vt normalize -r ${reference} -o BWA.varscan.indel.normalized.vcf BWA.varscan.indel.vcf
@@ -345,7 +352,8 @@ process MPILEUPBRESEQ {
 
 	script:
 		"""
-		samtools mpileup ${params.snpcalling_mpileup_options} -f ${mappingPath}/reference.fasta ${mappingPath}/*.bam | parse_mpileup.py > BRESEQ.mpileup.txt
+		sortfiles.py ${mappingPath} bam _ > bamlist.txt
+		samtools mpileup ${params.snpcalling_mpileup_options} -f ${mappingPath}/reference.fasta -b bamlist.txt | parse_mpileup.py > BRESEQ.mpileup.txt
 
 		"""
 }
@@ -370,7 +378,8 @@ process MPILEUPMINIMAP2 {
 
 	script:
 		"""
-		samtools mpileup ${params.snpcalling_mpileup_options} -f ${reference} ${mappingPath}/*.bam | parse_mpileup.py > MINIMAP2.mpileup.txt
+		sortfiles.py ${mappingPath} bam _ > bamlist.txt
+		samtools mpileup ${params.snpcalling_mpileup_options} -f ${reference} -b bamlist.txt | parse_mpileup.py > MINIMAP2.mpileup.txt
 
 		"""
 }
@@ -395,7 +404,8 @@ process MPILEUPBWA {
 
 	script:
 		"""
-		samtools mpileup ${params.snpcalling_mpileup_options} -f ${reference} ${mappingPath}/*.bam | parse_mpileup.py > BWA.mpileup.txt
+		sortfiles.py ${mappingPath} bam _ > bamlist.txt
+		samtools mpileup ${params.snpcalling_mpileup_options} -f ${reference} -b bamlist.txt | parse_mpileup.py > BWA.mpileup.txt
 
 		"""
 }

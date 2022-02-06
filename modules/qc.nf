@@ -1,15 +1,17 @@
 process FASTQC {
 	conda baseDir + '/env/snpless-qc-fastqc.yml'
-	tag "FASTQC on ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}"
+	tag "FASTQC on ${sampleLong}"
 	cpus params.fastqc_threads
 
 	publishDir "${params.output}/QC/FASTQC", mode: 'symlink'
 
 	input:
-		tuple val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(sampleType), val(reads1), val(reads2), path(reads1f), path(reads2f), path(trim_adapater_file)
+		tuple val(sampleLong), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(sampleType), val(reads1), val(reads2), path(reads1f), path(reads2f), path(trim_adapater_file)
 
 	output:
-		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(sampleType), val(reads1), val(reads2)
+		path("${sampleLong}"), emit: fastqcDir
+		tuple val(sampleLong), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(sampleType), val(reads1), val(reads2), emit: fastqcSamples
+
 
 	when:
 		(params.qc && params.run_fastqc) || params.run_all
@@ -19,62 +21,63 @@ process FASTQC {
 			if (params.qc_fastqc_quiet)
 				if (params.qc_fastqc_nogroup)
 					"""
-					mkdir -p ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}
-					fastqc -t $task.cpus -k $params.qc_fastqc_kmers -q --nogroup -o ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType} $reads1f &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.fastqc.log
+					mkdir -p ${sampleLong}
+					fastqc -t $task.cpus -k $params.qc_fastqc_kmers -q --nogroup -o ${sampleLong} $reads1f &> ${sampleLong}/${sampleLong}.fastqc.log
 					"""
 				else
 					"""
-					mkdir -p ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}
-					fastqc -t $task.cpus -k $params.qc_fastqc_kmers -q -o ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType} $reads1f &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.fastqc.log
+					mkdir -p ${sampleLong}
+					fastqc -t $task.cpus -k $params.qc_fastqc_kmers -q -o ${sampleLong} $reads1f &> ${sampleLong}/${sampleLong}.fastqc.log
 					"""
 			else
 				if (params.qc_fastqc_nogroup)
 					"""
-					mkdir -p ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}
-					fastqc -t $task.cpus -k $params.qc_fastqc_kmers --nogroup -o ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType} $reads1f &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.fastqc.log
+					mkdir -p ${sampleLong}
+					fastqc -t $task.cpus -k $params.qc_fastqc_kmers --nogroup -o ${sampleLong} $reads1f &> ${sampleLong}/${sampleLong}.fastqc.log
 					"""
 				else
 					"""
-					mkdir -p ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}
-					fastqc -t $task.cpus -k $params.qc_fastqc_kmers -o ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType} $reads1f &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.fastqc.log
+					mkdir -p ${sampleLong}
+					fastqc -t $task.cpus -k $params.qc_fastqc_kmers -o ${sampleLong} $reads1f &> ${sampleLong}/${sampleLong}.fastqc.log
 					"""
 		else
 			if (params.qc_fastqc_quiet)
 				if (params.qc_fastqc_nogroup)
 					"""
-					mkdir -p ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}
-					fastqc -t $task.cpus -k $params.qc_fastqc_kmers -q --nogroup -o ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType} $reads1f $reads2f &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.fastqc.log
+					mkdir -p ${sampleLong}
+					fastqc -t $task.cpus -k $params.qc_fastqc_kmers -q --nogroup -o ${sampleLong} $reads1f $reads2f &> ${sampleLong}/${sampleLong}.fastqc.log
 					"""
 				else
 					"""
-					mkdir -p ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}
-					fastqc -t $task.cpus -k $params.qc_fastqc_kmers -q -o ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType} $reads1f $reads2f &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.fastqc.log
+					mkdir -p ${sampleLong}
+					fastqc -t $task.cpus -k $params.qc_fastqc_kmers -q -o ${sampleLong} $reads1f $reads2f &> ${sampleLong}/${sampleLong}.fastqc.log
 					"""
 			else
 				if (params.qc_fastqc_nogroup)
 					"""
-					mkdir -p ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}
-					fastqc -t $task.cpus -k $params.qc_fastqc_kmers --nogroup -o ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType} $reads1f $reads2f &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.fastqc.log
+					mkdir -p ${sampleLong}
+					fastqc -t $task.cpus -k $params.qc_fastqc_kmers --nogroup -o ${sampleLong} $reads1f $reads2f &> ${sampleLong}/${sampleLong}.fastqc.log
 					"""
 				else
 					"""
-					mkdir -p ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}
-					fastqc -t $task.cpus -k $params.qc_fastqc_kmers -o ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType} $reads1f $reads2f &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.fastqc.log
+					mkdir -p ${sampleLong}
+					fastqc -t $task.cpus -k $params.qc_fastqc_kmers -o ${sampleLong} $reads1f $reads2f &> ${sampleLong}/${sampleLong}.fastqc.log
 					"""
 }
 
 process TRIM {
 	conda baseDir + '/env/snpless-qc-trim.yml'
-	tag "TRIM on ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}"
+	tag "TRIM on ${sampleLong}"
 	cpus params.trim_threads
 
 	publishDir "${params.output}/QC/TRIM", mode: 'symlink'
 
 	input:
-		tuple val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(sampleType), val(reads1), val(reads2), path(reads1f), path(reads2f), path(trim_adapter_file)
+		tuple val(sampleLong), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(sampleType), val(reads1), val(reads2), path(reads1f), path(reads2f), path(trim_adapter_file)
 
 	output:
-		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(sampleType), val(reads1), val(reads2)
+		path("${sampleLong}"), emit: trimDir
+		tuple val(sampleLong), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(sampleType), val(reads1), val(reads2), emit: trimSamples
 
 	when:
 		(params.qc && params.run_trim) || params.run_all
@@ -84,87 +87,88 @@ process TRIM {
 			if (params.qc_fastqc_quiet)
 				if(params.qc_trim_use_adapter)
 					"""
-					mkdir -p ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}
-					trimmomatic SE -threads $task.cpus -quiet $reads1f ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq ILLUMINACLIP:${trim_adapter_file}:${params.qc_clip_options} ${params.qc_trim_options} &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.trim.log
-					bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq
+					mkdir -p ${sampleLong}
+					trimmomatic SE -threads $task.cpus -quiet $reads1f ${sampleLong}/${sampleLong}.SE.fq ILLUMINACLIP:${trim_adapter_file}:${params.qc_clip_options} ${params.qc_trim_options} &> ${sampleLong}/${sampleLong}.trim.log
+					bgzip ${sampleLong}/${sampleLong}.SE.fq
 					"""
 				else
 					"""
-					mkdir -p ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}
-					trimmomatic SE -threads $task.cpus -quiet $reads1f ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq ${params.qc_trim_options} &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.trim.log
-					bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq
+					mkdir -p ${sampleLong}
+					trimmomatic SE -threads $task.cpus -quiet $reads1f ${sampleLong}/${sampleLong}.SE.fq ${params.qc_trim_options} &> ${sampleLong}/${sampleLong}.trim.log
+					bgzip ${sampleLong}/${sampleLong}.SE.fq
 					"""
 			else
 				if(params.qc_trim_use_adapter)
 					"""
-					mkdir -p ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}
-					trimmomatic SE -threads $task.cpus $reads1f ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq ILLUMINACLIP:${trim_adapter_file}:${params.qc_clip_options} ${params.qc_trim_options} &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.trim.log
-					bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq
+					mkdir -p ${sampleLong}
+					trimmomatic SE -threads $task.cpus $reads1f ${sampleLong}/${sampleLong}.SE.fq ILLUMINACLIP:${trim_adapter_file}:${params.qc_clip_options} ${params.qc_trim_options} &> ${sampleLong}/${sampleLong}.trim.log
+					bgzip ${sampleLong}/${sampleLong}.SE.fq
 					"""
 				else
 					"""
-					mkdir -p ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}
-					trimmomatic SE -threads $task.cpus $reads1f ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq ${params.qc_trim_options} &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.trim.log
-					bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq
+					mkdir -p ${sampleLong}
+					trimmomatic SE -threads $task.cpus $reads1f ${sampleLong}/${sampleLong}.SE.fq ${params.qc_trim_options} &> ${sampleLong}/${sampleLong}.trim.log
+					bgzip ${sampleLong}/${sampleLong}.SE.fq
 					"""
 		else
 			if (params.qc_fastqc_quiet)
 				if(params.qc_trim_use_adapter)
 					"""
-					mkdir -p ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}
-					trimmomatic PE -threads $task.cpus -quiet $reads1f $reads2f ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE1.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE1.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE2.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE2.fq ILLUMINACLIP:${trim_adapter_file}:${params.qc_clip_options} ${params.qc_trim_options} &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.trim.log
-					bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE1.fq
-					bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE2.fq 
-					cat ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE1.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE2.fq > ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq
-					bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq
-					rm ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE1.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE2.fq
+					mkdir -p ${sampleLong}
+					trimmomatic PE -threads $task.cpus -quiet $reads1f $reads2f ${sampleLong}/${sampleLong}.PE1.fq ${sampleLong}/${sampleLong}.SE1.fq ${sampleLong}/${sampleLong}.PE2.fq ${sampleLong}/${sampleLong}.SE2.fq ILLUMINACLIP:${trim_adapter_file}:${params.qc_clip_options} ${params.qc_trim_options} &> ${sampleLong}/${sampleLong}.trim.log
+					bgzip ${sampleLong}/${sampleLong}.PE1.fq
+					bgzip ${sampleLong}/${sampleLong}.PE2.fq 
+					cat ${sampleLong}/${sampleLong}.SE1.fq ${sampleLong}/${sampleLong}.SE2.fq > ${sampleLong}/${sampleLong}.SE.fq
+					bgzip ${sampleLong}/${sampleLong}.SE.fq
+					rm ${sampleLong}/${sampleLong}.SE1.fq ${sampleLong}/${sampleLong}.SE2.fq
 					"""
 				else
 					"""
-					mkdir -p ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}
-					trimmomatic PE -threads $task.cpus -quiet $reads1f $reads2f ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE1.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE1.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE2.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE2.fq ${params.qc_trim_options} &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.trim.log
-					bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE1.fq
-					bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE2.fq 
-					cat ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE1.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE2.fq > ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq
-					bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq
-					rm ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE1.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE2.fq
+					mkdir -p ${sampleLong}
+					trimmomatic PE -threads $task.cpus -quiet $reads1f $reads2f ${sampleLong}/${sampleLong}.PE1.fq ${sampleLong}/${sampleLong}.SE1.fq ${sampleLong}/${sampleLong}.PE2.fq ${sampleLong}/${sampleLong}.SE2.fq ${params.qc_trim_options} &> ${sampleLong}/${sampleLong}.trim.log
+					bgzip ${sampleLong}/${sampleLong}.PE1.fq
+					bgzip ${sampleLong}/${sampleLong}.PE2.fq 
+					cat ${sampleLong}/${sampleLong}.SE1.fq ${sampleLong}/${sampleLong}.SE2.fq > ${sampleLong}/${sampleLong}.SE.fq
+					bgzip ${sampleLong}/${sampleLong}.SE.fq
+					rm ${sampleLong}/${sampleLong}.SE1.fq ${sampleLong}/${sampleLong}.SE2.fq
 					"""
 			else
 				if(params.qc_trim_use_adapter)
 					"""
-					mkdir -p ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}
-					trimmomatic PE -threads $task.cpus $reads1f $reads2f ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE1.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE1.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE2.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE2.fq ILLUMINACLIP:${trim_adapter_file}:${params.qc_clip_options} ${params.qc_trim_options} &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.trim.log
-					bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE1.fq
-					bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE2.fq 
-					cat ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE1.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE2.fq > ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq
-					bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq
-					rm ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE1.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE2.fq
+					mkdir -p ${sampleLong}
+					trimmomatic PE -threads $task.cpus $reads1f $reads2f ${sampleLong}/${sampleLong}.PE1.fq ${sampleLong}/${sampleLong}.SE1.fq ${sampleLong}/${sampleLong}.PE2.fq ${sampleLong}/${sampleLong}.SE2.fq ILLUMINACLIP:${trim_adapter_file}:${params.qc_clip_options} ${params.qc_trim_options} &> ${sampleLong}/${sampleLong}.trim.log
+					bgzip ${sampleLong}/${sampleLong}.PE1.fq
+					bgzip ${sampleLong}/${sampleLong}.PE2.fq 
+					cat ${sampleLong}/${sampleLong}.SE1.fq ${sampleLong}/${sampleLong}.SE2.fq > ${sampleLong}/${sampleLong}.SE.fq
+					bgzip ${sampleLong}/${sampleLong}.SE.fq
+					rm ${sampleLong}/${sampleLong}.SE1.fq ${sampleLong}/${sampleLong}.SE2.fq
 					"""
 				else
 					"""
-					mkdir -p ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}
-					trimmomatic PE -threads $task.cpus $reads1f $reads2f ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE1.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE1.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE2.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE2.fq ${params.qc_trim_options} &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.trim.log
-					bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE1.fq
-					bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE2.fq 
-					cat ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE1.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE2.fq > ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq
-					bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq
-					rm ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE1.fq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE2.fq
+					mkdir -p ${sampleLong}
+					trimmomatic PE -threads $task.cpus $reads1f $reads2f ${sampleLong}/${sampleLong}.PE1.fq ${sampleLong}/${sampleLong}.SE1.fq ${sampleLong}/${sampleLong}.PE2.fq ${sampleLong}/${sampleLong}.SE2.fq ${params.qc_trim_options} &> ${sampleLong}/${sampleLong}.trim.log
+					bgzip ${sampleLong}/${sampleLong}.PE1.fq
+					bgzip ${sampleLong}/${sampleLong}.PE2.fq 
+					cat ${sampleLong}/${sampleLong}.SE1.fq ${sampleLong}/${sampleLong}.SE2.fq > ${sampleLong}/${sampleLong}.SE.fq
+					bgzip ${sampleLong}/${sampleLong}.SE.fq
+					rm ${sampleLong}/${sampleLong}.SE1.fq ${sampleLong}/${sampleLong}.SE2.fq
 					"""
 }
 
 process PEAR {
 	conda baseDir + '/env/snpless-qc-pear.yml'
-	tag "PEAR on ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}"
+	tag "PEAR on ${sampleLong}"
 	cpus params.pear_threads
 
 	publishDir "${params.output}/QC/PEAR", mode: 'symlink'
 
 	input:
-		tuple path(trimPath), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(sampleType), val(reads1), val(reads2)
-
+		path(trimDir)
+		tuple val(sampleLong), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(sampleType), val(reads1), val(reads2)
 
 	output:
-		tuple path("${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}"), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(sampleType), val(reads1), val(reads2)
+		path("${sampleLong}"), emit: pearDir
+		tuple val(sampleLong), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(sampleType), val(reads1), val(reads2), emit: pearSamples
 
 	when:
 		(params.qc && params.run_pear) || params.run_all
@@ -175,15 +179,15 @@ process PEAR {
 			"""
 		else
 			"""
-			pear --threads $task.cpus ${params.qc_pear_options} -f ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE1.fq.gz -r ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.PE2.fq.gz -o ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType} &> ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.pear.log
-			mv ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.unassembled.forward.fastq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.MEPE1.fq
-			bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.MEPE1.fq
-			mv ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.unassembled.reverse.fastq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.MEPE2.fq
-			bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.MEPE2.fq
-			bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.assembled.fastq
-			gunzip -c ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.assembled.fastq ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.SE.fq.gz > ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.MESE.fq
-			bgzip ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.MESE.fq
-			rm ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.assembled.fastq.gz
-			rm ${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}/${sampleId}_${sampleReplicate}_${sampleTimepoint}_${sampleType}.discarded.fastq
+			pear --threads $task.cpus ${params.qc_pear_options} -f ${sampleLong}/${sampleLong}.PE1.fq.gz -r ${sampleLong}/${sampleLong}.PE2.fq.gz -o ${sampleLong}/${sampleLong} &> ${sampleLong}/${sampleLong}.pear.log
+			mv ${sampleLong}/${sampleLong}.unassembled.forward.fastq ${sampleLong}/${sampleLong}.MEPE1.fq
+			bgzip ${sampleLong}/${sampleLong}.MEPE1.fq
+			mv ${sampleLong}/${sampleLong}.unassembled.reverse.fastq ${sampleLong}/${sampleLong}.MEPE2.fq
+			bgzip ${sampleLong}/${sampleLong}.MEPE2.fq
+			bgzip ${sampleLong}/${sampleLong}.assembled.fastq
+			gunzip -c ${sampleLong}/${sampleLong}.assembled.fastq ${sampleLong}/${sampleLong}.SE.fq.gz > ${sampleLong}/${sampleLong}.MESE.fq
+			bgzip ${sampleLong}/${sampleLong}.MESE.fq
+			rm ${sampleLong}/${sampleLong}.assembled.fastq.gz
+			rm ${sampleLong}/${sampleLong}.discarded.fastq
 			"""
 }

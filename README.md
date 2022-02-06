@@ -27,7 +27,7 @@ snpless-nf - A Nextflow pipeline for time-course analysis with bacterial NGS who
     2. BCFTOOLS [bcftools](https://github.com/samtools/bcftools) mpileup, call, vcfutils.pl varFilter >>  VT [Vt](https://genome.sph.umich.edu/wiki/Vt) normalize >> decompose
     3. LOFREQ [LoFreq](http://csb5.github.io/lofreq/) indelqual, index, call-parallel
     4. VARSCAN [varscan](http://dkoboldt.github.io/varscan/) mpileup2snp, mpileup2indel
-    5. MPILEUP [samtools](https://github.com/samtools/samtools) >> 
+    5. MPILEUP [samtools](https://github.com/samtools/samtools) >> parse_mpileup.py >> annotate_pvalues
     6. GDCOMPARE [gdtools](https://barricklab.org/twiki/pub/Lab/ToolsBacterialGenomeResequencing/documentation/gd_usage.html)
 6. SVCALLING
     1. PINDEL [pindel](https://github.com/genome/pindel)
@@ -42,7 +42,8 @@ snpless-nf - A Nextflow pipeline for time-course analysis with bacterial NGS who
 Addtional Tools used for data conversion and data analysis:
 
 - HTSLIB [htslib](https://github.com/samtools/htslib)
-- trajectory_pvalue_cpp_code [https://github.com/benjaminhgood/LTEE-metagenomic/tree/master/trajectory_pvalue_cpp_code](https://github.com/benjaminhgood/LTEE-metagenomic/tree/master/trajectory_pvalue_cpp_code)
+- trajectory_pvalue_cpp_code [https://github.com/benjaminhgood/LTEE-metagenomic/tree/master/trajectory_pvalue_cpp_code](https://github.com/benjaminhgood/LTEE-metagenomic/tree/master/trajectory_pvalue_cpp_code) compiled into annotate_pvalues
+- create_timecourse.py [https://github.com/benjaminhgood/LTEE-metagenomic/blob/master/cluster_scripts/create_timecourse.py](https://github.com/benjaminhgood/LTEE-metagenomic/blob/master/cluster_scripts/create_timecourse.py) used in parse_mpileup.py
 
 ## Quickstart
 

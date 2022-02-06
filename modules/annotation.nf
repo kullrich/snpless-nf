@@ -48,3 +48,4 @@ process SNPEFFCREATEDB {
 		else
 		    error "Invalid annotation type: ${params.annotation_snpeff_type}"
 }
+

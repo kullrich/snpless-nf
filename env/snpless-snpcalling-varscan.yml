@@ -7,3 +7,4 @@ dependencies:
   - varscan
   - samtools=1.9
   - vt
+  - numpy

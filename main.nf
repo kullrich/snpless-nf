@@ -219,7 +219,7 @@ include {UNICYCLER; PROKKA} from './modules/assembly' params(params)
 include {BRESEQ; MINIMAP2; BWA; POSTBRESEQ; POSTMINIMAP2; POSTBWA} from './modules/mapping' params(params)
 include {FREEBAYESBRESEQ; FREEBAYESMINIMAP2; FREEBAYESBWA; BCFTOOLSBRESEQ; BCFTOOLSMINIMAP2; BCFTOOLSBWA; LOFREQBRESEQ; LOFREQMINIMAP2; LOFREQBWA; VARSCANBRESEQ; VARSCANMINIMAP2; VARSCANBWA; MPILEUPBRESEQ; MPILEUPMINIMAP2; MPILEUPBWA; GDCOMPARE} from './modules/snpcalling' params(params)
 include {PINDELMINIMAP2; PINDELBWA} from './modules/svcalling' params(params)
-include {SNPEFFCREATEDB} from './modules/annotation' params(params)
+include {SNPEFFCREATEDB; SNPEFFANNOTATEFREEBAYESBRESEQ; SNPEFFANNOTATEFREEBAYESMINIMAP2; SNPEFFANNOTATEFREEBAYESBWA; SNPEFFANNOTATEBCFTOOLSBRESEQ; SNPEFFANNOTATEBCFTOOLSMINIMAP2; SNPEFFANNOTATEBCFTOOLSBWA; SNPEFFANNOTATEVARSCANBRESEQ; SNPEFFANNOTATEVARSCANMINIMAP2; SNPEFFANNOTATEVARSCANBWA} from './modules/annotation' params(params)
 
 // QC workflow
 workflow qc {
@@ -532,11 +532,31 @@ workflow svcalling {
 
 workflow annotation {
     take:
-        snpeffDir
+        snpeffOutDir
+        freebayes_breseq_vcf
+        freebayes_minimap2_vcf
+        freebayes_bwa_vcf
+        bcftools_breseq_vcf
+        bcftools_minimap2_vcf
+        bcftools_bwa_vcf
+        varscan_breseq_vcf
+        varscan_minimap2_vcf
+        varscan_bwa_vcf
+
     main:
         // CREATE REFERENCE DB
-        file(params.annotation_snpeff_config_file).copyTo(snpeffDir)
-        SNPEFFCREATEDB(snpeffDir, file(params.reference), file(params.gff3))
+        file(params.annotation_snpeff_config_file).copyTo(snpeffOutDir)
+        SNPEFFCREATEDB(snpeffOutDir, file(params.reference), file(params.gff3))
+        SNPEFFANNOTATEFREEBAYESBRESEQ(snpeffOutDir, freebayes_breseq_vcf.flatten())
+        SNPEFFANNOTATEFREEBAYESMINIMAP2(snpeffOutDir, freebayes_minimap2_vcf.flatten())
+        SNPEFFANNOTATEFREEBAYESBWA(snpeffOutDir, freebayes_bwa_vcf.flatten())
+        SNPEFFANNOTATEBCFTOOLSBRESEQ(snpeffOutDir, bcftools_breseq_vcf.flatten())
+        SNPEFFANNOTATEBCFTOOLSMINIMAP2(snpeffOutDir, bcftools_minimap2_vcf.flatten())
+        SNPEFFANNOTATEBCFTOOLSBWA(snpeffOutDir, bcftools_bwa_vcf.flatten())
+        SNPEFFANNOTATEVARSCANBRESEQ(snpeffOutDir, varscan_breseq_vcf.flatten())
+        SNPEFFANNOTATEVARSCANMINIMAP2(snpeffOutDir, varscan_minimap2_vcf.flatten())
+        SNPEFFANNOTATEVARSCANBWA(snpeffOutDir, varscan_bwa_vcf.flatten())
+        
 }
 
 // MAIN workflow
@@ -627,9 +647,9 @@ OUTPUT: ${params.output}
             //
             // ANNOTATION
             //
-            // snpeffDir = file(params.output+"/ANNOTATION/REFERENCE")
-            // snpeffDir.mkdirs()
-            // annotation(snpeffDir)
+            snpeffOutDir = file(params.output+"/ANNOTATION/REFERENCE")
+            snpeffOutDir.mkdirs()
+            annotation(snpeffOutDir, snpcalling.out.freebayes_breseq_vcf, snpcalling.out.freebayes_minimap2_vcf, snpcalling.out.freebayes_bwa_vcf, snpcalling.out.bcftools_breseq_vcf, snpcalling.out.bcftools_minimap2_vcf, snpcalling.out.bcftools_bwa_vcf, snpcalling.out.varscan_breseq_vcf, snpcalling.out.varscan_minimap2_vcf, snpcalling.out.varscan_bwa_vcf)
             //
         }
 }

@@ -1,26 +1,72 @@
-library(circlize)
-library(tidyverse)
+#__________________________
+# ┬  ┬┌┐ ┬─┐┌─┐┬─┐┬┌─┐┌─┐
+# │  │├┴┐├┬┘├─┤├┬┘│├┤ └─┐
+# ┴─┘┴└─┘┴└─┴ ┴┴└─┴└─┘└─┘
+#__________________________
 
-# make a chrod diagram
+library(circlize)               # making circular plots
+library(tidyverse)              # best package ever
+library(ltc)                    # color palettes package
+
+#________________________________
+# ╔═╗╦ ╦╔═╗╦═╗╔╦╗  ┌─┐┬  ┌─┐┌┬┐
+# ║  ╠═╣║ ║╠╦╝ ║║  ├─┘│  │ │ │ 
+# ╚═╝╩ ╩╚═╝╩╚══╩╝  ┴  ┴─┘└─┘ ┴ 
+#_______________________________
 
 # here you can check the similarity among mappes and callers
+# create a test data frame
 
-random_values <- c(500:100)
-random_sample <- sample(random_values,12)
-random_sample
+test.df <- data.frame(Freebayes=sample(100:200,3), BCFtools=sample(100:200,3),
+           Lofreq=sample(200:250,3), Varscan=sample(300:350,3), 
+           Mappers=c("Breseq","BWA","Minimap")) %>% 
+  pivot_longer(!Mappers, names_to = "SNP_caller")
 
-col.pal = c(Freebayes="red",Lofreq="green",Varscan="blue",BreseQ="grey")
+# choose the colors
+pltc(ltc("minou"))
 
-check <- matrix(random_sample,nrow=4,
-       dimnames = list(c("Freebayes","Lofreq","Varscan", "BreseQ"),
-                       c("breseq","BWA","Minimap")))
+circos.clear()
 
-check
+# color each category 
+col.pal = c(Freebayes="#00798c",Lofreq="#d1495b",Varscan="#edae49",BCFtools="#66a182",
+            Breseq="#2e4057", BWA="#8d96a3", Minimap= "#c9cdd4")
 
-chordDiagram(check,grid.col = col.pal)
+{
+SNP_callers = c("Freebayes","Lofreq","Varscan","BCFtools")
+Mappers=c("Breseq","BWA","Minimap")
+}
+
+info=c(SNP_callers,Mappers)
+
+chordDiagram(test.df, order=info,
+             directional = 1,
+             annotationTrack = "grid",
+             diffHeight = F,
+             preAllocateTracks = list(list(track.height=  uh(3,"mm")), # outside track for names
+                                      list(track.height=  uh(10,"mm"))), # middle track for regions
+             self.link = 1,
+             grid.col =col.pal)
+
+highlight.sector(SNP_callers, track.index = 1, col = pal[1],
+                 text = "SNP_callers", cex = 0.7, text.col = "white", niceFacing = TRUE)
+
+highlight.sector(Mappers, track.index = 1, col = pal[2],
+                 text = "South Atlantic", cex = 0.7, text.col = "white", niceFacing = TRUE)
+
+title(main = list("Differences between callers and mappers",
+                  cex=2.4,
+                  col="grey75"))
+
+# I need to study the other example to fully understand what is going on! So there I go
 
 
 #https://jokergoo.github.io/2020/05/21/make-circular-heatmaps/
+
+#_______________________________________
+# ╔═╗╦╦═╗╔═╗╦ ╦╦  ╔═╗╦═╗  ╔═╗╦  ╔═╗╔╦╗
+# ║  ║╠╦╝║  ║ ║║  ╠═╣╠╦╝  ╠═╝║  ║ ║ ║ 
+# ╚═╝╩╩╚═╚═╝╚═╝╩═╝╩ ╩╩╚═  ╩  ╩═╝╚═╝ ╩ 
+#_______________________________________
   
 library(tidyverse)
 library(scales)

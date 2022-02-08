@@ -4,90 +4,174 @@
 # ┴─┘┴└─┘┴└─┴ ┴┴└─┴└─┘└─┘
 #__________________________
 
+## chord diagram
 library(circlize)               # making circular plots
 library(tidyverse)              # best package ever
 library(ltc)                    # color palettes package
 
-#________________________________
-# ╔═╗╦ ╦╔═╗╦═╗╔╦╗  ┌─┐┬  ┌─┐┌┬┐
-# ║  ╠═╣║ ║╠╦╝ ║║  ├─┘│  │ │ │ 
-# ╚═╝╩ ╩╚═╝╩╚══╩╝  ┴  ┴─┘└─┘ ┴ 
-#_______________________________
 
-# here you can check the similarity among mappes and callers
+## plot genome differences 
+library(scales)                 
+library(ggforce)
+
+#___________________________________________________________________________________
+#
+#  ██████╗██╗  ██╗ ██████╗ ██████╗ ██████╗     ██████╗ ██╗      ██████╗ ████████╗
+# ██╔════╝██║  ██║██╔═══██╗██╔══██╗██╔══██╗    ██╔══██╗██║     ██╔═══██╗╚══██╔══╝
+# ██║     ███████║██║   ██║██████╔╝██║  ██║    ██████╔╝██║     ██║   ██║   ██║   
+# ██║     ██╔══██║██║   ██║██╔══██╗██║  ██║    ██╔═══╝ ██║     ██║   ██║   ██║   
+# ╚██████╗██║  ██║╚██████╔╝██║  ██║██████╔╝    ██║     ███████╗╚██████╔╝   ██║   
+#  ╚═════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝     ╚═╝     ╚══════╝ ╚═════╝    ╚═╝   
+#___________________________________________________________________________________
+
+
+# here you can check the similarity among mappers and callers
 # create a test data frame
+
+# ---------------------------
+# create example data frame
+# ---------------------------
 
 test.df <- data.frame(Freebayes=sample(100:200,3), BCFtools=sample(100:200,3),
            Lofreq=sample(200:250,3), Varscan=sample(300:350,3), 
            Mappers=c("Breseq","BWA","Minimap")) %>% 
   pivot_longer(!Mappers, names_to = "SNP_caller")
 
-# choose the colors
+# ---------------------------
+# choose color -  palette
+# ---------------------------
+
 pltc(ltc("minou"))
 
-circos.clear()
-
-# color each category 
+# and choose the colors of your circus plot
 col.pal = c(Freebayes="#00798c",Lofreq="#d1495b",Varscan="#edae49",BCFtools="#66a182",
             Breseq="#2e4057", BWA="#8d96a3", Minimap= "#c9cdd4")
 
-{
+# ---------------------------
+# start making the plot
+# ---------------------------
+
+circos.clear()                # clear the area
+                              # set the parameters of the chart
+par(
+  mar = c(1, 0, 3, 0),        # Margin around chart
+  bg = c("white"),            # background color
+  family="Helvetica Neue Light"
+) 
+
+                              # group the variables into callers and Mappers
 SNP_callers = c("Freebayes","Lofreq","Varscan","BCFtools")
 Mappers=c("Breseq","BWA","Minimap")
-}
-
 info=c(SNP_callers,Mappers)
 
-chordDiagram(test.df, order=info,
-             directional = 1,
-             annotationTrack = "grid",
-             diffHeight = F,
-             preAllocateTracks = list(list(track.height=  uh(3,"mm")), # outside track for names
-                                      list(track.height=  uh(10,"mm"))), # middle track for regions
-             self.link = 1,
-             grid.col =col.pal)
+                                
 
-highlight.sector(SNP_callers, track.index = 1, col = pal[1],
+# -----------------------------
+# _|_ |_   _     _  _  ._ _  
+#  |_ | | (/_   (_ (_) | (/_ 
+# -----------------------------                 
+                       
+         
+chordDiagram(test.df, order=info,
+             directional = 1,            # ?
+             #annotationTrack = "grid",   # ?
+             diffHeight = F,            # ?
+             preAllocateTracks = list(list(track.height=  uh(3,"mm")),   # outside track for names ?
+                                      list(track.height=  uh(10,"mm"))), # middle track for regions ?
+             self.link = 1,              # ?
+             grid.col =col.pal,          # add colors in the bands
+             transparency = 0.2)         # add tansparency in the bands 
+
+
+# --------------------------------------                
+# _|_ |_   _     _     _|_  _ o  _|  _    
+#  |_ | | (/_   (_) |_| |_ _> | (_| (/_   
+# --------------------------------------                                  
+                                  
+
+highlight.sector(SNP_callers, track.index = 1, col = pal[1],  # what is track index, I have no idea
                  text = "SNP_callers", cex = 0.7, text.col = "white", niceFacing = TRUE)
 
 highlight.sector(Mappers, track.index = 1, col = pal[2],
-                 text = "South Atlantic", cex = 0.7, text.col = "white", niceFacing = TRUE)
+                 text = "Mappers", cex = 0.7, text.col = "white", niceFacing = TRUE)
 
+# circos.track(track.index = 2, panel.fun = function(x, y) {
+#   circos.text(CELL_META$xcenter, CELL_META$ylim[1], CELL_META$sector.index, 
+#               facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5), cex=.7,col="grey75")
+# }, bg.border = NA) # add state labels
+
+# --------------------------------
+# _|_ |_   _    _|_ o _|_ |  _    
+#  |_ | | (/_    |_ |  |_ | (/_   
+# --------------------------------                         
+                          
 title(main = list("Differences between callers and mappers",
                   cex=2.4,
                   col="grey75"))
 
-# I need to study the other example to fully understand what is going on! So there I go
+#______________________________________________________________________________________________
+# ██████╗ ███████╗███████╗███████╗██████╗ ███████╗███╗   ██╗ ██████╗███████╗███████╗
+# ██╔══██╗██╔════╝██╔════╝██╔════╝██╔══██╗██╔════╝████╗  ██║██╔════╝██╔════╝██╔════╝
+# ██████╔╝█████╗  █████╗  █████╗  ██████╔╝█████╗  ██╔██╗ ██║██║     █████╗  ███████╗
+# ██╔══██╗██╔══╝  ██╔══╝  ██╔══╝  ██╔══██╗██╔══╝  ██║╚██╗██║██║     ██╔══╝  ╚════██║
+# ██║  ██║███████╗██║     ███████╗██║  ██║███████╗██║ ╚████║╚██████╗███████╗███████║
+# ╚═╝  ╚═╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝ ╚═════╝╚══════╝╚══════╝
+
+# 1. https://jokergoo.github.io/2020/05/21/make-circular-heatmaps/ [Make circular heatmaps with circlize]
+# 2. https://r-charts.com/flow/chord-diagram/                      [Adjust colors in circlize ]
+# 3. https://cran.r-project.org/web/packages/circlize/circlize.pdf [Manual of circlize, updates in June 2021]
+
+#____________________________________________________________________________________________________
+#
+#  ██████╗██╗██████╗  ██████╗██╗   ██╗██╗      █████╗ ██████╗     ██████╗ ██╗      ██████╗ ████████╗
+# ██╔════╝██║██╔══██╗██╔════╝██║   ██║██║     ██╔══██╗██╔══██╗    ██╔══██╗██║     ██╔═══██╗╚══██╔══╝
+# ██║     ██║██████╔╝██║     ██║   ██║██║     ███████║██████╔╝    ██████╔╝██║     ██║   ██║   ██║   
+# ██║     ██║██╔══██╗██║     ██║   ██║██║     ██╔══██║██╔══██╗    ██╔═══╝ ██║     ██║   ██║   ██║   
+# ╚██████╗██║██║  ██║╚██████╗╚██████╔╝███████╗██║  ██║██║  ██║    ██║     ███████╗╚██████╔╝   ██║   
+#  ╚═════╝╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝    ╚═╝     ╚══════╝ ╚═════╝    ╚═╝   
+#____________________________________________________________________________________________________
+
+# ---------------------------
+# create example data frame
+# ---------------------------
+
+genome_size = seq(0,6000000,1000)         # size of the genome
+height1 = rep(1.1,length(genome_size))    # genome 1
+height2 = rep(1.5,length(genome_size))    # genome 2
+
+circles = as.data.frame(cbind(genome_size,height1,height2)) # compile it into a data.frame
+
+variants1 = data.frame(var1.pos = sample(1:6000000,100), var1.height = 1.3)
+variants2 = data.frame(var2.pos = sample(1:6000000,100), var2.height = 0.8)
 
 
-#https://jokergoo.github.io/2020/05/21/make-circular-heatmaps/
-
-#_______________________________________
-# ╔═╗╦╦═╗╔═╗╦ ╦╦  ╔═╗╦═╗  ╔═╗╦  ╔═╗╔╦╗
-# ║  ║╠╦╝║  ║ ║║  ╠═╣╠╦╝  ╠═╝║  ║ ║ ║ 
-# ╚═╝╩╩╚═╚═╝╚═╝╩═╝╩ ╩╩╚═  ╩  ╩═╝╚═╝ ╩ 
-#_______________________________________
-  
-library(tidyverse)
-library(scales)
-library(ggforce)
-
-x1=seq(0,6000000,1000)
-y1=rep(1.1,length(x1))
-y2=rep(1.5,length(x1))
-
-data2=as.data.frame(cbind(x1,y1,y2))
-##
-points= data.frame(mutations=c(0,5000000,10,1000000),check=c(1.7,1.7,1.3,1.3), type=c("indel","insertion"),
-                   genome=c("leaky","leaky", "ANC", "ANC"), gene=c("wssE","wssA","pvdI","pvdII"))
-points
-
-
-ticks <- data.frame(
+ticks <- data.frame(    
   x=seq(0,6000000,500000),
-  y=rep(1,13),
+  y=rep(0.5,13),
   angle=360000-seq(0,360,30)
 )
+
+ggplot() +
+  geom_rect(xmin=0, xmax=6000000, ymin= 1.1, ymax=1.5, fill="#eae3dc") +
+  geom_line(data = circles , aes(genome_size,y1), color="#333333",size=1) +
+  geom_line(data = circles , aes(genome_size,y2), color="#333333",size=1.5) +
+  geom_jitter(data = variants1, aes(var1.pos, var1.height), size=5, height=0.05, width = 0.05, alpha=0.7) +
+  geom_jitter(data = variants2, aes(var2.pos, var2.height), size=5, height=0.05, width = 0.05, alpha=0.7) +
+  coord_polar() +
+  ylim(c(0,NA)) +
+  geom_text(data = ticks, aes(x, y, label = "|", angle = angle)) +
+  theme_void()
+
+
+
+
+point.mutations = data.frame(mutations=c(0,5000000,10,1000000), 
+                   genome_coord=c(1.7,1.7,1.3,1.3),
+                   mutation_type=c("indel","insertion"),
+                   genome_name=c("leaky","leaky", "ANC", "ANC"), 
+                   gene_name=c("wssE","wssA","pvdI","pvdII"))
+point.mutations
+
 
 
 
@@ -127,6 +211,33 @@ ggplot() +
            fontface="bold.italic",size=4,color="gray") +
   labs(x="",y="") +
   geom_text(data = ticks, aes(x, y, label = "|", angle = angle))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 library('BioCircos')
 myGenome = list("A" = 6000000)

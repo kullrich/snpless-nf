@@ -152,20 +152,9 @@ ticks <- data.frame(
   angle=360000-seq(0,330,30)
 )
 
-library("gcookbook") # Load gcookbook for the pg_mean data set
-
-
-
-ggplot() +
-  geom_col(data=variants1,aes(var1.pos, var1.height), width=1, col='red') +
-  theme_void() +
-  coord_polar() +
-  ylim(c(0,NA)) 
-
 ggplot() +
   geom_rect(xmin=0, xmax=6000000, ymin= 1.1, ymax=1.5, fill="#eae3dc") +
-  geom_col(data=variants1,aes(var1.pos, var1.height), width=1, col='red') +
-  
+  geom_point(data=variants1,aes(var1.pos, var1.height), size=3, col='red') +
   geom_line(data = circles , aes(genome_size,y1), color="#333333",size=3) +
   geom_line(data = circles , aes(genome_size,y2), color="#333333",size=3.5) +
   # geom_jitter(data = variants1, aes(var1.pos, var1.height), size=3, color="#C02942", height=0.05, width = 0.05, alpha=0.7) +
@@ -176,7 +165,11 @@ ggplot() +
   geom_text(data = ticks, aes(x1, y2, label = x2, angle = angle), size=5) +
   theme_void() +
   labs(title="Ploting variant positions across genome") +
-  theme(plot.title = element_text(hjust=0.5))
+  theme(plot.title = element_text(hjust=0.5)) +
+  geom_textcurve(data = data.frame(x = 10, xend = 1000, y = 1.1, yend = 1.2), 
+               aes(x, y, xend = xend, yend = yend), hjust = 0.4, 
+               curvature = -0.8, label = "significant difference")
+
 
 point.mutations = data.frame(mutations=c(0,5000000,10,1000000), 
                    genome_coord=c(1.7,1.7,1.3,1.3),
@@ -184,7 +177,6 @@ point.mutations = data.frame(mutations=c(0,5000000,10,1000000),
                    genome_name=c("leaky","leaky", "ANC", "ANC"), 
                    gene_name=c("wssE","wssA","pvdI","pvdII"))
 point.mutations
-
 
 #https://stackoverflow.com/questions/62556246/how-to-plot-the-variant-circular-bar-chart-in-r-with-ggplot
 

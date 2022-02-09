@@ -142,28 +142,41 @@ height2 = rep(1.5,length(genome_size))    # genome 2
 circles = as.data.frame(cbind(genome_size,height1,height2)) # compile it into a data.frame
 
 variants1 = data.frame(var1.pos = sample(1:6000000,100), var1.height = 1.3)
-variants2 = data.frame(var2.pos = sample(1:6000000,100), var2.height = 0.8)
-
+variants2 = data.frame(var2.pos = sample(1:6000000,100), var2.height = 0.9)
 
 ticks <- data.frame(    
-  x=seq(0,6000000,500000),
-  y=rep(0.5,13),
-  angle=360000-seq(0,360,30)
+  x1=seq(0,5500000,500000),
+  y1=rep(0.7,12),
+  y2=rep(0.6,12),
+  x2=paste0((seq(0,5.5,0.5))),
+  angle=360000-seq(0,330,30)
 )
+
+library("gcookbook") # Load gcookbook for the pg_mean data set
+
+
+
+ggplot() +
+  geom_col(data=variants1,aes(var1.pos, var1.height), width=1, col='red') +
+  theme_void() +
+  coord_polar() +
+  ylim(c(0,NA)) 
 
 ggplot() +
   geom_rect(xmin=0, xmax=6000000, ymin= 1.1, ymax=1.5, fill="#eae3dc") +
-  geom_line(data = circles , aes(genome_size,y1), color="#333333",size=1) +
-  geom_line(data = circles , aes(genome_size,y2), color="#333333",size=1.5) +
-  geom_jitter(data = variants1, aes(var1.pos, var1.height), size=5, height=0.05, width = 0.05, alpha=0.7) +
-  geom_jitter(data = variants2, aes(var2.pos, var2.height), size=5, height=0.05, width = 0.05, alpha=0.7) +
+  geom_col(data=variants1,aes(var1.pos, var1.height), width=1, col='red') +
+  
+  geom_line(data = circles , aes(genome_size,y1), color="#333333",size=3) +
+  geom_line(data = circles , aes(genome_size,y2), color="#333333",size=3.5) +
+  # geom_jitter(data = variants1, aes(var1.pos, var1.height), size=3, color="#C02942", height=0.05, width = 0.05, alpha=0.7) +
+  geom_jitter(data = variants2, aes(var2.pos, var2.height), size=3, color="#ECD078", height=0.05, width = 0.05, alpha=0.7) +
   coord_polar() +
   ylim(c(0,NA)) +
-  geom_text(data = ticks, aes(x, y, label = "|", angle = angle)) +
-  theme_void()
-
-
-
+  geom_text(data = ticks, aes(x1, y1, label = "|", angle = angle)) +
+  geom_text(data = ticks, aes(x1, y2, label = x2, angle = angle), size=5) +
+  theme_void() +
+  labs(title="Ploting variant positions across genome") +
+  theme(plot.title = element_text(hjust=0.5))
 
 point.mutations = data.frame(mutations=c(0,5000000,10,1000000), 
                    genome_coord=c(1.7,1.7,1.3,1.3),
@@ -173,7 +186,7 @@ point.mutations = data.frame(mutations=c(0,5000000,10,1000000),
 point.mutations
 
 
-
+#https://stackoverflow.com/questions/62556246/how-to-plot-the-variant-circular-bar-chart-in-r-with-ggplot
 
 # organise and finsih plot to show it to Carsten
 ggplot() +

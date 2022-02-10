@@ -56,15 +56,13 @@ circos.clear()                # clear the area
 par(
   mar = c(1, 0, 3, 0),        # Margin around chart
   bg = c("white"),            # background color
-  family="Helvetica Neue Light"
+  family="Avenir"
 ) 
 
                               # group the variables into callers and Mappers
 SNP_callers = c("Freebayes","Lofreq","Varscan","BCFtools")
 Mappers=c("Breseq","BWA","Minimap")
 info=c(SNP_callers,Mappers)
-
-                                
 
 # -----------------------------
 # _|_ |_   _     _  _  ._ _  
@@ -82,17 +80,15 @@ chordDiagram(test.df, order=info,
              grid.col =col.pal,          # add colors in the bands
              transparency = 0.2)         # add tansparency in the bands 
 
-
 # --------------------------------------                
 # _|_ |_   _     _     _|_  _ o  _|  _    
 #  |_ | | (/_   (_) |_| |_ _> | (_| (/_   
 # --------------------------------------                                  
                                   
-
-highlight.sector(SNP_callers, track.index = 1, col = pal[1],  # what is track index, I have no idea
+highlight.sector(SNP_callers, track.index = 1, col = "#ee6c4d",  # what is track index, I have no idea
                  text = "SNP_callers", cex = 0.7, text.col = "white", niceFacing = TRUE)
 
-highlight.sector(Mappers, track.index = 1, col = pal[2],
+highlight.sector(Mappers, track.index = 1, col = "#3d5a80",
                  text = "Mappers", cex = 0.7, text.col = "white", niceFacing = TRUE)
 
 # circos.track(track.index = 2, panel.fun = function(x, y) {
@@ -105,9 +101,9 @@ highlight.sector(Mappers, track.index = 1, col = pal[2],
 #  |_ | | (/_    |_ |  |_ | (/_   
 # --------------------------------                         
                           
-title(main = list("Differences between callers and mappers",
+title(main = list("Differences among callers and mappers",
                   cex=2.4,
-                  col="grey75"))
+                  col="#333333"))
 
 #______________________________________________________________________________________________
 # ██████╗ ███████╗███████╗███████╗██████╗ ███████╗███╗   ██╗ ██████╗███████╗███████╗
@@ -120,6 +116,46 @@ title(main = list("Differences between callers and mappers",
 # 1. https://jokergoo.github.io/2020/05/21/make-circular-heatmaps/ [Make circular heatmaps with circlize]
 # 2. https://r-charts.com/flow/chord-diagram/                      [Adjust colors in circlize ]
 # 3. https://cran.r-project.org/web/packages/circlize/circlize.pdf [Manual of circlize, updates in June 2021]
+
+test.df %>% 
+  #pivot_longer(cols = 1:2, names_to = "stratum", values_to = "program" ) %>% 
+  rowid_to_column("alluvium") %>% 
+  ggplot(aes(y=value, axis1=Mappers, axis2=SNP_caller)) +
+    geom_alluvium(aes(fill=value)) +
+  geom_stratum(width = 1/12, fill = "black", color = "grey") +
+  geom_label(stat = "stratum", aes(label = after_stat(stratum)))  +
+  scale_x_discrete(limits = c("Mappers", "SNP callers"), expand = c(.05, .05))  +
+  ggtitle("Amount of SNPs that is called from combination of SNP callers and Mappers")
+
+
+#______________________________________________________________________________________________
+# ██████╗ ███████╗███████╗███████╗██████╗ ███████╗███╗   ██╗ ██████╗███████╗███████╗
+# ██╔══██╗██╔════╝██╔════╝██╔════╝██╔══██╗██╔════╝████╗  ██║██╔════╝██╔════╝██╔════╝
+# ██████╔╝█████╗  █████╗  █████╗  ██████╔╝█████╗  ██╔██╗ ██║██║     █████╗  ███████╗
+# ██╔══██╗██╔══╝  ██╔══╝  ██╔══╝  ██╔══██╗██╔══╝  ██║╚██╗██║██║     ██╔══╝  ╚════██║
+# ██║  ██║███████╗██║     ███████╗██║  ██║███████╗██║ ╚████║╚██████╗███████╗███████║
+# ╚═╝  ╚═╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝ ╚═════╝╚══════╝╚══════╝
+
+#1. https://cran.r-project.org/web/packages/ggalluvial/vignettes/ggalluvial.html
+#2. https://jokergoo.github.io/circlize_book/book/high-level-genomic-functions.html#genomic-axes
+  
+  
+  
+  
+  aes(x=stratum,y=value,
+      stratum="stratum", alluvium=alluvium, label="stratum")+
+  geom_alluvium(aes(fill=SNP_caller), 
+                aes.bind = "alluvia", 
+                colour = "darkgray",
+                reverse = FALSE) +
+  geom_stratum(aes(fill = SNP_caller), reverse = FALSE) +
+  geom_text(stat = "stratum", reverse = FALSE) +
+  scale_x_discrete(expand = expansion(mult = .1)) 
+
+
+
+
+
 
 #____________________________________________________________________________________________________
 #
@@ -154,10 +190,9 @@ ticks <- data.frame(
 
 ggplot() +
   geom_rect(xmin=0, xmax=6000000, ymin= 1.1, ymax=1.5, fill="#eae3dc") +
-  geom_point(data=variants1,aes(var1.pos, var1.height), size=3, col='red') +
   geom_line(data = circles , aes(genome_size,y1), color="#333333",size=3) +
   geom_line(data = circles , aes(genome_size,y2), color="#333333",size=3.5) +
-  # geom_jitter(data = variants1, aes(var1.pos, var1.height), size=3, color="#C02942", height=0.05, width = 0.05, alpha=0.7) +
+  geom_jitter(data = variants1, aes(var1.pos, var1.height), size=3, color="#C02942", height=0.05, width = 0.05, alpha=0.7) +
   geom_jitter(data = variants2, aes(var2.pos, var2.height), size=3, color="#ECD078", height=0.05, width = 0.05, alpha=0.7) +
   coord_polar() +
   ylim(c(0,NA)) +
@@ -165,10 +200,7 @@ ggplot() +
   geom_text(data = ticks, aes(x1, y2, label = x2, angle = angle), size=5) +
   theme_void() +
   labs(title="Ploting variant positions across genome") +
-  theme(plot.title = element_text(hjust=0.5)) +
-  geom_textcurve(data = data.frame(x = 10, xend = 1000, y = 1.1, yend = 1.2), 
-               aes(x, y, xend = xend, yend = yend), hjust = 0.4, 
-               curvature = -0.8, label = "significant difference")
+  theme(plot.title = element_text(hjust=0.5))
 
 
 point.mutations = data.frame(mutations=c(0,5000000,10,1000000), 

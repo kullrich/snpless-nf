@@ -163,7 +163,7 @@ test.df %>%
 # ╩╚═╚═╝╚  ╚═╝╩╚═╚═╝╝╚╝╚═╝╚═╝╚═╝
 
 # 1. https://cran.r-project.org/web/packages/ggalluvial/vignettes/ggalluvial.html [Make alluvial plots with gg]
-# 2. 
+# 2. https://mstkolf.rbind.io/en/2020/08/02/tidytuesday-2020-week31/ [palmer penguins data]
 
 
 

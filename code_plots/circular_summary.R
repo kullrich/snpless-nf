@@ -13,6 +13,7 @@ library(ltc)                    # color palettes package
 ## plot genome differences 
 library(scales)                 
 library(ggforce)
+library(ggalluvial)
 
 #___________________________________________________________________________________
 #
@@ -105,54 +106,64 @@ title(main = list("Differences among callers and mappers",
                   cex=2.4,
                   col="#333333"))
 
-#______________________________________________________________________________________________
-# ██████╗ ███████╗███████╗███████╗██████╗ ███████╗███╗   ██╗ ██████╗███████╗███████╗
-# ██╔══██╗██╔════╝██╔════╝██╔════╝██╔══██╗██╔════╝████╗  ██║██╔════╝██╔════╝██╔════╝
-# ██████╔╝█████╗  █████╗  █████╗  ██████╔╝█████╗  ██╔██╗ ██║██║     █████╗  ███████╗
-# ██╔══██╗██╔══╝  ██╔══╝  ██╔══╝  ██╔══██╗██╔══╝  ██║╚██╗██║██║     ██╔══╝  ╚════██║
-# ██║  ██║███████╗██║     ███████╗██║  ██║███████╗██║ ╚████║╚██████╗███████╗███████║
-# ╚═╝  ╚═╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝ ╚═════╝╚══════╝╚══════╝
+#___________________________________________________________________________________________________________
+# ╦═╗╔═╗╔═╗╔═╗╦═╗╔═╗╔╗╔╔═╗╔═╗╔═╗
+# ╠╦╝║╣ ╠╣ ║╣ ╠╦╝║╣ ║║║║  ║╣ ╚═╗
+# ╩╚═╚═╝╚  ╚═╝╩╚═╚═╝╝╚╝╚═╝╚═╝╚═╝
 
 # 1. https://jokergoo.github.io/2020/05/21/make-circular-heatmaps/ [Make circular heatmaps with circlize]
 # 2. https://r-charts.com/flow/chord-diagram/                      [Adjust colors in circlize ]
 # 3. https://cran.r-project.org/web/packages/circlize/circlize.pdf [Manual of circlize, updates in June 2021]
 
+#________________________________________________________________________________________________________
+#
+#  █████╗ ██╗     ██╗     ██╗   ██╗██╗   ██╗██╗ █████╗ ██╗         ██████╗ ██╗      ██████╗ ████████╗
+# ██╔══██╗██║     ██║     ██║   ██║██║   ██║██║██╔══██╗██║         ██╔══██╗██║     ██╔═══██╗╚══██╔══╝
+# ███████║██║     ██║     ██║   ██║██║   ██║██║███████║██║         ██████╔╝██║     ██║   ██║   ██║   
+# ██╔══██║██║     ██║     ██║   ██║╚██╗ ██╔╝██║██╔══██║██║         ██╔═══╝ ██║     ██║   ██║   ██║   
+# ██║  ██║███████╗███████╗╚██████╔╝ ╚████╔╝ ██║██║  ██║███████╗    ██║     ███████╗╚██████╔╝   ██║   
+# ╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝  ╚═╝╚══════╝    ╚═╝     ╚══════╝ ╚═════╝    ╚═╝   
+#________________________________________________________________________________________________________
+
+pal=ltc("dora", 15, "continuous")
+
+noPhage.colors <- function(unq.barcodes) {
+  pal <- pnw_palette("Sailboat", n_distinct(test.df$value), type = "continuous")
+  colorRampPalette(pal[1:n_distinct(test.df$value)])(length(levels(test.df$value)))
+}
+
+test.df
+
+library("colorspace")
+
 test.df %>% 
   #pivot_longer(cols = 1:2, names_to = "stratum", values_to = "program" ) %>% 
   rowid_to_column("alluvium") %>% 
   ggplot(aes(y=value, axis1=Mappers, axis2=SNP_caller)) +
-    geom_alluvium(aes(fill=value)) +
-  geom_stratum(width = 1/12, fill = "black", color = "grey") +
-  geom_label(stat = "stratum", aes(label = after_stat(stratum)))  +
+  geom_alluvium(aes(fill=value)) +
+  scale_fill_gradientn(colors=c(ltc("maya",12, "continuous")),
+                       name="# of Variants",
+                       guide=guide_legend(
+                         direction = "horizontal",
+                         title.position = "top"
+                       )) +
+  geom_stratum(width = 1/10, fill = "#2e4057", color = "black", ) +
+  #geom_text(stat = "stratum", aes(label = after_stat(stratum)))
+  geom_label(stat = "stratum", aes(label = after_stat(stratum)), label.size=NA)   +
   scale_x_discrete(limits = c("Mappers", "SNP callers"), expand = c(.05, .05))  +
-  ggtitle("Amount of SNPs that is called from combination of SNP callers and Mappers")
+  ggtitle("Amount of SNPs that is called from combination of SNP callers and Mappers") +
+  theme_void() +
+  theme(legend.position = "bottom",
+        legend.title = element_text(family="Avenir", hjust=0.5),
+        plot.title = element_text(hjust=0.5, family="Avenir", face="bold", size=18))
 
+#___________________________________________________________________________________________________________
+# ╦═╗╔═╗╔═╗╔═╗╦═╗╔═╗╔╗╔╔═╗╔═╗╔═╗
+# ╠╦╝║╣ ╠╣ ║╣ ╠╦╝║╣ ║║║║  ║╣ ╚═╗
+# ╩╚═╚═╝╚  ╚═╝╩╚═╚═╝╝╚╝╚═╝╚═╝╚═╝
 
-#______________________________________________________________________________________________
-# ██████╗ ███████╗███████╗███████╗██████╗ ███████╗███╗   ██╗ ██████╗███████╗███████╗
-# ██╔══██╗██╔════╝██╔════╝██╔════╝██╔══██╗██╔════╝████╗  ██║██╔════╝██╔════╝██╔════╝
-# ██████╔╝█████╗  █████╗  █████╗  ██████╔╝█████╗  ██╔██╗ ██║██║     █████╗  ███████╗
-# ██╔══██╗██╔══╝  ██╔══╝  ██╔══╝  ██╔══██╗██╔══╝  ██║╚██╗██║██║     ██╔══╝  ╚════██║
-# ██║  ██║███████╗██║     ███████╗██║  ██║███████╗██║ ╚████║╚██████╗███████╗███████║
-# ╚═╝  ╚═╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝ ╚═════╝╚══════╝╚══════╝
-
-#1. https://cran.r-project.org/web/packages/ggalluvial/vignettes/ggalluvial.html
-#2. https://jokergoo.github.io/circlize_book/book/high-level-genomic-functions.html#genomic-axes
-  
-  
-  
-  
-  aes(x=stratum,y=value,
-      stratum="stratum", alluvium=alluvium, label="stratum")+
-  geom_alluvium(aes(fill=SNP_caller), 
-                aes.bind = "alluvia", 
-                colour = "darkgray",
-                reverse = FALSE) +
-  geom_stratum(aes(fill = SNP_caller), reverse = FALSE) +
-  geom_text(stat = "stratum", reverse = FALSE) +
-  scale_x_discrete(expand = expansion(mult = .1)) 
-
-
+# 1. https://cran.r-project.org/web/packages/ggalluvial/vignettes/ggalluvial.html [Make alluvial plots with gg]
+# 2. 
 
 
 

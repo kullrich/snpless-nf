@@ -26,15 +26,15 @@ samples_timepoints = ' '.join([str(x) for x in range(len(samples_ordered))])
 samples_zero = ' '.join([str(0) for x in range(len(samples_ordered))])
 samples_coverage = ' '.join([str(mean_coverage_dict[x]) for x in samples_ordered])
 #chromosome, pos, depth, timepoints <0 1 2 3 ...>, alternative depth <int int int ...>, mean depth <int int int ...> 
-var_out_header = ','.join(['chromosome', 'pos', 'depth', samples_timepoints, samples_zero, samples_coverage])
+var_out_header = ', '.join(['chromosome', '0', 'Depth', samples_timepoints, samples_zero, samples_coverage])
 var_out = []
 for variant in vcf:
     #chromosome, pos, depth, timepoints <0 1 2 3 ...>, alternative depth <int int int ...>, total depth <int int int ...> 
     if variant.var_type == 'snp':
-        var_out.append(','.join([variant.CHROM, str(variant.POS), variant.REF+'->'+variant.ALT[0],samples_timepoints,' '.join([str(x) for x in variant.gt_alt_depths]),' '.join([str(x) for x in np.array(variant.gt_depths) - np.array(variant.gt_alt_depths)])]))
+        var_out.append(', '.join([variant.CHROM, str(variant.POS), variant.REF+'->'+variant.ALT[0],samples_timepoints,' '.join([str(x) for x in variant.gt_alt_depths]),' '.join([str(x) for x in np.array(variant.gt_depths) - np.array(variant.gt_alt_depths)])]))
     if variant.var_type == 'deletion':
-        var_out.append(','.join([variant.CHROM, str(variant.POS), 'deletion',samples_timepoints,' '.join([str(x) for x in variant.gt_alt_depths]),' '.join([str(x) for x in np.array(variant.gt_depths) - np.array(variant.gt_alt_depths)])]))
+        var_out.append(', '.join([variant.CHROM, str(variant.POS), 'deletion',samples_timepoints,' '.join([str(x) for x in variant.gt_alt_depths]),' '.join([str(x) for x in np.array(variant.gt_depths) - np.array(variant.gt_alt_depths)])]))
     if variant.var_type == 'indel':
-        var_out.append(','.join([variant.CHROM, str(variant.POS), 'indel',samples_timepoints,' '.join([str(x) for x in variant.gt_alt_depths]),' '.join([str(x) for x in np.array(variant.gt_depths) - np.array(variant.gt_alt_depths)])]))
+        var_out.append(', '.join([variant.CHROM, str(variant.POS), 'indel',samples_timepoints,' '.join([str(x) for x in variant.gt_alt_depths]),' '.join([str(x) for x in np.array(variant.gt_depths) - np.array(variant.gt_alt_depths)])]))
 sys.stdout.write(var_out_header+'\n')
 [sys.stdout.write(x+'\n') for x in var_out]

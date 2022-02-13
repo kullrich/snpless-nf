@@ -5,3 +5,4 @@ channels:
   - defaults
 dependencies:
   - prokka=1.14.6
+  - perl-bioperl=1.7.2

@@ -420,7 +420,8 @@ process GDCOMPARE {
 	input:
 		val(gds)
 		path(mappingPath)
-		path(proteins)
+		path(reference)
+		path(gff3)
 
 	output:
 		path "BRESEQ.annotate.*", emit: gdcompare
@@ -430,7 +431,8 @@ process GDCOMPARE {
 
 	script:
 		"""
-		gdtools ANNOTATE -o BRESEQ.annotate.html -r ${proteins} ${mappingPath}/*.gd
-		gdtools ANNOTATE -f TSV -o BRESEQ.annotate.tsv -r ${proteins} ${mappingPath}/*.gd
+		(cat ${gff3}; echo "##FASTA"; cat ${reference}) > reference.gff3
+		gdtools ANNOTATE -o BRESEQ.annotate.html -r reference.gff3 ${mappingPath}/*.gd
+		gdtools ANNOTATE -f TSV -o BRESEQ.annotate.tsv -r reference.gff3 ${mappingPath}/*.gd
 		"""
 }

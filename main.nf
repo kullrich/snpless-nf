@@ -310,7 +310,8 @@ workflow mapping {
         bwaOutDir
     main:
         // PROCESS BRESEQ
-        BRESEQ(pearDir, pearSamples.map{it + [file(params.proteins)]})
+        //BRESEQ(pearDir, pearSamples.map{it + [file(params.proteins)]})
+        BRESEQ(pearDir, pearSamples.map{it + [file(params.reference), file(params.gff3)]})
         // BRESEQ.out.subscribe {println "Got: $it"}
         // BRESEQ.out.view()
         // BRESEQ.out.subscribe onComplete: {println "breseq - Done"}
@@ -458,7 +459,7 @@ workflow snpcalling {
         // PROCESS MPILEUPBWA
         MPILEUPBWA(bwa_bam, bwaOutDir, file(params.reference))
         // PROCESS GDCOMPARE
-        GDCOMPARE(breseq_gd, breseqOutDir, file(params.proteins))
+        GDCOMPARE(breseq_gd, breseqOutDir, file(params.reference), file(params.gff3))
         freebayes_breseq_vcf = FREEBAYESBRESEQ.out.freebayes_vcf
         freebayes_minimap2_vcf = FREEBAYESMINIMAP2.out.freebayes_vcf
         freebayes_bwa_vcf = FREEBAYESBWA.out.freebayes_vcf
@@ -486,6 +487,9 @@ workflow snpcalling {
         lofreq_minimap2_vcf
         lofreq_bwa_vcf
         gdcompare
+        breseq_mean_coverage
+        minimap2_mean_coverage
+        bwa_mean_coverage
 }
 
 workflow svcalling {
@@ -528,6 +532,10 @@ workflow svcalling {
         // GRIDSSMINIMAP2(minimap2_bam, minimap2Dir, file(params.reference))
         // PROCESS GRIDSSBWA
         // GRIDSSBWA(bwa_bam, bwaDir, file(params.reference))
+    emit:
+        breseq_mean_coverage
+        minimap2_mean_coverage
+        bwa_mean_coverage
 }
 
 workflow annotation {
@@ -542,6 +550,9 @@ workflow annotation {
         varscan_breseq_vcf
         varscan_minimap2_vcf
         varscan_bwa_vcf
+        breseq_mean_coverage
+        minimap2_mean_coverage
+        bwa_mean_coverage
 
     main:
         // CREATE REFERENCE DB
@@ -649,7 +660,7 @@ OUTPUT: ${params.output}
             //
             snpeffOutDir = file(params.output+"/ANNOTATION/REFERENCE")
             snpeffOutDir.mkdirs()
-            annotation(snpeffOutDir, snpcalling.out.freebayes_breseq_vcf, snpcalling.out.freebayes_minimap2_vcf, snpcalling.out.freebayes_bwa_vcf, snpcalling.out.bcftools_breseq_vcf, snpcalling.out.bcftools_minimap2_vcf, snpcalling.out.bcftools_bwa_vcf, snpcalling.out.varscan_breseq_vcf, snpcalling.out.varscan_minimap2_vcf, snpcalling.out.varscan_bwa_vcf)
+            annotation(snpeffOutDir, snpcalling.out.freebayes_breseq_vcf, snpcalling.out.freebayes_minimap2_vcf, snpcalling.out.freebayes_bwa_vcf, snpcalling.out.bcftools_breseq_vcf, snpcalling.out.bcftools_minimap2_vcf, snpcalling.out.bcftools_bwa_vcf, snpcalling.out.varscan_breseq_vcf, snpcalling.out.varscan_minimap2_vcf, snpcalling.out.varscan_bwa_vcf, snpcalling.out.breseq_mean_coverage, snpcalling.out.minimap2_mean_coverage, snpcalling.out.bwa_mean_coverage)
             //
         }
 }

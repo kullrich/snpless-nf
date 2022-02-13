@@ -7,7 +7,7 @@ process BRESEQ {
 
 	input:
 		path(pearDir)
-		tuple val(sampleLong), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(sampleType), val(reads1), val(reads2), path(proteins)
+		tuple val(sampleLong), val(sampleId), val(sampleReplicate), val(sampleTimepoint), val(sampleType), val(reads1), val(reads2), path(reference), path(gff3)
 
 	output:
 		path("${sampleLong}"), emit: breseqDir
@@ -20,20 +20,24 @@ process BRESEQ {
 		if (reads2 == "-")
 			if(params.mapping_breseq_p)
 				"""
-				breseq --reference ${proteins} --num-processors $task.cpus --polymorphism-prediction --brief-html-output ${params.mapping_breseq_options} --output ${sampleLong} ${sampleLong}/${sampleLong}.SE.fq.gz
+				(cat ${gff3}; echo "##FASTA"; cat ${reference}) > reference.gff3
+				breseq --reference reference.gff3 --num-processors $task.cpus --polymorphism-prediction --brief-html-output ${params.mapping_breseq_options} --output ${sampleLong} ${sampleLong}/${sampleLong}.SE.fq.gz
 				"""
 			else
 				"""
-				breseq --reference ${proteins} --num-processors $task.cpus --brief-html-output ${params.mapping_breseq_options} --output ${sampleLong} ${sampleLong}/${sampleLong}.SE.fq.gz
+				(cat ${gff3}; echo "##FASTA"; cat ${reference}) > reference.gff3
+				breseq --reference reference.gff3 --num-processors $task.cpus --brief-html-output ${params.mapping_breseq_options} --output ${sampleLong} ${sampleLong}/${sampleLong}.SE.fq.gz
 				"""
 		else
 			if(params.mapping_breseq_p)
 				"""
-				breseq --reference ${proteins} --num-processors $task.cpus --polymorphism-prediction --brief-html-output ${params.mapping_breseq_options} --output ${sampleLong} ${sampleLong}/${sampleLong}.MEPE1.fq.gz ${sampleLong}/${sampleLong}.MEPE2.fq.gz ${sampleLong}/${sampleLong}.MESE.fq.gz
+				(cat ${gff3}; echo "##FASTA"; cat ${reference}) > reference.gff3
+				breseq --reference reference.gff3 --num-processors $task.cpus --polymorphism-prediction --brief-html-output ${params.mapping_breseq_options} --output ${sampleLong} ${sampleLong}/${sampleLong}.MEPE1.fq.gz ${sampleLong}/${sampleLong}.MEPE2.fq.gz ${sampleLong}/${sampleLong}.MESE.fq.gz
 				"""
 			else
 				"""
-				breseq --reference ${proteins} --num-processors $task.cpus --brief-html-output ${params.mapping_breseq_options} --output ${sampleLong} ${sampleLong}/${sampleLong}.MEPE1.fq.gz ${sampleLong}/${sampleLong}.MEPE2.fq.gz ${sampleLong}/${sampleLong}.MESE.fq.gz
+				(cat ${gff3}; echo "##FASTA"; cat ${reference}) > reference.gff3
+				breseq --reference reference.gff3 --num-processors $task.cpus --brief-html-output ${params.mapping_breseq_options} --output ${sampleLong} ${sampleLong}/${sampleLong}.MEPE1.fq.gz ${sampleLong}/${sampleLong}.MEPE2.fq.gz ${sampleLong}/${sampleLong}.MESE.fq.gz
 				"""
 }
 

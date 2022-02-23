@@ -11,6 +11,7 @@ process FREEBAYESBRESEQ {
 
 	output:
 		path "BRESEQ.freebayes.*.vcf", emit: freebayes_vcf
+		path "bamlist.txt", emit: bamlist
 
 	when:
 		(params.snpcalling && params.run_freebayes && params.run_breseq && !params.skip_breseq && !params.skip_freebayes) || params.run_all
@@ -38,6 +39,7 @@ process FREEBAYESMINIMAP2 {
 
 	output:
 		path "MINIMAP2.freebayes.*.vcf", emit: freebayes_vcf
+		path "bamlist.txt", emit: bamlist
 
 	when:
 		(params.snpcalling && params.run_freebayes && params.run_minimap2 && !params.skip_minimap2 && !params.skip_freebayes) || params.run_all
@@ -65,6 +67,7 @@ process FREEBAYESBWA {
 
 	output:
 		path "BWA.freebayes.*.vcf", emit: freebayes_vcf
+		path "bamlist.txt", emit: bamlist
 
 	when:
 		(params.snpcalling && params.run_freebayes && params.run_bwa && !params.skip_bwa && !params.skip_freebayes) || params.run_all
@@ -91,6 +94,7 @@ process BCFTOOLSBRESEQ {
 
 	output:
 		path "BRESEQ.bcftools.*.vcf", emit: bcftools_vcf
+		path "bamlist.txt", emit: bamlist
 
 	when:
 		(params.snpcalling && params.run_bcftools && params.run_breseq && !params.skip_breseq && !params.skip_bcftools) || params.run_all
@@ -118,6 +122,7 @@ process BCFTOOLSMINIMAP2 {
 
 	output:
 		path "MINIMAP2.bcftools.*.vcf", emit: bcftools_vcf
+		path "bamlist.txt", emit: bamlist
 
 	when:
 		(params.snpcalling && params.run_bcftools && params.run_minimap2 && !params.skip_minimap2 && !params.skip_bcftools) || params.run_all
@@ -145,6 +150,7 @@ process BCFTOOLSBWA {
 
 	output:
 		path "BWA.bcftools.*.vcf", emit: bcftools_vcf
+		path "bamlist.txt", emit: bamlist
 
 	when:
 		(params.snpcalling && params.run_bcftools && params.run_bwa && !params.skip_bwa && !params.skip_bcftools) || params.run_all
@@ -257,6 +263,7 @@ process VARSCANBRESEQ {
 
 	output:
 		path "BRESEQ.varscan.*.vcf", emit: varscan_vcf
+		path "bamlist.txt", emit: bamlist
 
 	when:
 		(params.snpcalling && params.run_varscan && params.run_breseq && !params.skip_breseq && !params.skip_varscan) || params.run_all
@@ -287,6 +294,7 @@ process VARSCANMINIMAP2 {
 
 	output:
 		path "MINIMAP2.varscan.*.vcf", emit: varscan_vcf
+		path "bamlist.txt", emit: bamlist
 
 	when:
 		(params.snpcalling && params.run_varscan && params.run_minimap2 && !params.skip_minimap2 && !params.skip_varscan) || params.run_all
@@ -317,6 +325,7 @@ process VARSCANBWA {
 
 	output:
 		path "BWA.varscan.*.vcf", emit: varscan_vcf
+		path "bamlist.txt", emit: bamlist
 
 	when:
 		(params.snpcalling && params.run_varscan && params.run_bwa && !params.skip_bwa && !params.skip_varscan) || params.run_all
@@ -346,6 +355,7 @@ process MPILEUPBRESEQ {
 
 	output:
 		path "BRESEQ.mpileup.txt", emit: mpileup_txt
+		path "bamlist.txt", emit: bamlist
 
 	when:
 		(params.snpcalling && params.run_mpileup && params.run_breseq && !params.skip_breseq && !params.skip_mpileup) || params.run_all
@@ -372,6 +382,7 @@ process MPILEUPMINIMAP2 {
 
 	output:
 		path "MINIMAP2.mpileup.txt", emit: mpileup_txt
+		path "bamlist.txt", emit: bamlist
 
 	when:
 		(params.snpcalling && params.run_mpileup && params.run_minimap2 && !params.skip_minimap2 && !params.skip_mpileup) || params.run_all
@@ -398,6 +409,7 @@ process MPILEUPBWA {
 
 	output:
 		path "BWA.mpileup.txt", emit: mpileup_txt
+		path "bamlist.txt", emit: bamlist
 
 	when:
 		(params.snpcalling && params.run_mpileup && params.run_bwa && !params.skip_bwa && !params.skip_mpileup) || params.run_all

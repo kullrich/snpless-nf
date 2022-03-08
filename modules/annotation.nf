@@ -82,6 +82,9 @@ process SNPEFFANNOTATEFREEBAYESBRESEQ {
 		parse_meancoverage.py covlist.txt > meancoverage.txt
 		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
 		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk '{gsub(",","");print $1,$2,$2}' ${vcfFile}.snpeff.vcf.pvalues.txt > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr($1,1,1)=="#") print $0}' ${vcfFile}.snpeff.vcf > ${vcfFile}.snpeff.vcf.pvalues.vcf
+		bedtools intersect -a ${vcfFile}.snpeff.vcf -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.snpeff.vcf.pvalues.vcf
 		"""
 }
 
@@ -117,6 +120,9 @@ process SNPEFFANNOTATEFREEBAYESMINIMAP2 {
 		parse_meancoverage.py covlist.txt > meancoverage.txt
 		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
 		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk '{gsub(",","");print $1,$2,$2}' ${vcfFile}.snpeff.vcf.pvalues.txt > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr($1,1,1)=="#") print $0}' ${vcfFile}.snpeff.vcf > ${vcfFile}.snpeff.vcf.pvalues.vcf
+		bedtools intersect -a ${vcfFile}.snpeff.vcf -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.snpeff.vcf.pvalues.vcf
 		"""
 }
 
@@ -152,6 +158,9 @@ process SNPEFFANNOTATEFREEBAYESBWA {
 		parse_meancoverage.py covlist.txt > meancoverage.txt
 		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
 		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk '{gsub(",","");print $1,$2,$2}' ${vcfFile}.snpeff.vcf.pvalues.txt > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr($1,1,1)=="#") print $0}' ${vcfFile}.snpeff.vcf > ${vcfFile}.snpeff.vcf.pvalues.vcf
+		bedtools intersect -a ${vcfFile}.snpeff.vcf -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.snpeff.vcf.pvalues.vcf
 		"""
 }
 
@@ -187,6 +196,9 @@ process SNPEFFANNOTATEBCFTOOLSBRESEQ {
 		parse_meancoverage.py covlist.txt > meancoverage.txt
 		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
 		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk '{gsub(",","");print $1,$2,$2}' ${vcfFile}.snpeff.vcf.pvalues.txt > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr($1,1,1)=="#") print $0}' ${vcfFile}.snpeff.vcf > ${vcfFile}.snpeff.vcf.pvalues.vcf
+		bedtools intersect -a ${vcfFile}.snpeff.vcf -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.snpeff.vcf.pvalues.vcf
 		"""
 }
 
@@ -222,6 +234,9 @@ process SNPEFFANNOTATEBCFTOOLSMINIMAP2 {
 		parse_meancoverage.py covlist.txt > meancoverage.txt
 		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
 		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk '{gsub(",","");print $1,$2,$2}' ${vcfFile}.snpeff.vcf.pvalues.txt > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr($1,1,1)=="#") print $0}' ${vcfFile}.snpeff.vcf > ${vcfFile}.snpeff.vcf.pvalues.vcf
+		bedtools intersect -a ${vcfFile}.snpeff.vcf -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.snpeff.vcf.pvalues.vcf
 		"""
 }
 
@@ -257,6 +272,9 @@ process SNPEFFANNOTATEBCFTOOLSBWA {
 		parse_meancoverage.py covlist.txt > meancoverage.txt
 		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
 		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk '{gsub(",","");print $1,$2,$2}' ${vcfFile}.snpeff.vcf.pvalues.txt > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr($1,1,1)=="#") print $0}' ${vcfFile}.snpeff.vcf > ${vcfFile}.snpeff.vcf.pvalues.vcf
+		bedtools intersect -a ${vcfFile}.snpeff.vcf -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.snpeff.vcf.pvalues.vcf
 		"""
 }
 
@@ -292,6 +310,9 @@ process SNPEFFANNOTATEVARSCANBRESEQ {
 		parse_meancoverage.py covlist.txt > meancoverage.txt
 		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
 		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk '{gsub(",","");print $1,$2,$2}' ${vcfFile}.snpeff.vcf.pvalues.txt > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr($1,1,1)=="#") print $0}' ${vcfFile}.snpeff.vcf > ${vcfFile}.snpeff.vcf.pvalues.vcf
+		bedtools intersect -a ${vcfFile}.snpeff.vcf -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.snpeff.vcf.pvalues.vcf
 		"""
 }
 
@@ -327,6 +348,9 @@ process SNPEFFANNOTATEVARSCANMINIMAP2 {
 		parse_meancoverage.py covlist.txt > meancoverage.txt
 		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
 		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk '{gsub(",","");print $1,$2,$2}' ${vcfFile}.snpeff.vcf.pvalues.txt > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr($1,1,1)=="#") print $0}' ${vcfFile}.snpeff.vcf > ${vcfFile}.snpeff.vcf.pvalues.vcf
+		bedtools intersect -a ${vcfFile}.snpeff.vcf -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.snpeff.vcf.pvalues.vcf
 		"""
 }
 
@@ -362,5 +386,8 @@ process SNPEFFANNOTATEVARSCANBWA {
 		parse_meancoverage.py covlist.txt > meancoverage.txt
 		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
 		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk '{gsub(",","");print $1,$2,$2}' ${vcfFile}.snpeff.vcf.pvalues.txt > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr($1,1,1)=="#") print $0}' ${vcfFile}.snpeff.vcf > ${vcfFile}.snpeff.vcf.pvalues.vcf
+		bedtools intersect -a ${vcfFile}.snpeff.vcf -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.snpeff.vcf.pvalues.vcf
 		"""
 }

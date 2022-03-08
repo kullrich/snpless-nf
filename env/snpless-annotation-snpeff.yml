@@ -7,3 +7,4 @@ dependencies:
   - snpeff
   - numpy
   - cyvcf2
+  - bedtools

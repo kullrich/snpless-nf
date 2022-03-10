@@ -85,7 +85,7 @@ process SNPEFFANNOTATEFREEBAYESBRESEQ {
 		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
 		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
 		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
-		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}..pvalues.snpeff.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }
 
@@ -124,7 +124,7 @@ process SNPEFFANNOTATEFREEBAYESMINIMAP2 {
 		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
 		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
 		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
-		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}..pvalues.snpeff.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }
 
@@ -163,7 +163,7 @@ process SNPEFFANNOTATEFREEBAYESBWA {
 		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
 		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
 		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
-		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}..pvalues.snpeff.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }
 
@@ -202,7 +202,7 @@ process SNPEFFANNOTATEBCFTOOLSBRESEQ {
 		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
 		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
 		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
-		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}..pvalues.snpeff.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }
 
@@ -241,7 +241,7 @@ process SNPEFFANNOTATEBCFTOOLSMINIMAP2 {
 		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
 		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
 		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
-		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}..pvalues.snpeff.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }
 
@@ -280,7 +280,7 @@ process SNPEFFANNOTATEBCFTOOLSBWA {
 		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
 		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
 		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
-		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}..pvalues.snpeff.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }
 
@@ -319,7 +319,7 @@ process SNPEFFANNOTATEVARSCANBRESEQ {
 		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
 		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
 		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
-		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}..pvalues.snpeff.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }
 
@@ -358,7 +358,7 @@ process SNPEFFANNOTATEVARSCANMINIMAP2 {
 		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
 		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
 		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
-		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}..pvalues.snpeff.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }
 
@@ -397,6 +397,6 @@ process SNPEFFANNOTATEVARSCANBWA {
 		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
 		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
 		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
-		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}..pvalues.snpeff.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }

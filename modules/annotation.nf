@@ -23,7 +23,7 @@ process SNPEFFCREATEDB {
 		    cp ${reference} ${snpeffOutDir}/data/${params.annotation_reference_name}${params.annotation_reference_version}/sequences.fa
 		    cp ${gff3} ${snpeffOutDir}/data/${params.annotation_reference_name}${params.annotation_reference_version}/genes.gff
 		    gzip -f ${snpeffOutDir}/data/${params.annotation_reference_name}${params.annotation_reference_version}/genes.gff
-		    snpEff build -c ${snpeffOutDir}/snpEff.config -gff3 -v ${params.annotation_reference_name}${params.annotation_reference_version}
+		    snpEff build -c ${snpeffOutDir}/snpEff.config -gff3 -noCheckProtein -noCheckCds -v ${params.annotation_reference_name}${params.annotation_reference_version}
 		    """
 		else if( params.annotation_snpeff_type == 'gtf' )
 		    """
@@ -34,7 +34,7 @@ process SNPEFFCREATEDB {
 		    cp ${reference} ${snpeffOutDir}/data/${params.annotation_reference_name}${params.annotation_reference_version}/sequences.fa
 		    cp ${gff3} ${snpeffOutDir}/data/${params.annotation_reference_name}${params.annotation_reference_version}/genes.gff
 		    gzip -f ${snpeffOutDir}/data/${params.annotation_reference_name}${params.annotation_reference_version}/genes.gff
-		    snpEff build -c ${snpeffOutDir}/snpEff.config -gtf22 -v ${params.annotation_reference_name}${params.annotation_reference_version}
+		    snpEff build -c ${snpeffOutDir}/snpEff.config -gtf22 -noCheckProtein -noCheckCds -v ${params.annotation_reference_name}${params.annotation_reference_version}
 		    """
 		else if( params.annotation_snpeff_type == 'genbank' )
 		    """
@@ -60,9 +60,16 @@ process SNPEFFANNOTATEFREEBAYESBRESEQ {
 	input:
 		path(snpeffOutDir)
 		path(vcfFile)
+		val(mean_coverage)
+		path(mappingPath)
 
 	output:
-		path "*.vcf", emit: annotation_vcf
+		path "*.snpeff.vcf", emit: annotation_vcf
+		path "*.snpeff.html", emit: annotation_html
+		path "*.snpeff.csv", emit: annotation_csv
+		path "*.snpeff.vcf.input.txt", emit: annotation_input
+		path "*.snpeff.vcf.pvalues.txt", emit: annotation_pvalues
+		path "covlist.txt", emit: covlist
 
 
 	when:
@@ -71,6 +78,14 @@ process SNPEFFANNOTATEFREEBAYESBRESEQ {
 	script:
 		"""
 		snpEff -s ${vcfFile}.snpeff.html -csvStats ${vcfFile}.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile} > ${vcfFile}.snpeff.vcf
+		sortfiles.py ${mappingPath} coverage _ > covlist.txt
+		parse_meancoverage.py covlist.txt > meancoverage.txt
+		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
+		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
+		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }
 
@@ -84,9 +99,16 @@ process SNPEFFANNOTATEFREEBAYESMINIMAP2 {
 	input:
 		path(snpeffOutDir)
 		path(vcfFile)
+		val(mean_coverage)
+		path(mappingPath)
 
 	output:
 		path "*.vcf", emit: annotation_vcf
+		path "*.snpeff.html", emit: annotation_html
+		path "*.snpeff.csv", emit: annotation_csv
+		path "*.snpeff.vcf.input.txt", emit: annotation_input
+		path "*.snpeff.vcf.pvalues.txt", emit: annotation_pvalues
+		path "covlist.txt", emit: covlist
 
 
 	when:
@@ -95,6 +117,14 @@ process SNPEFFANNOTATEFREEBAYESMINIMAP2 {
 	script:
 		"""
 		snpEff -s ${vcfFile}.snpeff.html -csvStats ${vcfFile}.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile} > ${vcfFile}.snpeff.vcf
+		sortfiles.py ${mappingPath} coverage _ > covlist.txt
+		parse_meancoverage.py covlist.txt > meancoverage.txt
+		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
+		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
+		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }
 
@@ -108,9 +138,16 @@ process SNPEFFANNOTATEFREEBAYESBWA {
 	input:
 		path(snpeffOutDir)
 		path(vcfFile)
+		val(mean_coverage)
+		path(mappingPath)
 
 	output:
 		path "*.vcf", emit: annotation_vcf
+		path "*.snpeff.html", emit: annotation_html
+		path "*.snpeff.csv", emit: annotation_csv
+		path "*.snpeff.vcf.input.txt", emit: annotation_input
+		path "*.snpeff.vcf.pvalues.txt", emit: annotation_pvalues
+		path "covlist.txt", emit: covlist
 
 
 	when:
@@ -119,6 +156,14 @@ process SNPEFFANNOTATEFREEBAYESBWA {
 	script:
 		"""
 		snpEff -s ${vcfFile}.snpeff.html -csvStats ${vcfFile}.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile} > ${vcfFile}.snpeff.vcf
+		sortfiles.py ${mappingPath} coverage _ > covlist.txt
+		parse_meancoverage.py covlist.txt > meancoverage.txt
+		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
+		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
+		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }
 
@@ -132,9 +177,16 @@ process SNPEFFANNOTATEBCFTOOLSBRESEQ {
 	input:
 		path(snpeffOutDir)
 		path(vcfFile)
+		val(mean_coverage)
+		path(mappingPath)
 
 	output:
 		path "*.vcf", emit: annotation_vcf
+		path "*.snpeff.html", emit: annotation_html
+		path "*.snpeff.csv", emit: annotation_csv
+		path "*.snpeff.vcf.input.txt", emit: annotation_input
+		path "*.snpeff.vcf.pvalues.txt", emit: annotation_pvalues
+		path "covlist.txt", emit: covlist
 
 
 	when:
@@ -143,6 +195,14 @@ process SNPEFFANNOTATEBCFTOOLSBRESEQ {
 	script:
 		"""
 		snpEff -s ${vcfFile}.snpeff.html -csvStats ${vcfFile}.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile} > ${vcfFile}.snpeff.vcf
+		sortfiles.py ${mappingPath} coverage _ > covlist.txt
+		parse_meancoverage.py covlist.txt > meancoverage.txt
+		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
+		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
+		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }
 
@@ -156,9 +216,16 @@ process SNPEFFANNOTATEBCFTOOLSMINIMAP2 {
 	input:
 		path(snpeffOutDir)
 		path(vcfFile)
+		val(mean_coverage)
+		path(mappingPath)
 
 	output:
 		path "*.vcf", emit: annotation_vcf
+		path "*.snpeff.html", emit: annotation_html
+		path "*.snpeff.csv", emit: annotation_csv
+		path "*.snpeff.vcf.input.txt", emit: annotation_input
+		path "*.snpeff.vcf.pvalues.txt", emit: annotation_pvalues
+		path "covlist.txt", emit: covlist
 
 
 	when:
@@ -167,6 +234,14 @@ process SNPEFFANNOTATEBCFTOOLSMINIMAP2 {
 	script:
 		"""
 		snpEff -s ${vcfFile}.snpeff.html -csvStats ${vcfFile}.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile} > ${vcfFile}.snpeff.vcf
+		sortfiles.py ${mappingPath} coverage _ > covlist.txt
+		parse_meancoverage.py covlist.txt > meancoverage.txt
+		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
+		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
+		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }
 
@@ -180,9 +255,16 @@ process SNPEFFANNOTATEBCFTOOLSBWA {
 	input:
 		path(snpeffOutDir)
 		path(vcfFile)
+		val(mean_coverage)
+		path(mappingPath)
 
 	output:
 		path "*.vcf", emit: annotation_vcf
+		path "*.snpeff.html", emit: annotation_html
+		path "*.snpeff.csv", emit: annotation_csv
+		path "*.snpeff.vcf.input.txt", emit: annotation_input
+		path "*.snpeff.vcf.pvalues.txt", emit: annotation_pvalues
+		path "covlist.txt", emit: covlist
 
 
 	when:
@@ -191,6 +273,14 @@ process SNPEFFANNOTATEBCFTOOLSBWA {
 	script:
 		"""
 		snpEff -s ${vcfFile}.snpeff.html -csvStats ${vcfFile}.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile} > ${vcfFile}.snpeff.vcf
+		sortfiles.py ${mappingPath} coverage _ > covlist.txt
+		parse_meancoverage.py covlist.txt > meancoverage.txt
+		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
+		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
+		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }
 
@@ -204,9 +294,16 @@ process SNPEFFANNOTATEVARSCANBRESEQ {
 	input:
 		path(snpeffOutDir)
 		path(vcfFile)
+		val(mean_coverage)
+		path(mappingPath)
 
 	output:
 		path "*.vcf", emit: annotation_vcf
+		path "*.snpeff.html", emit: annotation_html
+		path "*.snpeff.csv", emit: annotation_csv
+		path "*.snpeff.vcf.input.txt", emit: annotation_input
+		path "*.snpeff.vcf.pvalues.txt", emit: annotation_pvalues
+		path "covlist.txt", emit: covlist
 
 
 	when:
@@ -215,6 +312,14 @@ process SNPEFFANNOTATEVARSCANBRESEQ {
 	script:
 		"""
 		snpEff -s ${vcfFile}.snpeff.html -csvStats ${vcfFile}.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile} > ${vcfFile}.snpeff.vcf
+		sortfiles.py ${mappingPath} coverage _ > covlist.txt
+		parse_meancoverage.py covlist.txt > meancoverage.txt
+		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
+		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
+		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }
 
@@ -228,9 +333,16 @@ process SNPEFFANNOTATEVARSCANMINIMAP2 {
 	input:
 		path(snpeffOutDir)
 		path(vcfFile)
+		val(mean_coverage)
+		path(mappingPath)
 
 	output:
 		path "*.vcf", emit: annotation_vcf
+		path "*.snpeff.html", emit: annotation_html
+		path "*.snpeff.csv", emit: annotation_csv
+		path "*.snpeff.vcf.input.txt", emit: annotation_input
+		path "*.snpeff.vcf.pvalues.txt", emit: annotation_pvalues
+		path "covlist.txt", emit: covlist
 
 
 	when:
@@ -239,6 +351,14 @@ process SNPEFFANNOTATEVARSCANMINIMAP2 {
 	script:
 		"""
 		snpEff -s ${vcfFile}.snpeff.html -csvStats ${vcfFile}.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile} > ${vcfFile}.snpeff.vcf
+		sortfiles.py ${mappingPath} coverage _ > covlist.txt
+		parse_meancoverage.py covlist.txt > meancoverage.txt
+		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
+		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
+		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }
 
@@ -252,9 +372,16 @@ process SNPEFFANNOTATEVARSCANBWA {
 	input:
 		path(snpeffOutDir)
 		path(vcfFile)
+		val(mean_coverage)
+		path(mappingPath)
 
 	output:
 		path "*.vcf", emit: annotation_vcf
+		path "*.snpeff.html", emit: annotation_html
+		path "*.snpeff.csv", emit: annotation_csv
+		path "*.snpeff.vcf.input.txt", emit: annotation_input
+		path "*.snpeff.vcf.pvalues.txt", emit: annotation_pvalues
+		path "covlist.txt", emit: covlist
 
 
 	when:
@@ -263,5 +390,13 @@ process SNPEFFANNOTATEVARSCANBWA {
 	script:
 		"""
 		snpEff -s ${vcfFile}.snpeff.html -csvStats ${vcfFile}.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile} > ${vcfFile}.snpeff.vcf
+		sortfiles.py ${mappingPath} coverage _ > covlist.txt
+		parse_meancoverage.py covlist.txt > meancoverage.txt
+		parse_vcf.py ${vcfFile}.snpeff.vcf meancoverage.txt > ${vcfFile}.snpeff.vcf.input.txt
+		annotate_pvalues < ${vcfFile}.snpeff.vcf.input.txt > ${vcfFile}.snpeff.vcf.pvalues.txt
+		awk -v OFS='\\t' '{gsub(",","");print \$1,\$2,\$2}' ${vcfFile}.snpeff.vcf.pvalues.txt | tail -n +2 > ${vcfFile}.snpeff.vcf.pvalues.bed
+		awk '{if(substr(\$1,1,1)=="#") print \$0}' ${vcfFile} > ${vcfFile}.pvalues.vcf
+		bedtools intersect -a ${vcfFile} -b ${vcfFile}.snpeff.vcf.pvalues.bed >> ${vcfFile}.pvalues.vcf
+		snpEff -s ${vcfFile}.pvalues.snpeff.html -csvStats ${vcfFile}.pvalues.snpeff.csv -c ${snpeffOutDir}/snpEff.config -v ${params.annotation_reference_name}${params.annotation_reference_version} ${vcfFile}.pvalues.vcf > ${vcfFile}.pvalues.snpeff.vcf
 		"""
 }

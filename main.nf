@@ -540,6 +540,9 @@ workflow svcalling {
 
 workflow annotation {
     take:
+        breseqOutDir
+        minimap2OutDir
+        bwaOutDir
         snpeffOutDir
         freebayes_breseq_vcf
         freebayes_minimap2_vcf
@@ -558,15 +561,15 @@ workflow annotation {
         // CREATE REFERENCE DB
         file(params.annotation_snpeff_config_file).copyTo(snpeffOutDir)
         SNPEFFCREATEDB(snpeffOutDir, file(params.reference), file(params.gff3))
-        SNPEFFANNOTATEFREEBAYESBRESEQ(snpeffOutDir, freebayes_breseq_vcf.flatten())
-        SNPEFFANNOTATEFREEBAYESMINIMAP2(snpeffOutDir, freebayes_minimap2_vcf.flatten())
-        SNPEFFANNOTATEFREEBAYESBWA(snpeffOutDir, freebayes_bwa_vcf.flatten())
-        SNPEFFANNOTATEBCFTOOLSBRESEQ(snpeffOutDir, bcftools_breseq_vcf.flatten())
-        SNPEFFANNOTATEBCFTOOLSMINIMAP2(snpeffOutDir, bcftools_minimap2_vcf.flatten())
-        SNPEFFANNOTATEBCFTOOLSBWA(snpeffOutDir, bcftools_bwa_vcf.flatten())
-        SNPEFFANNOTATEVARSCANBRESEQ(snpeffOutDir, varscan_breseq_vcf.flatten())
-        SNPEFFANNOTATEVARSCANMINIMAP2(snpeffOutDir, varscan_minimap2_vcf.flatten())
-        SNPEFFANNOTATEVARSCANBWA(snpeffOutDir, varscan_bwa_vcf.flatten())
+        SNPEFFANNOTATEFREEBAYESBRESEQ(snpeffOutDir, freebayes_breseq_vcf.flatten(), breseq_mean_coverage, breseqOutDir)
+        SNPEFFANNOTATEFREEBAYESMINIMAP2(snpeffOutDir, freebayes_minimap2_vcf.flatten(), minimap2_mean_coverage, minimap2OutDir)
+        SNPEFFANNOTATEFREEBAYESBWA(snpeffOutDir, freebayes_bwa_vcf.flatten(), bwa_mean_coverage, bwaOutDir)
+        SNPEFFANNOTATEBCFTOOLSBRESEQ(snpeffOutDir, bcftools_breseq_vcf.flatten(), breseq_mean_coverage, breseqOutDir)
+        SNPEFFANNOTATEBCFTOOLSMINIMAP2(snpeffOutDir, bcftools_minimap2_vcf.flatten(), minimap2_mean_coverage, minimap2OutDir)
+        SNPEFFANNOTATEBCFTOOLSBWA(snpeffOutDir, bcftools_bwa_vcf.flatten(), bwa_mean_coverage, bwaOutDir)
+        SNPEFFANNOTATEVARSCANBRESEQ(snpeffOutDir, varscan_breseq_vcf.flatten(), breseq_mean_coverage, breseqOutDir)
+        SNPEFFANNOTATEVARSCANMINIMAP2(snpeffOutDir, varscan_minimap2_vcf.flatten(), minimap2_mean_coverage, minimap2OutDir)
+        SNPEFFANNOTATEVARSCANBWA(snpeffOutDir, varscan_bwa_vcf.flatten(), bwa_mean_coverage, bwaOutDir)
         
 }
 
@@ -660,7 +663,7 @@ OUTPUT: ${params.output}
             //
             snpeffOutDir = file(params.output+"/ANNOTATION/REFERENCE")
             snpeffOutDir.mkdirs()
-            annotation(snpeffOutDir, snpcalling.out.freebayes_breseq_vcf, snpcalling.out.freebayes_minimap2_vcf, snpcalling.out.freebayes_bwa_vcf, snpcalling.out.bcftools_breseq_vcf, snpcalling.out.bcftools_minimap2_vcf, snpcalling.out.bcftools_bwa_vcf, snpcalling.out.varscan_breseq_vcf, snpcalling.out.varscan_minimap2_vcf, snpcalling.out.varscan_bwa_vcf, snpcalling.out.breseq_mean_coverage, snpcalling.out.minimap2_mean_coverage, snpcalling.out.bwa_mean_coverage)
+            annotation(breseqOutDir, minimap2OutDir, bwaOutDir, snpeffOutDir, snpcalling.out.freebayes_breseq_vcf, snpcalling.out.freebayes_minimap2_vcf, snpcalling.out.freebayes_bwa_vcf, snpcalling.out.bcftools_breseq_vcf, snpcalling.out.bcftools_minimap2_vcf, snpcalling.out.bcftools_bwa_vcf, snpcalling.out.varscan_breseq_vcf, snpcalling.out.varscan_minimap2_vcf, snpcalling.out.varscan_bwa_vcf, snpcalling.out.breseq_mean_coverage, snpcalling.out.minimap2_mean_coverage, snpcalling.out.bwa_mean_coverage)
             //
         }
 }

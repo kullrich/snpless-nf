@@ -11,9 +11,9 @@ library(ltc)                    # color palettes package
 
 
 ## plot genome differences 
-library(scales)                 
-library(ggforce)
-library(ggalluvial)
+library(scales)                 # you need to scale the x-y axis 
+library(ggforce)                # to make shapes
+library(ggalluvial)             # make an alluvial plot
 
 #___________________________________________________________________________________
 #

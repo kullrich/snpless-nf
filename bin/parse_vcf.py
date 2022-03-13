@@ -1,4 +1,3 @@
-vcffile = 'BRESEQ.bcftools.normalized.vcf.gz'
 #!/usr/bin/env python3
 
 

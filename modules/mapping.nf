@@ -147,6 +147,7 @@ process POSTBRESEQ {
 		path "${sampleLong}/data/reference.fasta", emit: breseq_bam_reference
 		path "${sampleLong}/data/reference.gff3", emit: breseq_bam_reference_gff3
 		path "${sampleLong}/data/${sampleLong}.vcf", emit: breseq_vcf
+		path "${sampleLong}/data/${sampleLong}.GT.vcf", emit: breseq_gtvcf
 		path "${sampleLong}/data/${sampleLong}.gd", emit: breseq_gd
 
 	when:
@@ -160,6 +161,7 @@ process POSTBRESEQ {
 		samtools sort -@ $task.cpus ${sampleLong}/data/${sampleLong}.breseq.bam  > ${sampleLong}/data/${sampleLong}.breseq.sorted.bam 
 		samtools index ${sampleLong}/data/${sampleLong}.breseq.sorted.bam
 		samtools coverage ${params.mapping_breseq_coverage} ${sampleLong}/data/${sampleLong}.breseq.sorted.bam > ${sampleLong}/data/${sampleLong}.breseq.mean.coverage
+		breseqVCFaddGT.py ${sampleLong}/data/${sampleLong}.vcf ${sampleLong} > ${sampleLong}/data/${sampleLong}.GT.vcf
 		"""
 }
 

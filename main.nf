@@ -217,7 +217,7 @@ include {FASTQC; TRIM; PEAR} from './modules/qc' params(params)
 include {GENMAP} from './modules/genmap' params(params)
 include {UNICYCLER; PROKKA} from './modules/assembly' params(params)
 include {BRESEQ; MINIMAP2; BWA; POSTBRESEQ; POSTMINIMAP2; POSTBWA} from './modules/mapping' params(params)
-include {FREEBAYESBRESEQ; FREEBAYESMINIMAP2; FREEBAYESBWA; BCFTOOLSBRESEQ; BCFTOOLSMINIMAP2; BCFTOOLSBWA; LOFREQBRESEQ; LOFREQMINIMAP2; LOFREQBWA; VARSCANBRESEQ; VARSCANMINIMAP2; VARSCANBWA; MPILEUPBRESEQ; MPILEUPMINIMAP2; MPILEUPBWA; GDCOMPARE} from './modules/snpcalling' params(params)
+include {FREEBAYESBRESEQ; FREEBAYESMINIMAP2; FREEBAYESBWA; BCFTOOLSBRESEQ; BCFTOOLSMINIMAP2; BCFTOOLSBWA; LOFREQBRESEQ; LOFREQMINIMAP2; LOFREQBWA; VARSCANBRESEQ; VARSCANMINIMAP2; VARSCANBWA; MPILEUPBRESEQ; MPILEUPMINIMAP2; MPILEUPBWA; GDCOMPARE; BRESEQVCF} from './modules/snpcalling' params(params)
 include {PINDELMINIMAP2; PINDELBWA} from './modules/svcalling' params(params)
 include {SNPEFFCREATEDB; SNPEFFANNOTATEFREEBAYESBRESEQ; SNPEFFANNOTATEFREEBAYESMINIMAP2; SNPEFFANNOTATEFREEBAYESBWA; SNPEFFANNOTATEBCFTOOLSBRESEQ; SNPEFFANNOTATEBCFTOOLSMINIMAP2; SNPEFFANNOTATEBCFTOOLSBWA; SNPEFFANNOTATEVARSCANBRESEQ; SNPEFFANNOTATEVARSCANMINIMAP2; SNPEFFANNOTATEVARSCANBWA} from './modules/annotation' params(params)
 
@@ -334,6 +334,7 @@ workflow mapping {
         breseq_bam_reference = POSTBRESEQ.out.breseq_bam_reference.collect()
         breseq_bam_reference_gff3 = POSTBRESEQ.out.breseq_bam_reference_gff3.collect()
         breseq_vcf = POSTBRESEQ.out.breseq_vcf.collect()
+        breseq_gtvcf = POSTBRESEQ.out.breseq_gtvcf.collect()
         breseq_gd = POSTBRESEQ.out.breseq_gd.collect()
         //
         // PROCESS MINIMAP2
@@ -381,6 +382,7 @@ workflow mapping {
         breseq_bam_reference
         breseq_bam_reference_gff3
         breseq_vcf
+        breseq_gtvcf
         breseq_gd
         postminimap2Dir
         postminimap2Samples
@@ -413,6 +415,7 @@ workflow snpcalling {
         breseq_bam_reference
         breseq_bam_reference_gff3
         breseq_vcf
+        breseq_gtvcf
         breseq_gd
         postminimap2Dir
         postminimap2Samples
@@ -460,6 +463,7 @@ workflow snpcalling {
         MPILEUPBWA(bwa_bam, bwaOutDir, file(params.reference))
         // PROCESS GDCOMPARE
         GDCOMPARE(breseq_gd, breseqOutDir, file(params.reference), file(params.gff3))
+        BRESEQVCF(breseq_gtvcf, breseqOutDir)
         freebayes_breseq_vcf = FREEBAYESBRESEQ.out.freebayes_vcf
         freebayes_minimap2_vcf = FREEBAYESMINIMAP2.out.freebayes_vcf
         freebayes_bwa_vcf = FREEBAYESBWA.out.freebayes_vcf
@@ -473,6 +477,7 @@ workflow snpcalling {
         lofreq_minimap2_vcf = LOFREQMINIMAP2.out.lofreq_vcf
         lofreq_bwa_vcf = LOFREQBWA.out.lofreq_vcf
         gdcompare = GDCOMPARE.out.gdcompare
+        breseqvcf = BRESEQVCF.out.vcf
     emit:
         freebayes_breseq_vcf
         freebayes_minimap2_vcf
@@ -487,6 +492,7 @@ workflow snpcalling {
         lofreq_minimap2_vcf
         lofreq_bwa_vcf
         gdcompare
+        breseqvcf
         breseq_mean_coverage
         minimap2_mean_coverage
         bwa_mean_coverage
@@ -642,7 +648,7 @@ OUTPUT: ${params.output}
             mpileup_bwaOutDir = file(params.output+"/SNPCALLING/MPILEUP/BWA")
             mpileup_bwaOutDir.mkdirs()
             //
-            snpcalling(breseqOutDir, minimap2OutDir, bwaOutDir, lofreq_breseqOutDir, lofreq_minimap2OutDir, lofreq_bwaOutDir, mpileup_breseqOutDir, mpileup_minimap2OutDir, mpileup_bwaOutDir, mapping.out.postbreseqDir, mapping.out.postbreseqSamples, mapping.out.breseq_mean_coverage, mapping.out.breseq_bam, mapping.out.breseq_bam_index, mapping.out.breseq_bam_reference, mapping.out.breseq_bam_reference_gff3, mapping.out.breseq_vcf, mapping.out.breseq_gd, mapping.out.postminimap2Dir, mapping.out.postminimap2Samples, mapping.out.minimap2_mean_coverage, mapping.out.minimap2_bam, mapping.out.minimap2_bam_index, mapping.out.postbwaDir, mapping.out.postbwaSamples, mapping.out.bwa_mean_coverage, mapping.out.bwa_bam, mapping.out.bwa_bam_index)
+            snpcalling(breseqOutDir, minimap2OutDir, bwaOutDir, lofreq_breseqOutDir, lofreq_minimap2OutDir, lofreq_bwaOutDir, mpileup_breseqOutDir, mpileup_minimap2OutDir, mpileup_bwaOutDir, mapping.out.postbreseqDir, mapping.out.postbreseqSamples, mapping.out.breseq_mean_coverage, mapping.out.breseq_bam, mapping.out.breseq_bam_index, mapping.out.breseq_bam_reference, mapping.out.breseq_bam_reference_gff3, mapping.out.breseq_vcf, mapping.out.breseq_gtvcf, mapping.out.breseq_gd, mapping.out.postminimap2Dir, mapping.out.postminimap2Samples, mapping.out.minimap2_mean_coverage, mapping.out.minimap2_bam, mapping.out.minimap2_bam_index, mapping.out.postbwaDir, mapping.out.postbwaSamples, mapping.out.bwa_mean_coverage, mapping.out.bwa_bam, mapping.out.bwa_bam_index)
             //
             // SVCALLING
             //

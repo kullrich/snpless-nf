@@ -261,6 +261,62 @@ ggplot() +
   geom_text(data = ticks, aes(x, y, label = "|", angle = angle))
 
 
+#_______________________________________________
+# ┌─┐┌─┐┌┐┌┌─┐┌─┐┌┬┐┌─┐┌┐┌┌─┐┌┬┐┌─┐  ╦  ╦╔═╗╔═╗
+# │  │ │││││  ├─┤ │ ├┤ │││├─┤ │ ├┤   ╚╗╔╝║  ╠╣ 
+# └─┘└─┘┘└┘└─┘┴ ┴ ┴ └─┘┘└┘┴ ┴ ┴ └─┘   ╚╝ ╚═╝╚  
+#_______________________________________________
+
+
+library(here)
+library(vcfR)
+library(tidyverse)
+library(strex)
+library(data.table)
+library(rvest)            # load rvest for reading html files
+library(janitor)
+
+
+setwd(here("code_plots"))
+list.files()
+
+vcf.raw=list.files(         # read in the directory all the html files
+  pattern = "vcf", recursive = TRUE) 
+
+vcf.merge = c()
+for(i in 1:length(vcf.raw)) {
+  vcf.dat1 <- read.vcfR(vcf.raw[i], verbose = FALSE) 
+  id <- str_before_nth(vcf.raw[i], ".vcf", 1)        # make an id to keep only the first part of the names
+  vcf.dat2 <- as.data.frame(vcf.dat1@fix) %>%    # you select from the VCF the fix option
+    mutate(sample_id=id) %>% 
+    mutate(POS=as.numeric(POS))
+  
+  vcf.merge <- rbind(vcf.merge,vcf.dat2)
+} 
+
+gd <- fread("BRESEQ.annotate.tsv")
+
+html <- read_html("BRESEQ.annotate.html", skip=1) %>% 
+  html_table(fill=TRUE, header = TRUE)  %>% 
+  as.data.frame() %>% 
+  janitor::row_to_names(row_number =1) %>% 
+  filter(grepl("4,296,380",position))
+html
+
+  separate(.,position,into=c("position","note"),":", fill="right") %>% 
+  mutate(position=as.numeric(str_replace_all(position,",",""))) 
+
+vcf.merge %>% 
+  filter(POS=="4296380")
+
+
+html %>% 
+  filter(position=="4296380")
+
+tsv <- fread("BRESEQ.annotate.tsv") %>% 
+  filter(position=="4296380") %>% 
+  select(position,ref_seq,new_seq, title)
+tsv
 
 
 
@@ -283,29 +339,25 @@ ggplot() +
 
 
 
-
-
-
-
-library('BioCircos')
-myGenome = list("A" = 6000000)
-check = list("B"=6000000)
-
-BioCircos(genome = myGenome, yChr = FALSE, genomeFillColor = "Reds", chrPad = 0, 
-          displayGenomeBorder = FALSE, genomeTicksDisplay = FALSE, genomeLabelDy = 0)
-
-tracklist = BioCircosTextTrack('myTextTrack', 'Some text', size = "2em", opacity = 0.5, 
-                               x = -0.67, y = -0.5)
-
-BioCircos(tracklist, genomeFillColor = "PuOr",
-          chrPad = 0, displayGenomeBorder = FALSE, 
-          genomeTicksLen = 2, genomeTicksTextSize = 0, genomeTicksScale = 1e+8,
-          genomeLabelTextSize = "9pt", genomeLabelDy = 0)
-
-tracklist = BioCircosBackgroundTrack("myBackgroundTrack", minRadius = 0.5, maxRadius = 0.8,
-                                     borderColors = "#AAAAAA", borderSize = 0.6, fillColors = "#FFBBBB")
-
-
-BioCircos(tracklist, genomeFillColor = "PuOr",
-          chrPad = 0.05, displayGenomeBorder = FALSE, 
-          genomeTicksDisplay = FALSE,  genomeLabelTextSize = "9pt", genomeLabelDy = 0)
+# library('BioCircos')
+# myGenome = list("A" = 6000000)
+# check = list("B"=6000000)
+# 
+# BioCircos(genome = myGenome, yChr = FALSE, genomeFillColor = "Reds", chrPad = 0, 
+#           displayGenomeBorder = FALSE, genomeTicksDisplay = FALSE, genomeLabelDy = 0)
+# 
+# tracklist = BioCircosTextTrack('myTextTrack', 'Some text', size = "2em", opacity = 0.5, 
+#                                x = -0.67, y = -0.5)
+# 
+# BioCircos(tracklist, genomeFillColor = "PuOr",
+#           chrPad = 0, displayGenomeBorder = FALSE, 
+#           genomeTicksLen = 2, genomeTicksTextSize = 0, genomeTicksScale = 1e+8,
+#           genomeLabelTextSize = "9pt", genomeLabelDy = 0)
+# 
+# tracklist = BioCircosBackgroundTrack("myBackgroundTrack", minRadius = 0.5, maxRadius = 0.8,
+#                                      borderColors = "#AAAAAA", borderSize = 0.6, fillColors = "#FFBBBB")
+# 
+# 
+# BioCircos(tracklist, genomeFillColor = "PuOr",
+#           chrPad = 0.05, displayGenomeBorder = FALSE, 
+#           genomeTicksDisplay = FALSE,  genomeLabelTextSize = "9pt", genomeLabelDy = 0)

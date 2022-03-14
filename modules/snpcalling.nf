@@ -437,6 +437,8 @@ process GDCOMPARE {
 
 	output:
 		path "BRESEQ.annotate.*", emit: gdcompare
+		path "*.vcf", emit: vcf
+		path "*.gd", emit: gd
 
 	when:
 		(params.snpcalling && params.run_gdcompare && params.run_breseq && !params.skip_breseq && !params.skip_gdcompare) || params.run_all
@@ -446,5 +448,30 @@ process GDCOMPARE {
 		(cat ${gff3}; echo "##FASTA"; cat ${reference}) > reference.gff3
 		gdtools ANNOTATE -o BRESEQ.annotate.html -r reference.gff3 ${mappingPath}/*.gd
 		gdtools ANNOTATE -f TSV -o BRESEQ.annotate.tsv -r reference.gff3 ${mappingPath}/*.gd
+		"""
+}
+
+process BRESEQVCF {
+	conda baseDir + '/env/snpless-snpcalling-bcftools.yml'
+	tag "BRESEQVCF on ${mappingPath}"
+	cpus params.gdtools_threads
+
+	publishDir "${params.output}/SNPCALLING/BRESEQVCF/", mode: 'symlink'
+
+	input:
+		val(vcfs)
+		path(mappingPath)
+
+	output:
+		path "*.vcf*", emit: vcf
+
+	when:
+		(params.snpcalling && params.run_gdcompare && params.run_breseq && !params.skip_breseq && !params.skip_gdcompare) || params.run_all
+
+	script:
+		"""
+		bcftools merge ${mappingPath}/*.GT.vcf > BRESEQ.GT.vcf
+		bgzip BRESEQ.GT.vcf
+		tabix BRESEQ.GT.vcf.gz
 		"""
 }

@@ -325,6 +325,7 @@ workflow mapping {
         POSTBRESEQ.out.breseq_bam_reference.subscribe {it.copyTo(breseqOutDir)}
         POSTBRESEQ.out.breseq_bam_reference_gff3.subscribe {it.copyTo(breseqOutDir)}
         POSTBRESEQ.out.breseq_vcf.subscribe {it.copyTo(breseqOutDir)}
+        POSTBRESEQ.out.breseq_gtvcf.subscribe {it.copyTo(breseqOutDir)}
         POSTBRESEQ.out.breseq_gd.subscribe {it.copyTo(breseqOutDir)}
         postbreseqDir = POSTBRESEQ.out.postbreseqDir
         postbreseqSamples = POSTBRESEQ.out.postbreseqSamples

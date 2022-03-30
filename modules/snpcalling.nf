@@ -364,7 +364,6 @@ process MPILEUPBRESEQ {
 		"""
 		sortfiles.py ${mappingPath} bam _ > bamlist.txt
 		samtools mpileup ${params.snpcalling_mpileup_options} -f ${mappingPath}/reference.fasta -b bamlist.txt | parse_mpileup.py > BRESEQ.mpileup.txt
-
 		"""
 }
 
@@ -391,7 +390,6 @@ process MPILEUPMINIMAP2 {
 		"""
 		sortfiles.py ${mappingPath} bam _ > bamlist.txt
 		samtools mpileup ${params.snpcalling_mpileup_options} -f ${reference} -b bamlist.txt | parse_mpileup.py > MINIMAP2.mpileup.txt
-
 		"""
 }
 
@@ -418,7 +416,6 @@ process MPILEUPBWA {
 		"""
 		sortfiles.py ${mappingPath} bam _ > bamlist.txt
 		samtools mpileup ${params.snpcalling_mpileup_options} -f ${reference} -b bamlist.txt | parse_mpileup.py > BWA.mpileup.txt
-
 		"""
 }
 

@@ -467,8 +467,8 @@ process BRESEQVCF {
 
 	script:
 		"""
-		for file in BRESEQOUT/*.GT.vcf;do bgzip $file;done
-		for file in BRESEQOUT/*.GT.vcf.gz;do tabix $file;done
+		for file in BRESEQOUT/*.GT.vcf;do bgzip \$file;done
+		for file in BRESEQOUT/*.GT.vcf.gz;do tabix \$file;done
 		bcftools merge ${mappingPath}/*.GT.vcf > BRESEQ.GT.vcf
 		bgzip BRESEQ.GT.vcf
 		tabix BRESEQ.GT.vcf.gz

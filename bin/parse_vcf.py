@@ -20,7 +20,7 @@ samples_split = [x for x in samples_split if x[3] != "c"]
 splitted = [[x[0],int(x[1]),int(x[2]),x[3]] for x in samples_split]
 splitted.sort(key = operator.itemgetter(1, 2))
 samples_ordered = ['_'.join([str(x) for x in x]) for x in splitted]
-samples_index = [samples_ordered.index(x) for x in vcf.samples]
+samples_index = [samples_ordered.index(x) for x in vcf.samples if x in samples_ordered]
 samples_timepoints = ' '.join([str(x) for x in range(len(samples_ordered))])
 samples_zero = ' '.join([str(0) for x in range(len(samples_ordered))])
 samples_coverage = ' '.join([str(mean_coverage_dict[x]) for x in samples_ordered])

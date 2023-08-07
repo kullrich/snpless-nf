@@ -158,46 +158,25 @@ By contributing to this project, you agree to abide by its terms.
 Behringer, Megan G., et al. "Escherichia coli cultures maintain stable subpopulation structure during long-term evolution." Proceedings of the National Academy of Sciences 115.20 (2018): E4642-E4650. [https://www.pnas.org/content/115/20/E4642.short](https://www.pnas.org/content/115/20/E4642.short)
 
 ## References - Tools
-
-Good, Benjamin H., et al. "The dynamics of molecular evolution over 60,000 generations." Nature 551.7678 (2017): 45-50. [https://www.nature.com/articles/nature24287](https://www.nature.com/articles/nature24287)
-
-Di Tommaso, Paolo, et al. "Nextflow enables reproducible computational workflows." Nature biotechnology 35.4 (2017): 316-319. [https://www.nature.com/articles/nbt.3820?report=reader](https://www.nature.com/articles/nbt.3820?report=reader)
-
-Andrews, Simon. "FastQC: a quality control tool for high throughput sequence data. 2010." (2017): W29-33.
-
-Bolger, Anthony M., Marc Lohse, and Bjoern Usadel. "Trimmomatic: a flexible trimmer for Illumina sequence data." Bioinformatics 30.15 (2014): 2114-2120. [https://academic.oup.com/bioinformatics/article/30/15/2114/2390096?login=true](https://academic.oup.com/bioinformatics/article/30/15/2114/2390096?login=true)
-
-Zhang, Jiajie, et al. "PEAR: a fast and accurate Illumina Paired-End reAd mergeR." Bioinformatics 30.5 (2014): 614-620. [https://academic.oup.com/bioinformatics/article/30/5/614/247231?login=true](https://academic.oup.com/bioinformatics/article/30/5/614/247231?login=true)
-
-Pockrandt, Christopher, et al. "GenMap: ultra-fast computation of genome mappability." Bioinformatics 36.12 (2020): 3687-3692. [https://academic.oup.com/bioinformatics/article/36/12/3687/5815974?login=true](https://academic.oup.com/bioinformatics/article/36/12/3687/5815974?login=true)
-
-Wick, Ryan R., et al. "Unicycler: resolving bacterial genome assemblies from short and long sequencing reads." PLoS computational biology 13.6 (2017): e1005595. [https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005595](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005595)
-
-Seemann, Torsten. "Prokka: rapid prokaryotic genome annotation." Bioinformatics 30.14 (2014): 2068-2069. [https://academic.oup.com/bioinformatics/article/30/14/2068/2390517?login=true](https://academic.oup.com/bioinformatics/article/30/14/2068/2390517?login=true)
-
-Deatherage, Daniel E., and Jeffrey E. Barrick. "Identification of mutations in laboratory-evolved microbes from next-generation sequencing data using breseq." Engineering and analyzing multicellular systems. Humana Press, New York, NY, 2014. 165-188. [https://link.springer.com/content/pdf/10.1007/978-1-4939-0554-6_12.pdf](https://link.springer.com/content/pdf/10.1007/978-1-4939-0554-6_12.pdf)
-
-Li, Heng. "Minimap2: pairwise alignment for nucleotide sequences." Bioinformatics 34.18 (2018): 3094-3100. [https://academic.oup.com/bioinformatics/article/34/18/3094/4994778?login=true](https://academic.oup.com/bioinformatics/article/34/18/3094/4994778?login=true)
-
-Li, Heng. "Aligning sequence reads, clone sequences and assembly contigs with BWA-MEM." arXiv preprint arXiv:1303.3997 (2013). [https://arxiv.org/abs/1303.3997](https://arxiv.org/abs/1303.3997)
-
-Faust, Gregory G., and Ira M. Hall. "SAMBLASTER: fast duplicate marking and structural variant read extraction." Bioinformatics 30.17 (2014): 2503-2505. [https://academic.oup.com/bioinformatics/article/30/17/2503/2748175?login=true](https://academic.oup.com/bioinformatics/article/30/17/2503/2748175?login=true)
-
-Li, Heng, et al. "The sequence alignment/map format and SAMtools." Bioinformatics 25.16 (2009): 2078-2079. [https://academic.oup.com/bioinformatics/article/25/16/2078/204688?login=true](https://academic.oup.com/bioinformatics/article/25/16/2078/204688?login=true)
-
-Garrison, Erik, and Gabor Marth. "Haplotype-based variant detection from short-read sequencing." arXiv preprint arXiv:1207.3907 (2012). [https://arxiv.org/abs/1207.3907](https://arxiv.org/abs/1207.3907)
-
-Wilm, Andreas, et al. "LoFreq: a sequence-quality aware, ultra-sensitive variant caller for uncovering cell-population heterogeneity from high-throughput sequencing datasets." Nucleic acids research 40.22 (2012): 11189-11201. [https://academic.oup.com/nar/article/40/22/11189/1152727?login=true](https://academic.oup.com/nar/article/40/22/11189/1152727?login=true)
-
-Koboldt, Daniel C., et al. "VarScan 2: somatic mutation and copy number alteration discovery in cancer by exome sequencing." Genome research 22.3 (2012): 568-576. [https://genome.cshlp.org/content/22/3/568.short](https://genome.cshlp.org/content/22/3/568.short)
-
-Ye, Kai, et al. "Pindel: a pattern growth approach to detect break points of large deletions and medium sized insertions from paired-end short reads." Bioinformatics 25.21 (2009): 2865-2871. [https://academic.oup.com/bioinformatics/article/25/21/2865/2112044?login=true](https://academic.oup.com/bioinformatics/article/25/21/2865/2112044?login=true)
-
-Cameron, Daniel L., et al. "GRIDSS2: comprehensive characterisation of somatic structural variation using single breakend variants and structural variant phasing." bioRxiv (2021): 2020-07. [https://genomebiology.biomedcentral.com/articles/10.1186/s13059-021-02423-x](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-021-02423-x)
-
-Quinlan, Aaron R., and Ira M. Hall. "BEDTools: a flexible suite of utilities for comparing genomic features." Bioinformatics 26.6 (2010): 841-842. [https://academic.oup.com/bioinformatics/article/26/6/841/244688?login=true](https://academic.oup.com/bioinformatics/article/26/6/841/244688?login=true)
-
-Cingolani, Pablo, et al. "A program for annotating and predicting the effects of single nucleotide polymorphisms, SnpEff: SNPs in the genome of Drosophila melanogaster strain w1118; iso-2; iso-3." Fly 6.2 (2012): 80-92. [https://www.tandfonline.com/doi/full/10.4161/fly.19695](https://www.tandfonline.com/doi/full/10.4161/fly.19695)
-
-Wickham, Hadley. "ggplot2." Wiley Interdisciplinary Reviews: Computational Statistics 3.2 (2011): 180-185. [https://wires.onlinelibrary.wiley.com/doi/full/10.1002/wics.147](https://wires.onlinelibrary.wiley.com/doi/full/10.1002/wics.147)
+1. Good, Benjamin H., et al. "The dynamics of molecular evolution over 60,000 generations." Nature 551.7678 (2017): 45-50. [link](https://www.nature.com/articles/nature24287)
+2. Di Tommaso, Paolo, et al. "Nextflow enables reproducible computational workflows." Nature biotechnology 35.4 (2017): 316-319. [link](https://www.nature.com/articles/nbt.3820?report=reader)
+3. Andrews, Simon. "FastQC: a quality control tool for high throughput sequence data. 2010." (2017): W29-33. [link](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+4.Bolger, Anthony M., Marc Lohse, and Bjoern Usadel. "Trimmomatic: a flexible trimmer for Illumina sequence data." Bioinformatics 30.15 (2014): 2114-2120. [link](https://academic.oup.com/bioinformatics/article/30/15/2114/2390096?login=true)
+5. Zhang, Jiajie, et al. "PEAR: a fast and accurate Illumina Paired-End reAd mergeR." Bioinformatics 30.5 (2014): 614-620. [link](https://academic.oup.com/bioinformatics/article/30/5/614/247231?login=true)
+6. Pockrandt, Christopher, et al. "GenMap: ultra-fast computation of genome mappability." Bioinformatics 36.12 (2020): 3687-3692. [link](https://academic.oup.com/bioinformatics/article/36/12/3687/5815974?login=true)
+7. Wick, Ryan R., et al. "Unicycler: resolving bacterial genome assemblies from short and long sequencing reads." PLoS computational biology 13.6 (2017): e1005595. [link](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005595)
+8. Seemann, Torsten. "Prokka: rapid prokaryotic genome annotation." Bioinformatics 30.14 (2014): 2068-2069. [link](https://academic.oup.com/bioinformatics/article/30/14/2068/2390517?login=true)
+9. Deatherage, Daniel E., and Jeffrey E. Barrick. "Identification of mutations in laboratory-evolved microbes from next-generation sequencing data using breseq." Engineering and analyzing multicellular systems. Humana Press, New York, NY, 2014. 165-188. [link](https://link.springer.com/content/pdf/10.1007/978-1-4939-0554-6_12.pdf)
+10. Li, Heng. "Minimap2: pairwise alignment for nucleotide sequences." Bioinformatics 34.18 (2018): 3094-3100. [link](https://academic.oup.com/bioinformatics/article/34/18/3094/4994778?login=true)
+11. Li, Heng. "Aligning sequence reads, clone sequences and assembly contigs with BWA-MEM." arXiv preprint arXiv:1303.3997 (2013). [link](https://arxiv.org/abs/1303.3997)
+12. Faust, Gregory G., and Ira M. Hall. "SAMBLASTER: fast duplicate marking and structural variant read extraction." Bioinformatics 30.17 (2014): 2503-2505. [link](https://academic.oup.com/bioinformatics/article/30/17/2503/2748175?login=true)
+13. Li, Heng, et al. "The sequence alignment/map format and SAMtools." Bioinformatics 25.16 (2009): 2078-2079. [link](https://academic.oup.com/bioinformatics/article/25/16/2078/204688?login=true)
+14. Garrison, Erik, and Gabor Marth. "Haplotype-based variant detection from short-read sequencing." arXiv preprint arXiv:1207.3907 (2012). [link](https://arxiv.org/abs/1207.3907)
+15. Wilm, Andreas, et al. "LoFreq: a sequence-quality aware, ultra-sensitive variant caller for uncovering cell-population heterogeneity from high-throughput sequencing datasets." Nucleic acids research 40.22 (2012): 11189-11201. [link](https://academic.oup.com/nar/article/40/22/11189/1152727?login=true)
+16. Koboldt, Daniel C., et al. "VarScan 2: somatic mutation and copy number alteration discovery in cancer by exome sequencing." Genome research 22.3 (2012): 568-576. [link](https://genome.cshlp.org/content/22/3/568.short)
+17. Ye, Kai, et al. "Pindel: a pattern growth approach to detect break points of large deletions and medium sized insertions from paired-end short reads." Bioinformatics 25.21 (2009): 2865-2871. [link](https://academic.oup.com/bioinformatics/article/25/21/2865/2112044?login=true)
+18. Cameron, Daniel L., et al. "GRIDSS2: comprehensive characterisation of somatic structural variation using single breakend variants and structural variant phasing." bioRxiv (2021): 2020-07. [link](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-021-02423-x)
+19. Quinlan, Aaron R., and Ira M. Hall. "BEDTools: a flexible suite of utilities for comparing genomic features." Bioinformatics 26.6 (2010): 841-842. [link](https://academic.oup.com/bioinformatics/article/26/6/841/244688?login=true)
+20. Cingolani, Pablo, et al. "A program for annotating and predicting the effects of single nucleotide polymorphisms, SnpEff: SNPs in the genome of Drosophila melanogaster strain w1118; iso-2; iso-3." Fly 6.2 (2012): 80-92. [link](https://www.tandfonline.com/doi/full/10.4161/fly.19695)
+21. Wickham, Hadley. "ggplot2." Wiley Interdisciplinary Reviews: Computational Statistics 3.2 (2011): 180-185. [link](https://wires.onlinelibrary.wiley.com/doi/full/10.1002/wics.147)
  

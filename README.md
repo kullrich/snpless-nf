@@ -1,9 +1,13 @@
-# snpless-nf
+<a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=30&pause=1000&color=333333&center=true&width=1000&lines=Welcome+to+SNPless+repository+;Ask+me+anything" alt="Typing SVG" /></a>
+
+<h1 align="center"><b>SNPless powered by <span style="color: green;">Nextflow</span></b></h1>
+
+
 snpless-nf - A Nextflow pipeline for time-course analysis with bacterial NGS whole-genome data. <img align="right" src="logo/new_SNPless.png" width=400>
 
-[![nextflow](https://img.shields.io/badge/nextflow-%E2%89%A521.10.0-brightgreen.svg)](http://nextflow.io)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 [![MITlicense](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
+[![nextflow](https://img.shields.io/badge/nextflow-%E2%89%A521.10.0-brightgreen.svg)](http://nextflow.io)
 
 ## Introduction
 
